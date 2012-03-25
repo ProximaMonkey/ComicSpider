@@ -1,0 +1,32 @@
+﻿<Window x:Class="UI.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:tree="clr-namespace:Aga.Controls.Tree;assembly=Aga.Controls"
+		Title="MainWindow" Height="350" Width="525">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="28*" />
+			<RowDefinition Height="283*" />
+		</Grid.RowDefinitions>
+		<Button Click="Button_Click">test</Button>
+		<tree:TreeList Name="view" Grid.Row="1">
+			<tree:TreeList.View>
+				<GridView>
+					<GridViewColumn>
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<tree:RowExpander></tree:RowExpander>
+								</StackPanel>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Age" Width="50" DisplayMemberBinding="{Binding Age}">
+					</GridViewColumn>
+					<GridViewColumn Header="Name" Width="80" DisplayMemberBinding="{Binding Name}">
+					</GridViewColumn>
+				</GridView>
+			</tree:TreeList.View>
+		</tree:TreeList>
+	</Grid>
+</Window>
