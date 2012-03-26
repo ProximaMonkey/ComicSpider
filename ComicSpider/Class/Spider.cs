@@ -17,7 +17,8 @@ namespace ys.Web
 		{
 			stopped = true;
 			Thread_count = 1;
-			img_info_queue = new Queue<Web_file_info>();
+			file_info_queue = new Queue<Web_src_info>();
+			vol_info_queue = new Queue<Web_src_info>();
 		}
 
 		public void Async_show_vol_list(string url)
@@ -28,45 +29,34 @@ namespace ys.Web
 
 			Report("Show vol list...");
 		}
-		public void Async_download(ObservableCollection<Web_page_info> vol_info_list, string root_dir = "")
+		public void Async_start(ObservableCollection<Web_src_info> vol_info_list, string root_dir = "")
 		{
 			Root_dir = root_dir;
 			stopped = false;
+
+			foreach (var vol_info in vol_info_list)
+			{
+				vol_info.Counter.Reset_all();
+				vol_info_queue.Enqueue(vol_info);
+			}
 
 			for (int i = 0; i < Thread_count; i++)
 			{
 				Thread downloader = new Thread(new ThreadStart(Downloader));
 				downloader.Name = "Downloader";
 				downloader.Start();
-			}
 
-			Thread infomer = new Thread(new ParameterizedThreadStart(Get_page_info_list));
-			infomer.Name = "Get_page_info_list";
-			infomer.Start(vol_info_list);
+				Thread info_getter = new Thread(new ThreadStart(Get_page_info_list));
+				info_getter.Name = "Get_page_info_list";
+				info_getter.Start();
+			}
 
 			Report("Comic Spider start...");
-		}
-		public void Async_download_missed(ObservableCollection<Web_page_info> img_info_list, string root_dir = "")
-		{
-			stopped = false;
-			Root_dir = root_dir;
-
-			foreach (var img_info in img_info_list)
-			{
-				img_info_queue.Enqueue(img_info);
-			}
-
-			for (int i = 0; i < Thread_count; i++)
-			{
-				Thread downloader = new Thread(new ThreadStart(Downloader));
-				downloader.Name = "Missed Downloader";
-				downloader.Start();
-			}
 		}
 
 		public void Stop()
 		{
-			img_info_queue.Clear();
+			file_info_queue.Clear();
 			stopped = true;
 		}
 		public bool Stopped { get { return stopped; } }
@@ -74,12 +64,13 @@ namespace ys.Web
 		public int Thread_count { get; set; }
 
 		private bool stopped;
-		private Queue<Web_file_info> img_info_queue;
+		private Queue<Web_src_info> file_info_queue;
+		private Queue<Web_src_info> vol_info_queue;
 
 		private void Show_vol_list(object arg)
 		{
 			string url = arg as string;
-			ObservableCollection<Web_page_info> vol_info_list = Get_vol_info_list(url);
+			ObservableCollection<Web_src_info> vol_info_list = Get_vol_info_list(url);
 
 			MainWindow.Main.Dispatcher.Invoke(
 				new MainWindow.Show_vol_list_delegate(MainWindow.Main.Show_vol_list),
@@ -97,14 +88,14 @@ namespace ys.Web
 					DateTime.Now,
 					url,
 					ex.Message,
-					Guid.NewGuid().ToString());
+					ex.StackTrace);
 				a.Connection.Close();
 			}
 			catch (Exception)
 			{
 			}
 		}
-		private void Log_missed(Exception ex, string url = "", Web_file_info web_base_info = null)
+		private void Log_missed(Exception ex, string url = "", string type = "page")
 		{
 			try
 			{
@@ -113,7 +104,7 @@ namespace ys.Web
 				a.Insert(
 					DateTime.Now,
 					url,
-					ys.Common.ObjectToByteArray(web_base_info));
+					type);
 				a.Connection.Close();
 			}
 			catch (Exception)
@@ -123,18 +114,18 @@ namespace ys.Web
 		private void Report(string info)
 		{
 			Console.WriteLine(info);
-			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Show_info_delegate(MainWindow.Main.Show_info), info);
+			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 		private void Report(string format, params object[] arg)
 		{
 			string info = string.Format(format, arg);
 			Console.WriteLine(info);
-			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Show_info_delegate(MainWindow.Main.Show_info), info);
+			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
-		private ObservableCollection<Web_page_info> Get_vol_info_list(string comic_url)
+		private ObservableCollection<Web_src_info> Get_vol_info_list(string comic_url)
 		{
-			ObservableCollection<Web_page_info> vol_info_list = new ObservableCollection<Web_page_info>();
+			ObservableCollection<Web_src_info> vol_info_list = new ObservableCollection<Web_src_info>();
 			string html = "";
 
 			WebClient wc = new WebClient();
@@ -151,13 +142,14 @@ namespace ys.Web
 				Counter counter = new Counter(mc.Count);
 				for (int i = 0; i < mc.Count; i++)
 				{
-					vol_info_list.Add(new Web_page_info(
+					vol_info_list.Add(new Web_src_info(
 						mc[i].Groups["url"].Value,
 						i,
+						"",
 						counter,
 						cookie,
 						mc[i].Groups["vol"].Value.Trim(),
-						new Web_page_info(comic_url, 0, null, cookie, comic_name, null))
+						new Web_src_info(comic_url, 0, "", null, cookie, comic_name, null))
 					);
 				}
 
@@ -170,92 +162,49 @@ namespace ys.Web
 
 			return vol_info_list;
 		}
-		private void Get_page_info_list(object arg)
+
+		private void Get_page_info_list()
 		{
-			ObservableCollection<Web_page_info> vol_info_list = arg as ObservableCollection<Web_page_info>;
-
-			#region Insert Vol_info_list into data base
-
-			try
+			while (!stopped)
 			{
-				App_data.Vol_infoDataTable table = new App_data.Vol_infoDataTable();
-				Counter counter = new Counter(vol_info_list.Count);
-				foreach (var item in vol_info_list)
+				Web_src_info vol_info;
+				lock (vol_info_queue)
 				{
-					item.Counter = counter;
-					table.AddVol_infoRow(
-						item.Url,
-						item.Name,
-						item.Index,
-						item.Cookie,
-						DateTime.Now
-					);
+					if (vol_info_queue.Count == 0)
+					{
+						return;
+					}
+					vol_info = vol_info_queue.Dequeue();
 				}
 
-				Vol_infoTableAdapter vol_adapter = new Vol_infoTableAdapter();
-				vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
-				vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Vol_info where 1";
-
-				vol_adapter.Connection.Open();
-
-				vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
-				vol_adapter.Update(table);
-
-				vol_adapter.Connection.Close();
-			}
-			catch (Exception ex)
-			{
-				Log_error(ex);
-			}
-
-			#endregion
-
-			Thread[] threads = new Thread[Thread_count];
-			int count = 0;
-			foreach (var vol_info in vol_info_list)
-			{
-				if (stopped) return;
-
-				ObservableCollection<Web_page_info> page_info_list;
-				try
+				if (vol_info.Children == null ||
+					vol_info.Children.Count == 0)
 				{
-					page_info_list = Get_info_list_from_html(
-							vol_info,
-							@"value=""(?<url>http://.+?)""",
-							@"change_page(.|\n)+?/select");
-				}
-				catch (Exception ex)
-				{
-					Log_error(ex, vol_info.Url);
-					continue;
+					try
+					{
+						vol_info.Children = Get_info_list_from_html(
+								vol_info,
+								@"value=""(?<url>http://.+?)""",
+								@"change_page(.|\n)+?/select");
+					}
+					catch (Exception ex)
+					{
+						Log_error(ex, vol_info.Url);
+						continue;
+					}
 				}
 
 				Report("Page list: {0}", vol_info.Name);
 
-				if (count < Thread_count)
-				{
-					threads[count] = new Thread(new ParameterizedThreadStart(Get_img_info_list));
-					threads[count].Name = "Get_img_info_list";
-					threads[count].Start(page_info_list);
-				}
-				else
-				{
-					count = 0;
-					for (int i = 0; i < Thread_count; i++)
-					{
-						threads[i].Join();
-					}
-				}
+				Get_file_info_list(vol_info.Children);
 			}
 		}
-		private void Get_img_info_list(object arg)
+		private void Get_file_info_list(ObservableCollection<Web_src_info> page_info_list)
 		{
 			if (stopped) return;
 
-			ObservableCollection<Web_page_info> page_info_list = arg as ObservableCollection<Web_page_info>;
-
 			string dir_path = "";
-			Web_page_info parent = page_info_list[0];
+			Web_src_info parent = page_info_list[0];
 			while ((parent = parent.Parent) != null)
 			{
 				dir_path = Path.Combine(parent.Name, dir_path);
@@ -267,56 +216,69 @@ namespace ys.Web
 				Report("Create dir: {0}", dir_path);
 			}
 
+
 			for (int i = 0; i < page_info_list.Count; i++)
 			{
 				if (stopped) return;
 
-				Web_page_info page_info = page_info_list[i];
+				Web_src_info page_info = page_info_list[i];
+
+				if (page_info.State == "OK")
+				{
+					int downloaded = page_info.Counter.Increment();
+					if (downloaded == page_info.Counter.All)
+					{
+						page_info.Parent.State = "OK";
+					}
+					continue;
+				}
+
 				try
 				{
-					ObservableCollection<Web_page_info> img_info_list = Get_info_list_from_html(
+					ObservableCollection<Web_src_info> file_info_list = Get_info_list_from_html(
 								page_info,
 								@"src=""(?<url>http://c.mhcdn.net/store/manga/.+?((jpg)|(png)|(gif)|(bmp)))""");
 
-					lock (img_info_queue)
+					lock (file_info_queue)
 					{
-						img_info_queue.Enqueue(img_info_list[0]);
+						file_info_queue.Enqueue(file_info_list[0]);
 					}
+					Report("File: {0}", file_info_list[0].Name);
 				}
 				catch (Exception ex)
 				{
-					Log_missed(ex, page_info.Url, page_info);
+					Log_missed(ex, page_info.Url);
 				}
 			}
 		}
 
 		private void Downloader()
 		{
-			Web_file_info img_info;
+			Web_src_info file_info;
 
 			while (!stopped)
 			{
-				lock (img_info_queue)
+				lock (file_info_queue)
 				{
-					if (img_info_queue.Count == 0)
+					if (file_info_queue.Count == 0)
 					{
 						Thread.Sleep(100);
 						continue;
 					}
 
-					img_info = img_info_queue.Dequeue();
+					file_info = file_info_queue.Dequeue();
 				}
 
-				#region check and create directory and file name
+				#region Create file name
 
 				string file_path = "";
-				Web_page_info parent = img_info.Parent;
+				Web_src_info parent = file_info.Parent;
 				while ((parent = parent.Parent) != null)
 				{
 					file_path = Path.Combine(parent.Name, file_path);
 				}
 				file_path = Path.Combine(file_path,
-					string.Format("{0:D3}{1}", img_info.Parent.Index, Path.GetExtension(img_info.Url))
+					string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url))
 				);
 				file_path = Path.Combine(Root_dir, file_path);
 
@@ -324,28 +286,39 @@ namespace ys.Web
 
 				WebClient wc = new WebClient();
 				wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
-				wc.Headers.Add("Cookie", img_info.Cookie);
-				wc.Headers.Add("Referer", img_info.Parent.Url);
+				wc.Headers.Add("Cookie", file_info.Cookie);
+				wc.Headers.Add("Referer", file_info.Parent.Url);
 				try
 				{
-					wc.DownloadFile(img_info.Url, file_path);
-					byte[] data = wc.DownloadData(img_info.Url);
+					wc.DownloadFile(file_info.Url, file_path);
+					byte[] data = wc.DownloadData(file_info.Url);
 					FileStream sw = new FileStream(file_path, FileMode.Create);
 					sw.Write(data, 0, data.Length);
 					sw.Close();
+
+					int downloaded = file_info.Parent.Counter.Increment();
+					file_info.Parent.State = "OK";
+					if (downloaded == file_info.Parent.Counter.All)
+					{
+						file_info.Parent.Parent.State = "OK";
+					}
+					else
+					{
+						file_info.Parent.Parent.State = string.Format("{0}/{1}", downloaded, file_info.Parent.Counter.All);
+					}
+
+					Report("{0}: {1}/{2} , Downloaded: {3}",
+						file_info.Parent.Parent.Name,
+						downloaded,
+						file_info.Parent.Counter.All,
+						file_info.Name);
 				}
 				catch (Exception ex)
 				{
-					Log_error(ex, img_info.Url);
-					Log_missed(ex, img_info.Parent.Url, img_info.Parent);
+					file_info.Parent.State = "X";
+					Log_error(ex, file_info.Url);
+					Log_missed(ex, file_info.Parent.Url);
 				}
-
-				int downloaded = img_info.Parent.Counter.Increment();
-				Report("{0}: {1}/{2} , Downloaded: {3}", img_info.Parent.Parent.Name, downloaded, img_info.Parent.Counter.All, img_info.Name);
-				MainWindow.Main.Dispatcher.Invoke(
-					new MainWindow.Update_progress_delegate(MainWindow.Main.Update_progress),
-					img_info
-				);
 			}
 		}
 
@@ -356,12 +329,12 @@ namespace ys.Web
 		/// <param name="pattern">Must have adpter group named "page_info"</param>
 		/// <param name="region_pattern"></param>
 		/// <returns></returns>
-		private ObservableCollection<Web_page_info> Get_info_list_from_html(
-			Web_page_info src_info,
+		private ObservableCollection<Web_src_info> Get_info_list_from_html(
+			Web_src_info src_info,
 			string url_pattern,
 			string region_pattern = null)
 		{
-			ObservableCollection<Web_page_info> list = new ObservableCollection<Web_page_info>();
+			ObservableCollection<Web_src_info> list = new ObservableCollection<Web_src_info>();
 			string html = "";
 
 			WebClient wc = new WebClient();
@@ -381,15 +354,17 @@ namespace ys.Web
 				for (int i = 0; i < mc.Count; i++)
 				{
 					string url = mc[i].Groups["url"].Value;
-					list.Add(new Web_page_info(
+					Web_src_info new_page_info = new Web_src_info(
 						url,
 						i,
+						"",
 						counter,
 						wc.ResponseHeaders["Set-Cookie"],
 						Path.GetFileName(url),
-						src_info)
-					);
+						src_info);
+					list.Add(new_page_info);
 				}
+				src_info.Children = list;
 			}
 			catch (Exception ex)
 			{

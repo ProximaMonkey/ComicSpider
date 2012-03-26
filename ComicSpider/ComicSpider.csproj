@@ -55,7 +55,6 @@
     <ApplicationIcon>Images\y.s.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aga.Controls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b1d788d229eb5990, processorArchitecture=MSIL" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -135,7 +134,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\Aga.Controls.dll" />
     <Content Include="Lib\System.Data.SQLite.dll" />
     <Resource Include="Images\main_bg.jpg" />
     <Resource Include="Images\Metro-Loading-Blue-100.png" />

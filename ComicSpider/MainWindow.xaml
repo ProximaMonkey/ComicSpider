@@ -4,11 +4,27 @@
 		xmlns:ComicSpider="clr-namespace:ComicSpider"
 		Title="Comic Spider" Height="500" Width="650"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		xmlns:tree="clr-namespace:Aga.Controls.Tree;assembly=Aga.Controls"
 		Loaded="Window_Loaded"
-		Closing="Window_Closing"
 		Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico">
 	<Window.Resources>
+		<DataTemplate x:Key="HeaderTemplateArrowUp">
+			<DockPanel>
+				<TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
+				<Path x:Name="arrow"
+		   StrokeThickness = "1"					  
+		   Fill            = "gray"
+		   Data            = "M 5,10 L 15,10 L 10,5 L 5,10"/>
+			</DockPanel>
+		</DataTemplate>
+		<DataTemplate x:Key="HeaderTemplateArrowDown">
+			<DockPanel>
+				<TextBlock HorizontalAlignment="Center" Text="{Binding }"/>
+				<Path x:Name="arrow"
+			  StrokeThickness = "1"					  
+			  Fill            = "gray"
+			  Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
+			</DockPanel>
+		</DataTemplate>
 	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -19,22 +35,35 @@
 			<RowDefinition Height="36" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<tree:TreeList Name="vol_list" Grid.Row="2" Margin="5">
-			<tree:TreeList.View>
-				<GridView>
-					<GridViewColumn>
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<tree:RowExpander></tree:RowExpander>
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"></GridViewColumn>
-					<GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
-					<GridViewColumn Header="Url" Width="300" DisplayMemberBinding="{Binding Url}"></GridViewColumn>
-				</GridView>
-			</tree:TreeList.View>
-		</tree:TreeList>
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<ListView Name="vol_list" Margin="5,5,0,5" SelectionChanged="vol_list_SelectionChanged" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"></GridViewColumn>
+						<GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
+					</GridView>
+				</ListView.View>
+			</ListView>
+			<GridSplitter HorizontalAlignment="Left" Name="gridSplitter1" Width="5" Grid.Column="1" Margin="0,5" Background="White" />
+			<ListView Name="Page_list" Grid.Column="1" Margin="5" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"></GridViewColumn>
+						<GridViewColumn Header="Url" Width="200">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"></TextBlock>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+					</GridView>
+				</ListView.View>
+			</ListView>
+		</Grid>
 		<Grid Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="70" />
@@ -50,13 +79,14 @@
 			<TextBox Name="txt_url"  Margin="5" Grid.Column="1" Grid.ColumnSpan="3" />
 			<Label Margin="0,5" Grid.Row="1" HorizontalContentAlignment="Right">Save to</Label>
 			<TextBox Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" />
-			<Label Grid.Row="1" Grid.Column="2" Margin="0,5" HorizontalContentAlignment="Right">Thead</Label>
+			<Label Grid.Row="1" Grid.Column="2" Margin="0,5" HorizontalContentAlignment="Right" Content="Thread"></Label>
 			<TextBox x:Name="txt_thread" Grid.Row="1" Grid.Column="3" Margin="5" MaxLength="3" HorizontalContentAlignment="Center" PreviewTextInput="TextBox_PreviewTextInput">1</TextBox>
 		</Grid>
 		<StackPanel Orientation="Horizontal" Grid.Row="1">
 			<Button Content="Start" Name="btn_start" Click="btn_start_Click" IsEnabled="False" Margin="5" Padding="5,0" />
 			<Button Content="Get List" Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 			<Button Content="Delete" Name="btn_delelte" Margin="5" Padding="5,0" Click="btn_delelte_Click" />
+			<Button Content="Select Downloaded" Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" />
 		</StackPanel>
 	</Grid>
 </Window>

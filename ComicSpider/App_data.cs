@@ -18,19 +18,32 @@ create table if not exists [Key_value] (
 );
 create table if not exists [Error_log] (
 	[Date_time] datetime NOT NULL,
-	[Url] nvarchar(100) PRIMARY KEY NOT NULL,
+	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Title] nvarchar(100) NOT NULL,
 	[Detail] text
 );
 create table if not exists [Missed_log] (
 	[Date_time] datetime NOT NULL,
-	[Url] nvarchar(100) PRIMARY KEY NOT NULL,
-	[Object] image
+	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
+	[Type] nvarchar(50)
 );
 create table if not exists [Vol_info] (
-	[Url] nvarchar(100) PRIMARY KEY NOT NULL,
+	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(100),
-	[Index] integer,
+	[State] nvarchar(50),
+	[Parent_url] nvarchar(200),
+	[Parent_name] nvarchar(100),
+	[Index] int,
+	[Cookie] text,
+	[Data_time] datetime NOT NULL
+);
+create table if not exists [Page_info] (
+	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
+	[Name] nvarchar(100),
+	[State] nvarchar(50),
+	[Parent_url] nvarchar(200),
+	[Parent_name] nvarchar(100),
+	[Index] int,
 	[Cookie] text,
 	[Data_time] datetime NOT NULL
 );
