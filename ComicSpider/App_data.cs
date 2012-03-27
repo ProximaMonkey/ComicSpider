@@ -1,7 +1,7 @@
 ﻿namespace ComicSpider
 {
-	
-	
+
+
 	public partial class App_data
 	{
 		public static void CheckAndFix()

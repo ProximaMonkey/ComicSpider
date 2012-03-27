@@ -284,9 +284,13 @@ namespace ComicSpider
 		{
 			comic_spider.Stop();
 
+			DateTime dt = DateTime.Now;
+
 			Save_settings();
 			Save_vol_info_list();
 			Save_page_info_list();
+
+			Console.WriteLine(DateTime.Now.Subtract(dt).TotalSeconds);
 
 			Environment.Exit(0);
 		}

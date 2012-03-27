@@ -19,6 +19,8 @@ namespace ys.Web
 			Thread_count = 1;
 			file_info_queue = new Queue<Web_src_info>();
 			vol_info_queue = new Queue<Web_src_info>();
+			file_info_queue_lock = new object();
+			vol_info_queue_lock = new object();
 		}
 
 		public void Async_show_vol_list(string url)
@@ -37,7 +39,10 @@ namespace ys.Web
 			foreach (var vol_info in vol_info_list)
 			{
 				vol_info.Counter.Reset_all();
-				vol_info_queue.Enqueue(vol_info);
+				lock (vol_info_queue_lock)
+				{
+					vol_info_queue.Enqueue(vol_info); 
+				}
 			}
 
 			for (int i = 0; i < Thread_count; i++)
@@ -66,6 +71,8 @@ namespace ys.Web
 		private bool stopped;
 		private Queue<Web_src_info> file_info_queue;
 		private Queue<Web_src_info> vol_info_queue;
+		private object file_info_queue_lock;
+		private object vol_info_queue_lock;
 
 		private void Show_vol_list(object arg)
 		{
@@ -168,7 +175,7 @@ namespace ys.Web
 			while (!stopped)
 			{
 				Web_src_info vol_info;
-				lock (vol_info_queue)
+				lock (vol_info_queue_lock)
 				{
 					if (vol_info_queue.Count == 0)
 					{
@@ -201,8 +208,6 @@ namespace ys.Web
 		}
 		private void Get_file_info_list(ObservableCollection<Web_src_info> page_info_list)
 		{
-			if (stopped) return;
-
 			string dir_path = "";
 			Web_src_info parent = page_info_list[0];
 			while ((parent = parent.Parent) != null)
@@ -239,11 +244,11 @@ namespace ys.Web
 								page_info,
 								@"src=""(?<url>http://c.mhcdn.net/store/manga/.+?((jpg)|(png)|(gif)|(bmp)))""");
 
-					lock (file_info_queue)
+					lock (file_info_queue_lock)
 					{
 						file_info_queue.Enqueue(file_info_list[0]);
 					}
-					Report("File: {0}", file_info_list[0].Name);
+					Report("Get file info: {0}", file_info_list[0].Url);
 				}
 				catch (Exception ex)
 				{
@@ -258,7 +263,7 @@ namespace ys.Web
 
 			while (!stopped)
 			{
-				lock (file_info_queue)
+				lock (file_info_queue_lock)
 				{
 					if (file_info_queue.Count == 0)
 					{
