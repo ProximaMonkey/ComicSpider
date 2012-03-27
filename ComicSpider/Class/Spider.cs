@@ -291,7 +291,7 @@ namespace ys.Web
 
 				WebClient wc = new WebClient();
 				wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
-				wc.Headers.Add("Cookie", file_info.Cookie);
+				wc.Headers.Add("Cookie", file_info.Parent.Cookie);
 				wc.Headers.Add("Referer", file_info.Parent.Url);
 				try
 				{
@@ -343,10 +343,13 @@ namespace ys.Web
 			string html = "";
 
 			WebClient wc = new WebClient();
-			html = wc.DownloadString(src_info.Url);
-
 			try
 			{
+				html = wc.DownloadString(src_info.Url);
+
+				src_info.Children = list;
+				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
+
 				if (region_pattern != null)
 				{
 					Regex reg_region = new Regex(region_pattern);
@@ -364,12 +367,11 @@ namespace ys.Web
 						i,
 						"",
 						counter,
-						wc.ResponseHeaders["Set-Cookie"],
+						"",
 						Path.GetFileName(url),
 						src_info);
 					list.Add(new_page_info);
 				}
-				src_info.Children = list;
 			}
 			catch (Exception ex)
 			{

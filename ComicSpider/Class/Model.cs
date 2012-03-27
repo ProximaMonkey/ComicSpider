@@ -68,7 +68,7 @@ namespace ys.Web
 		}
 		public Counter Counter;
 		public int Index { get; set; }
-		public string Cookie { get; protected set; }
+		public string Cookie { get; set; }
 		public bool Missed { get; set; }
 		public Web_src_info Parent { get; protected set; }
 

@@ -284,13 +284,9 @@ namespace ComicSpider
 		{
 			comic_spider.Stop();
 
-			DateTime dt = DateTime.Now;
-
 			Save_settings();
 			Save_vol_info_list();
 			Save_page_info_list();
-
-			Console.WriteLine(DateTime.Now.Subtract(dt).TotalSeconds);
 
 			Environment.Exit(0);
 		}
@@ -314,10 +310,19 @@ namespace ComicSpider
 		}
 		private void Save_vol_info_list()
 		{
-			App_data.Vol_infoDataTable vol_info_table = new App_data.Vol_infoDataTable();
+			Vol_infoTableAdapter vol_adapter = new Vol_infoTableAdapter();
+			vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
+			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Vol_info where 1";
+
+			vol_adapter.Connection.Open();
+
+			SQLiteTransaction transaction = vol_adapter.Connection.BeginTransaction();
+
+			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
+
 			foreach (var item in vol_info_list)
 			{
-				vol_info_table.AddVol_infoRow(
+				vol_adapter.Insert(
 					item.Url,
 					item.Name,
 					item.State,
@@ -329,26 +334,28 @@ namespace ComicSpider
 				);
 			}
 
-			Vol_infoTableAdapter vol_adapter = new Vol_infoTableAdapter();
-			vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
-			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Vol_info where 1";
-
-			vol_adapter.Connection.Open();
-
-			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
-			vol_adapter.Update(vol_info_table);
+			transaction.Commit();
 
 			vol_adapter.Connection.Close();
 		}
 		private void Save_page_info_list()
 		{
-			App_data.Page_infoDataTable page_info_table = new App_data.Page_infoDataTable();
+			Page_infoTableAdapter page_adapter = new Page_infoTableAdapter();
+			page_adapter.Adapter.DeleteCommand = page_adapter.Connection.CreateCommand();
+			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_info where 1";
+
+			page_adapter.Connection.Open();
+
+			SQLiteTransaction transaction = page_adapter.Connection.BeginTransaction();
+
+			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
+
 			foreach (Web_src_info vol in vol_info_list)
 			{
 				if (vol.Children == null) continue;
 				foreach (Web_src_info item in vol.Children)
 				{
-					page_info_table.AddPage_infoRow(
+					page_adapter.Insert(
 											item.Url,
 											item.Name,
 											item.State,
@@ -361,15 +368,7 @@ namespace ComicSpider
 				}
 			}
 
-			Page_infoTableAdapter page_adapter = new Page_infoTableAdapter();
-			page_adapter.Adapter.DeleteCommand = page_adapter.Connection.CreateCommand();
-			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_info where 1";
-
-			page_adapter.Connection.Open();
-
-			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
-			page_adapter.Update(page_info_table);
-
+			transaction.Commit();
 			page_adapter.Connection.Close();
 		}
 

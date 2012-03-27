@@ -52,5 +52,15 @@ namespace ComicSpider.Properties {
                 return ((string)(this["App_dataConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=|DataDirectory|\\test.sdf")]
+        public string testConnectionString {
+            get {
+                return ((string)(this["testConnectionString"]));
+            }
+        }
     }
 }
