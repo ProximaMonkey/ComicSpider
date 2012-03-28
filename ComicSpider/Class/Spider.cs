@@ -14,7 +14,6 @@ namespace ys.Web
 		public Comic_spider()
 		{
 			stopped = true;
-			Thread_count = 1;
 			file_info_queue = new Queue<Web_src_info>();
 			vol_info_queue = new Queue<Web_src_info>();
 			file_info_queue_lock = new object();
@@ -22,17 +21,16 @@ namespace ys.Web
 			thread_list = new List<Thread>();
 		}
 
-		public void Async_show_vol_list(string url)
+		public void Async_show_vol_list()
 		{
 			Thread thread = new Thread(new ParameterizedThreadStart(Show_vol_list));
 			thread.Name = "Show_vol_list";
-			thread.Start(url);
+			thread.Start(MainWindow.Main.Settings.Main_url);
 
 			Report("Show vol list...");
 		}
-		public void Async_start(System.Windows.Controls.ItemCollection vol_info_list, string root_dir = "")
+		public void Async_start(System.Windows.Controls.ItemCollection vol_info_list)
 		{
-			Root_dir = root_dir;
 			stopped = false;
 
 			foreach (Web_src_info vol_info in vol_info_list)
@@ -44,7 +42,7 @@ namespace ys.Web
 				}
 			}
 
-			for (int i = 0; i < Thread_count; i++)
+			for (int i = 0; i < int.Parse(MainWindow.Main.Settings.Thread_count); i++)
 			{
 				Thread downloader = new Thread(new ThreadStart(Downloader));
 				downloader.Name = "Downloader" + i;
@@ -73,8 +71,6 @@ namespace ys.Web
 			thread_list.Clear();
 		}
 		public bool Stopped { get { return stopped; } }
-		public string Root_dir { get; set; }
-		public int Thread_count { get; set; }
 
 		private bool stopped;
 		private Queue<Web_src_info> file_info_queue;
@@ -126,43 +122,13 @@ namespace ys.Web
 		private List<Web_src_info> Get_vol_info_list(Web_src_info comic_info)
 		{
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
-			string html = "";
 
-			WebClient wc = new WebClient();
-			try
-			{
-				html = wc.DownloadString(comic_info.Url);
-
-				string cookie = wc.ResponseHeaders["Set-Cookie"];
-
-				Regex reg = new Regex("<title>(?<comic>.+?) Manga .+</title>");
-				string comic_name = reg.Match(html).Groups["comic"].Value.Trim();
-
-				reg = new Regex(@"color_0077"" href=""(?<url>.+?)"" (name="".*?"")?>(?<name>(\n|.)+?)</a>(\n|.)*?</span>(?<title>.*?)</span>");
-				MatchCollection mc = reg.Matches(html);
-				for (int i = 0; i < mc.Count; i++)
-				{
-					vol_info_list.Add(new Web_src_info(
-						mc[i].Groups["url"].Value,
-						i,
-						"",
-						null,
-						cookie,
-						ys.Common.Format_for_number_sort(mc[i].Groups["name"].Value.Trim()),
-						comic_info)
-					);
-				}
-				comic_info.Children = vol_info_list;
-				comic_info.Name = comic_name;
-				comic_info.Cookie = cookie;
-				comic_info.Counter = new Counter(mc.Count);
-
-				Report("Vol list: {0}", vol_info_list);
-			}
-			catch (Exception ex)
-			{
-				Log_error(ex, comic_info.Url);
-			}
+			vol_info_list = Get_info_list_from_html(
+				comic_info,
+				@"<a(.|\n)+?href=""(?<url>.+?)""(.|\n)+?>(?<name>(.|\n)+?)</a>",
+				"{0}",
+				MainWindow.Main.Settings.Page_url
+			);
 
 			return vol_info_list;
 		}
@@ -188,8 +154,8 @@ namespace ys.Web
 					{
 						vol_info.Children = Get_info_list_from_html(
 								vol_info,
-								@"value=""(?<url>http://.+?)""",
-								@"change_page(.|\n)+?/select");
+								@"<select[^<>]+change_page(.|\n)+?</select>		value=""(?<url>[1-9]\d?\d?)""",
+								vol_info.Url.Remove(vol_info.Url.LastIndexOf('/') + 1) + "{0}" + ".html");
 					}
 					catch (Exception ex)
 					{
@@ -206,12 +172,19 @@ namespace ys.Web
 		private void Get_file_info_list(List<Web_src_info> page_info_list)
 		{
 			string dir_path = "";
+
+			if (page_info_list.Count == 0)
+			{
+				Report("No page found.");
+				return;
+			}
+
 			Web_src_info parent = page_info_list[0];
 			while ((parent = parent.Parent) != null)
 			{
 				dir_path = Path.Combine(parent.Name, dir_path);
 			}
-			dir_path = Path.Combine(Root_dir, dir_path);
+			dir_path = Path.Combine(MainWindow.Main.Settings.Root_dir, dir_path);
 			if (!Directory.Exists(dir_path))
 			{
 				Directory.CreateDirectory(dir_path);
@@ -239,7 +212,7 @@ namespace ys.Web
 				{
 					List<Web_src_info> file_info_list = Get_info_list_from_html(
 								page_info,
-								@"src=""(?<url>http://c.mhcdn.net/store/manga/.+?((jpg)|(png)|(gif)|(bmp)))""");
+								@"src=""(?<url>.+?((jpg)|(png)|(gif)|(bmp)))""");
 
 					lock (file_info_queue_lock)
 					{
@@ -283,7 +256,7 @@ namespace ys.Web
 				file_path = Path.Combine(file_path,
 					string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url))
 				);
-				file_path = Path.Combine(Root_dir, file_path);
+				file_path = Path.Combine(MainWindow.Main.Settings.Root_dir, file_path);
 
 				#endregion
 
@@ -330,41 +303,48 @@ namespace ys.Web
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="page_info"></param>
-		/// <param name="pattern">Must have adpter group named "page_info"</param>
-		/// <param name="region_pattern"></param>
+		/// <param name="src_info"></param>
+		/// <param name="pattern">Regex pattern</param>
+		/// <param name="anchor">Levenshtein Distance anchor</param>
+		/// <param name="threshold">Levenshtein Distance threshold</param>
 		/// <returns></returns>
 		private List<Web_src_info> Get_info_list_from_html(
 			Web_src_info src_info,
-			string url_pattern,
-			string region_pattern = null)
+			string pattern,
+			string url_format = "{0}",
+			string anchor = null,
+			int threshold = 10)
 		{
 			List<Web_src_info> list = new List<Web_src_info>();
 			string html = "";
+			string[] patterns = pattern.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
 			WebClient wc = new WebClient();
 			try
 			{
 				html = wc.DownloadString(src_info.Url);
 
-				if (region_pattern != null)
+				for (int i = 0; i < patterns.Length - 1; i++)
 				{
-					Regex reg_region = new Regex(region_pattern);
-					html = reg_region.Match(html).Value;
+					html = Regex.Match(html, patterns[i]).Groups[0].Value;
 				}
 
-				Regex reg_url = new Regex(url_pattern);
-				MatchCollection mc = reg_url.Matches(html);
+				MatchCollection mc = Regex.Matches(html, patterns[patterns.Length - 1]);
 				for (int i = 0; i < mc.Count; i++)
 				{
-					string url = mc[i].Groups["url"].Value;
+					if (anchor != null &&
+						ys.Common.LevenshteinDistance(anchor, mc[i].Groups["url"].Value) > threshold)
+						continue;
+
+					string url = string.Format(url_format, mc[i].Groups["url"].Value);
+					string name = mc[i].Groups["name"].Value;
 					Web_src_info new_page_info = new Web_src_info(
 						url,
 						i,
 						"",
 						null,
 						"",
-						Path.GetFileName(url),
+						name == "" ? Path.GetFileName(url) : name,
 						src_info);
 					list.Add(new_page_info);
 				}

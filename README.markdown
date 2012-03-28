@@ -1,4 +1,4 @@
-A personal tool. Now it was just a prototype for future. My Guide Recognition arithmetic will be use to make it fit most sites automatically in future. For testing, now I manually parsed the site http://www.mangahere.com/ via regular expression.
+A personal tool. Now it was just a prototype for future. My Guide Recognition arithmetic will be use to make it fit most sites automatically in future. For testing, now I manually parsed the site http://mangafox.me via regular expression.
 
 Maybe use mono will make the project open, but now windows only.
 

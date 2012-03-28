@@ -15,7 +15,7 @@ namespace ys.Web
 			string state = "",
 			Counter count = null,
 			string cookie = "",
-			string name = null,
+			string name = "",
 			Web_src_info parent = null,
 			List<Web_src_info> children = null)
 		{

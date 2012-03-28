@@ -51,8 +51,13 @@ namespace ComicSpider
 			this.Title = info;
 		}
 
+		public MainSettings Settings
+		{
+			get { return settings; }
+		}
+
 		private Comic_spider comic_spider;
-		private Settings settings;
+		private MainSettings settings;
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -80,15 +85,17 @@ namespace ComicSpider
 			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
 			if (data_reader.Read())
 			{
-				settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Settings;
+				settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as MainSettings;
 			}
 
 			kv_adpter.Connection.Close();
 
-			if (settings == null) settings = new Settings();
+			if (settings == null) settings = new MainSettings();
 
+			txt_main_url.Text = settings.Main_url;
+			txt_page.Text = settings.Page_url;
+			txt_file.Text = settings.File_url;
 			txt_dir.Text = settings.Root_dir;
-			txt_url.Text = settings.Url;
 			txt_thread.Text = settings.Thread_count;
 		}
 		private void Init_vol_info_list()
@@ -144,16 +151,14 @@ namespace ComicSpider
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
+			Save_settings();
+
 			if (btn_start.Content.ToString() == "Start")
 			{
 				btn_start.Content = "Stop";
 				btn_get_list.IsEnabled = false;
 
-				settings.Root_dir = txt_dir.Text;
-				settings.Url = txt_url.Text;
-
-				comic_spider.Thread_count = int.Parse(txt_thread.Text);
-				comic_spider.Async_start(vol_list.Items, txt_dir.Text);
+				comic_spider.Async_start(vol_list.Items);
 			}
 			else
 			{
@@ -164,7 +169,8 @@ namespace ComicSpider
 		}
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
-			comic_spider.Async_show_vol_list(txt_url.Text);
+			Save_settings();
+			comic_spider.Async_show_vol_list();
 			btn_get_list.IsEnabled = false;
 		}
 		private void btn_delelte_Click(object sender, RoutedEventArgs e)
@@ -322,8 +328,10 @@ namespace ComicSpider
 		}
 		private void Save_settings()
 		{
+			settings.Main_url = txt_main_url.Text;
+			settings.Page_url = txt_page.Text;
+			settings.File_url = txt_file.Text;
 			settings.Root_dir = txt_dir.Text;
-			settings.Url = txt_url.Text;
 			settings.Thread_count = txt_thread.Text;
 
 			Key_valueTableAdapter kv_adapter = new Key_valueTableAdapter();
@@ -402,15 +410,17 @@ namespace ComicSpider
 		}
 
 		[Serializable]
-		private class Settings
+		public class MainSettings
 		{
-			public Settings()
+			public MainSettings()
 			{
 				Thread_count = "5";
 			}
 
+			public string Main_url { get; set; }
+			public string Page_url { get; set; }
+			public string File_url { get; set; }
 			public string Root_dir { get; set; }
-			public string Url { get; set; }
 			public string Thread_count { get; set; }
 		}
 	}
