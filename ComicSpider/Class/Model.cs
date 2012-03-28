@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 
@@ -17,7 +17,7 @@ namespace ys.Web
 			string cookie = "",
 			string name = null,
 			Web_src_info parent = null,
-			ObservableCollection<Web_src_info> children = null)
+			List<Web_src_info> children = null)
 		{
 			Url = url;
 			Index = index;
@@ -57,7 +57,7 @@ namespace ys.Web
 				NotifyPropertyChanged("State");
 			}
 		}
-		public ObservableCollection<Web_src_info> Children
+		public List<Web_src_info> Children
 		{
 			get { return children; }
 			set
@@ -85,7 +85,7 @@ namespace ys.Web
 		private string url;
 		private string name;
 		private string state;
-		private ObservableCollection<Web_src_info> children;
+		private List<Web_src_info> children;
 	}
 
 	public class Counter

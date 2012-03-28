@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Media;
 
 namespace ys
 {
@@ -51,6 +54,45 @@ namespace ys
 
 			// Deserializes adpter stream into an object graph and return as adpter object.
 			return _BinaryFormatter.Deserialize(_MemoryStream);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public static string Format_for_number_sort(string str, int length = 3)
+		{
+			Regex reg = new Regex(@"(?<int>\d+)(?<float>\.?\d*)");
+			str = reg.Replace(str, (m) =>
+				{
+					string int_part = string.Format("{0:D3}", int.Parse(m.Groups["int"].Value));
+					string float_part = m.Groups["float"].Value;
+					return int_part + float_part;
+				}
+			);
+			return str;
+		}
+
+		public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+		{
+			if (depObj != null)
+			{
+				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+				{
+					DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+					if (child != null && child is T)
+					{
+						yield return (T)child;
+					}
+
+					foreach (T childOfChild in FindVisualChildren<T>(child))
+					{
+						yield return childOfChild;
+					}
+				}
+			}
 		}
 	}
 }

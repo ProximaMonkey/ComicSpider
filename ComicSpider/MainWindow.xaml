@@ -25,6 +25,10 @@
 			  Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
 			</DockPanel>
 		</DataTemplate>
+		<ContextMenu x:Key="view_list_menu">
+			<MenuItem Header="Open Url" Click="Open_url_Click" />
+			<MenuItem Header="Open folder" Click="Open_folder_Click" />
+		</ContextMenu>
 	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -40,7 +44,7 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<ListView Name="vol_list" Margin="5,5,0,5" SelectionChanged="vol_list_SelectionChanged" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
+			<ListView Name="vol_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="vol_list_SelectionChanged" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"></GridViewColumn>
@@ -49,7 +53,7 @@
 				</ListView.View>
 			</ListView>
 			<GridSplitter HorizontalAlignment="Left" Name="gridSplitter1" Width="5" Grid.Column="1" Margin="0,5" Background="White" />
-			<ListView Name="Page_list" Grid.Column="1" Margin="5" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
+			<ListView Name="Page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"></GridViewColumn>
@@ -86,7 +90,7 @@
 			<Button Content="Start" Name="btn_start" Click="btn_start_Click" IsEnabled="False" Margin="5" Padding="5,0" />
 			<Button Content="Get List" Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 			<Button Content="Delete" Name="btn_delelte" Margin="5" Padding="5,0" Click="btn_delelte_Click" />
-			<Button Content="Select Downloaded" Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" />
+			<Button Content="Select downloaded" Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" />
 		</StackPanel>
 	</Grid>
 </Window>

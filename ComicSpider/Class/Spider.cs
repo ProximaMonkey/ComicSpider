@@ -6,8 +6,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using ComicSpider;
 using ComicSpider.App_dataTableAdapters;
-using System.Data;
-using System.Collections.ObjectModel;
 
 namespace ys.Web
 {
@@ -31,12 +29,12 @@ namespace ys.Web
 
 			Report("Show vol list...");
 		}
-		public void Async_start(ObservableCollection<Web_src_info> vol_info_list, string root_dir = "")
+		public void Async_start(System.Windows.Controls.ItemCollection vol_info_list, string root_dir = "")
 		{
 			Root_dir = root_dir;
 			stopped = false;
 
-			foreach (var vol_info in vol_info_list)
+			foreach (Web_src_info vol_info in vol_info_list)
 			{
 				vol_info.Counter.Reset_all();
 				lock (vol_info_queue_lock)
@@ -61,7 +59,9 @@ namespace ys.Web
 
 		public void Stop()
 		{
+			vol_info_queue.Clear();
 			file_info_queue.Clear();
+			
 			stopped = true;
 		}
 		public bool Stopped { get { return stopped; } }
@@ -77,7 +77,7 @@ namespace ys.Web
 		private void Show_vol_list(object arg)
 		{
 			string url = arg as string;
-			ObservableCollection<Web_src_info> vol_info_list = Get_vol_info_list(url);
+			List<Web_src_info> vol_info_list = Get_vol_info_list(url);
 
 			MainWindow.Main.Dispatcher.Invoke(
 				new MainWindow.Show_vol_list_delegate(MainWindow.Main.Show_vol_list),
@@ -102,22 +102,6 @@ namespace ys.Web
 			{
 			}
 		}
-		private void Log_missed(Exception ex, string url = "", string type = "page")
-		{
-			try
-			{
-				Missed_logTableAdapter a = new Missed_logTableAdapter();
-				a.Connection.Open();
-				a.Insert(
-					DateTime.Now,
-					url,
-					type);
-				a.Connection.Close();
-			}
-			catch (Exception)
-			{
-			}
-		}
 		private void Report(string info)
 		{
 			Console.WriteLine(info);
@@ -130,9 +114,9 @@ namespace ys.Web
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
-		private ObservableCollection<Web_src_info> Get_vol_info_list(string comic_url)
+		private List<Web_src_info> Get_vol_info_list(string comic_url)
 		{
-			ObservableCollection<Web_src_info> vol_info_list = new ObservableCollection<Web_src_info>();
+			List<Web_src_info> vol_info_list = new List<Web_src_info>();
 			string html = "";
 
 			WebClient wc = new WebClient();
@@ -144,7 +128,7 @@ namespace ys.Web
 				Regex reg = new Regex("<title>(?<comic>.+?) Manga .+</title>");
 				string comic_name = reg.Match(html).Groups["comic"].Value.Trim();
 
-				reg = new Regex(@"color_0077"" href=""(?<url>.+?)"" (name="".*?"")?>(?<vol>(\n|.)+?)</a>(\n|.)*?</span>(?<title>.*?)</span>");
+				reg = new Regex(@"color_0077"" href=""(?<url>.+?)"" (name="".*?"")?>(?<name>(\n|.)+?)</a>(\n|.)*?</span>(?<title>.*?)</span>");
 				MatchCollection mc = reg.Matches(html);
 				Counter counter = new Counter(mc.Count);
 				for (int i = 0; i < mc.Count; i++)
@@ -155,7 +139,7 @@ namespace ys.Web
 						"",
 						counter,
 						cookie,
-						mc[i].Groups["vol"].Value.Trim(),
+						ys.Common.Format_for_number_sort(mc[i].Groups["name"].Value.Trim()),
 						new Web_src_info(comic_url, 0, "", null, cookie, comic_name, null))
 					);
 				}
@@ -206,7 +190,7 @@ namespace ys.Web
 				Get_file_info_list(vol_info.Children);
 			}
 		}
-		private void Get_file_info_list(ObservableCollection<Web_src_info> page_info_list)
+		private void Get_file_info_list(List<Web_src_info> page_info_list)
 		{
 			string dir_path = "";
 			Web_src_info parent = page_info_list[0];
@@ -240,7 +224,7 @@ namespace ys.Web
 
 				try
 				{
-					ObservableCollection<Web_src_info> file_info_list = Get_info_list_from_html(
+					List<Web_src_info> file_info_list = Get_info_list_from_html(
 								page_info,
 								@"src=""(?<url>http://c.mhcdn.net/store/manga/.+?((jpg)|(png)|(gif)|(bmp)))""");
 
@@ -252,7 +236,8 @@ namespace ys.Web
 				}
 				catch (Exception ex)
 				{
-					Log_missed(ex, page_info.Url);
+					page_info.State = "X";
+					Log_error(ex, page_info.Url);
 				}
 			}
 		}
@@ -273,7 +258,6 @@ namespace ys.Web
 
 					file_info = file_info_queue.Dequeue();
 				}
-
 				#region Create file name
 
 				string file_path = "";
@@ -322,7 +306,6 @@ namespace ys.Web
 				{
 					file_info.Parent.State = "X";
 					Log_error(ex, file_info.Url);
-					Log_missed(ex, file_info.Parent.Url);
 				}
 			}
 		}
@@ -334,12 +317,12 @@ namespace ys.Web
 		/// <param name="pattern">Must have adpter group named "page_info"</param>
 		/// <param name="region_pattern"></param>
 		/// <returns></returns>
-		private ObservableCollection<Web_src_info> Get_info_list_from_html(
+		private List<Web_src_info> Get_info_list_from_html(
 			Web_src_info src_info,
 			string url_pattern,
 			string region_pattern = null)
 		{
-			ObservableCollection<Web_src_info> list = new ObservableCollection<Web_src_info>();
+			List<Web_src_info> list = new List<Web_src_info>();
 			string html = "";
 
 			WebClient wc = new WebClient();

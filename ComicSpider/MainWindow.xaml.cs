@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Data.SQLite;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using ys.Web;
-using System.Xml.Serialization;
-using System.IO;
 using ComicSpider.App_dataTableAdapters;
-using System.Data.SQLite;
-using System.Linq;
-using System.Collections.ObjectModel;
+using ys.Web;
+using System.Windows.Threading;
+using System.IO;
 
 namespace ComicSpider
 {
@@ -24,24 +22,21 @@ namespace ComicSpider
 			InitializeComponent();
 			App_data.CheckAndFix();
 			Main = this;
-
-			vol_info_list = new ObservableCollection<Web_src_info>();
-			vol_list.ItemsSource = vol_info_list;
 		}
 
 		public static MainWindow Main;
 
-		public delegate void Show_vol_list_delegate(ObservableCollection<Web_src_info> list);
-		public void Show_vol_list(ObservableCollection<Web_src_info> list)
+		public delegate void Show_vol_list_delegate(List<Web_src_info> list);
+		public void Show_vol_list(List<Web_src_info> list)
 		{
 			foreach (Web_src_info item in list)
 			{
-				foreach (var vol in vol_info_list)
+				foreach (Web_src_info vol in vol_list.Items)
 				{
 					if (vol.Url == item.Url)
 						goto contains;
 				}
-				vol_info_list.Add(item);
+				vol_list.Items.Add(item);
 			contains: ;
 			}
 
@@ -58,7 +53,6 @@ namespace ComicSpider
 
 		private Comic_spider comic_spider;
 		private Settings settings;
-		private ObservableCollection<Web_src_info> vol_info_list;
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -67,6 +61,12 @@ namespace ComicSpider
 			Init_settings();
 			Init_vol_info_list();
 			Init_page_info_list();
+
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+			DispatcherTimer auto_saver = new DispatcherTimer();
+			auto_saver.Interval = TimeSpan.FromMinutes(5);
+			auto_saver.Tick += new EventHandler(auto_saver_Tick);
+			auto_saver.Start();
 		}
 
 		private void Init_settings()
@@ -98,7 +98,7 @@ namespace ComicSpider
 			Counter vol_info_counter = new Counter(vol_info_table.Count);
 			if (vol_info_table.Count > 0)
 			{
-				ObservableCollection<Web_src_info> list = new ObservableCollection<Web_src_info>();
+				List<Web_src_info> list = new List<Web_src_info>();
 				foreach (App_data.Vol_infoRow row in vol_info_table.Rows)
 				{
 					Web_src_info src_info = new Web_src_info(
@@ -109,7 +109,7 @@ namespace ComicSpider
 						row.Cookie,
 						row.Name,
 						new Web_src_info(row.Parent_url, 0, "", null, "", row.Parent_name));
-					src_info.Children = new ObservableCollection<Web_src_info>();
+					src_info.Children = new List<Web_src_info>();
 					list.Add(src_info);
 				}
 				Show_vol_list(list);
@@ -121,7 +121,7 @@ namespace ComicSpider
 			App_data.Page_infoDataTable page_info_table = page_adpter.GetData();
 			if (page_info_table.Count > 0)
 			{
-				foreach (var vol in vol_info_list)
+				foreach (Web_src_info vol in vol_list.Items)
 				{
 					Counter counter = new Counter(0);
 					foreach (var row in page_info_table)
@@ -151,8 +151,11 @@ namespace ComicSpider
 				btn_start.Content = "Stop";
 				btn_get_list.IsEnabled = false;
 
+				settings.Root_dir = txt_dir.Text;
+				settings.Url = txt_url.Text;
+
 				comic_spider.Thread_count = int.Parse(txt_thread.Text);
-				comic_spider.Async_start(vol_info_list, txt_dir.Text);
+				comic_spider.Async_start(vol_list.Items, txt_dir.Text);
 			}
 			else
 			{
@@ -161,31 +164,61 @@ namespace ComicSpider
 				comic_spider.Stop();
 			}
 		}
-
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
 			comic_spider.Async_show_vol_list(txt_url.Text);
 			btn_get_list.IsEnabled = false;
 		}
-
 		private void btn_delelte_Click(object sender, RoutedEventArgs e)
 		{
 			while (vol_list.SelectedItems.Count > 0)
 			{
-				vol_info_list.RemoveAt(vol_list.SelectedIndex);
+				vol_list.Items.RemoveAt(vol_list.SelectedIndex);
 			}
 		}
-
 		private void btn_select_downloaded_Click(object sender, RoutedEventArgs e)
 		{
 			vol_list.Focus();
 			vol_list.SelectedIndex = -1;
-			foreach (var item in vol_info_list)
+			foreach (Web_src_info item in vol_list.Items)
 			{
 				if (item.State == "OK")
 				{
 					vol_list.SelectedItems.Add(item);
 				}
+			}
+		}
+		private void Open_url_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = sender as MenuItem;
+			ListView list_view = (item.Parent as ContextMenu).PlacementTarget as ListView;
+			foreach (Web_src_info vol in list_view.SelectedItems)
+			{
+				System.Diagnostics.Process.Start(vol.Url);
+			}
+		}
+		private void Open_folder_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = sender as MenuItem;
+			ListView list_view = (item.Parent as ContextMenu).PlacementTarget as ListView;
+			try
+			{
+				foreach (Web_src_info vol in list_view.SelectedItems)
+				{
+					string path = "";
+					Web_src_info parent = vol;
+					while ((parent = parent.Parent) != null)
+					{
+						path = Path.Combine(parent.Name, path);
+					}
+					path = Path.Combine(settings.Root_dir, path);
+					System.Diagnostics.Process.Start(path);
+					break;
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
 			}
 		}
 
@@ -203,7 +236,7 @@ namespace ComicSpider
 
 		private void vol_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ObservableCollection<Web_src_info> list = new ObservableCollection<Web_src_info>();
+			List<Web_src_info> list = new List<Web_src_info>();
 			foreach (Web_src_info vol in vol_list.SelectedItems)
 			{
 				if (vol.Children == null) continue;
@@ -215,82 +248,80 @@ namespace ComicSpider
 			Page_list.ItemsSource = list;
 		}
 
-		private GridViewColumnHeader _lastHeaderClicked = null;
-		private ListSortDirection _lastDirection = ListSortDirection.Ascending;
 		private void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
 		{
-			GridViewColumnHeader headerClicked =
-				  e.OriginalSource as GridViewColumnHeader;
-			ListSortDirection direction;
+			GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
+			ListView clicked_view = sender as ListView;
+			List<Web_src_info> list = new List<Web_src_info>();
 
-			if (headerClicked != null)
+			foreach (Web_src_info item in clicked_view.Items)
 			{
-				if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
-				{
-					if (headerClicked != _lastHeaderClicked)
-					{
-						direction = ListSortDirection.Ascending;
-					}
-					else
-					{
-						if (_lastDirection == ListSortDirection.Ascending)
-						{
-							direction = ListSortDirection.Descending;
-						}
-						else
-						{
-							direction = ListSortDirection.Ascending;
-						}
-					}
-
-					string header = headerClicked.Column.Header as string;
-					Sort(header, direction);
-
-					if (direction == ListSortDirection.Ascending)
-					{
-						headerClicked.Column.HeaderTemplate =
-						  Resources["HeaderTemplateArrowUp"] as DataTemplate;
-					}
-					else
-					{
-						headerClicked.Column.HeaderTemplate =
-						  Resources["HeaderTemplateArrowDown"] as DataTemplate;
-					}
-
-					// Remove arrow from previously sorted header
-					if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
-					{
-						_lastHeaderClicked.Column.HeaderTemplate = null;
-					}
-
-
-					_lastHeaderClicked = headerClicked;
-					_lastDirection = direction;
-				}
+				list.Add(item);
 			}
-		}
-		private void Sort(string sortBy, ListSortDirection direction)
-		{
-			ICollectionView dataView =
-			  System.Windows.Data.CollectionViewSource.GetDefaultView(vol_list.ItemsSource);
 
-			dataView.SortDescriptions.Clear();
-			SortDescription sd = new SortDescription(sortBy, direction);
-			dataView.SortDescriptions.Add(sd);
-			dataView.Refresh();
+			string col_name = header.Column.Header as string;
+			IOrderedEnumerable<Web_src_info> temp_list;
+
+			foreach (var col in (header.Parent as GridViewHeaderRowPresenter).Columns)
+			{
+				if (col != header.Column)
+					col.HeaderTemplate = null;
+			}
+
+			DataTemplate arrow_up = Resources["HeaderTemplateArrowUp"] as DataTemplate;
+			DataTemplate arrow_down = Resources["HeaderTemplateArrowDown"] as DataTemplate;
+			if (header.Column.HeaderTemplate == arrow_up)
+			{
+				header.Column.HeaderTemplate = arrow_down;
+				temp_list = list.OrderByDescending(info => info.GetType().GetProperty(col_name).GetValue(info, null));			
+			}
+			else
+			{
+				header.Column.HeaderTemplate = arrow_up;
+				temp_list = list.OrderBy(info => info.GetType().GetProperty(col_name).GetValue(info, null));
+			}
+
+
+			List<Web_src_info> new_list = new List<Web_src_info>();
+			foreach (var item in temp_list)
+			{
+				new_list.Add(item);
+			}
+			list = new_list;
+
+			clicked_view.Items.Clear();
+			foreach (var item in list)
+			{
+				clicked_view.Items.Add(item);
+			}
 		}
 
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			comic_spider.Stop();
 
-			Save_settings();
-			Save_vol_info_list();
-			Save_page_info_list();
+			Save_all();
 
 			Environment.Exit(0);
 		}
 
+		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			MessageBox.Show((e.ExceptionObject as Exception).Message);
+			Window_Closed(null, null);
+		}
+
+		private void auto_saver_Tick(object sender, EventArgs e)
+		{
+			Save_all();
+		}
+
+		private void Save_all()
+		{
+			Save_settings();
+			Save_vol_info_list();
+			Save_page_info_list();
+		}
 		private void Save_settings()
 		{
 			settings.Root_dir = txt_dir.Text;
@@ -320,7 +351,7 @@ namespace ComicSpider
 
 			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
 
-			foreach (var item in vol_info_list)
+			foreach (Web_src_info item in vol_list.Items)
 			{
 				vol_adapter.Insert(
 					item.Url,
@@ -350,7 +381,7 @@ namespace ComicSpider
 
 			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
 
-			foreach (Web_src_info vol in vol_info_list)
+			foreach (Web_src_info vol in vol_list.Items)
 			{
 				if (vol.Children == null) continue;
 				foreach (Web_src_info item in vol.Children)

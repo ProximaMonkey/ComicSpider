@@ -1,19 +1,17 @@
-﻿using ys.Web;
+﻿using ys;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace UnitTest
 {
 	
 	
 	/// <summary>
-	///This is adpter test class for Comic_spiderTest and is intended
-	///to contain all Comic_spiderTest Unit Tests
+	///This is a test class for CommonTest and is intended
+	///to contain all CommonTest Unit Tests
 	///</summary>
 	[TestClass()]
-	public class Comic_spiderTest
+	public class CommonTest
 	{
 
 
@@ -45,7 +43,7 @@ namespace UnitTest
 		//{
 		//}
 		//
-		//Use ClassCleanup to run code after all tests in adpter class have run
+		//Use ClassCleanup to run code after all tests in a class have run
 		//[ClassCleanup()]
 		//public static void MyClassCleanup()
 		//{
@@ -67,20 +65,17 @@ namespace UnitTest
 
 
 		/// <summary>
-		///A test for Get_info_list_from_html
+		///A test for Format_for_number_sort
 		///</summary>
 		[TestMethod()]
-		[DeploymentItem("Comic Spider.exe")]
-		public void Get_info_list_from_htmlTest()
+		public void Format_for_number_sortTest()
 		{
-			Comic_spider_Accessor target = new Comic_spider_Accessor();
-			Web_src_info src_info = new Web_src_info("http://www.mangahere.com/manga/nononono/v09/c087/", 0);
-			string url_pattern = @"src=""(?<url>http://c.mhcdn.net/store/manga/.+?((jpg)|(png)|(gif)|(bmp)))""";
-			int expected = 1;
-			List<Web_src_info> actual;
-			actual = target.Get_info_list_from_html(src_info, url_pattern);
-			Assert.AreEqual(expected, actual.Count);
-			Assert.Inconclusive("Verify the correctness of this test method.");
+			string str = "asdf 01.12 sdf"; // TODO: Initialize to an appropriate value
+			int length = 3; // TODO: Initialize to an appropriate value
+			string expected = "asdf 001.12 sdf"; // TODO: Initialize to an appropriate value
+			string actual;
+			actual = Common.Format_for_number_sort(str, length);
+			Assert.AreEqual(expected, actual);
 		}
 	}
 }

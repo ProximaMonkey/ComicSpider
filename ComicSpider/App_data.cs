@@ -22,11 +22,6 @@ create table if not exists [Error_log] (
 	[Title] nvarchar(100) NOT NULL,
 	[Detail] text
 );
-create table if not exists [Missed_log] (
-	[Date_time] datetime NOT NULL,
-	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
-	[Type] nvarchar(50)
-);
 create table if not exists [Vol_info] (
 	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(100),

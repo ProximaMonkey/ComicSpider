@@ -78,11 +78,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\ys.common.cs" />
-    <Compile Include="testDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>testDataSet.xsd</DependentUpon>
-    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -138,23 +133,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="testDataSet.xsc">
-      <DependentUpon>testDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="testDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>testDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="testDataSet.xss">
-      <DependentUpon>testDataSet.xsd</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\System.Data.SQLite.dll" />
-    <Content Include="test.sdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Images\main_bg.jpg" />
     <Resource Include="Images\Metro-Loading-Blue-100.png" />
     <Resource Include="Images\running.png" />
