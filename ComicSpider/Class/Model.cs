@@ -42,7 +42,7 @@ namespace ys.Web
 		public string Name
 		{
 			get { return name; }
-			private set
+			set
 			{
 				name = value;
 				NotifyPropertyChanged("Name");
@@ -103,9 +103,9 @@ namespace ys.Web
 		{
 			   All++;
 		}
-		public void Reset_all()
+		public void Reset()
 		{
-			All = 0;
+			Downloaded = 0;
 		}
 		public int All { get; private set; }
 		public int Downloaded

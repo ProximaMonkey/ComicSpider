@@ -95,7 +95,6 @@ namespace ComicSpider
 		{
 			Vol_infoTableAdapter vol_adpter = new Vol_infoTableAdapter();
 			App_data.Vol_infoDataTable vol_info_table = vol_adpter.GetData();
-			Counter vol_info_counter = new Counter(vol_info_table.Count);
 			if (vol_info_table.Count > 0)
 			{
 				List<Web_src_info> list = new List<Web_src_info>();
@@ -105,7 +104,7 @@ namespace ComicSpider
 						row.Url,
 						row.Index,
 						row.State,
-						vol_info_counter,
+						new Counter(0),
 						row.Cookie,
 						row.Name,
 						new Web_src_info(row.Parent_url, 0, "", null, "", row.Parent_name));
@@ -123,17 +122,16 @@ namespace ComicSpider
 			{
 				foreach (Web_src_info vol in vol_list.Items)
 				{
-					Counter counter = new Counter(0);
 					foreach (var row in page_info_table)
 					{
 						if (row.Parent_url == vol.Url)
 						{
-							counter.Increase_all();
+							vol.Counter.Increase_all();
 							vol.Children.Add(new Web_src_info(
 								row.Url,
 								row.Index,
 								row.State,
-								counter,
+								null,
 								row.Cookie,
 								row.Name,
 								vol)
@@ -222,7 +220,7 @@ namespace ComicSpider
 			}
 		}
 
-		private void TextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
 			try
 			{
@@ -408,7 +406,7 @@ namespace ComicSpider
 		{
 			public Settings()
 			{
-				Thread_count = "1";
+				Thread_count = "5";
 			}
 
 			public string Root_dir { get; set; }

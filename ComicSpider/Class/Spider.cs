@@ -19,6 +19,7 @@ namespace ys.Web
 			vol_info_queue = new Queue<Web_src_info>();
 			file_info_queue_lock = new object();
 			vol_info_queue_lock = new object();
+			thread_list = new List<Thread>();
 		}
 
 		public void Async_show_vol_list(string url)
@@ -36,7 +37,7 @@ namespace ys.Web
 
 			foreach (Web_src_info vol_info in vol_info_list)
 			{
-				vol_info.Counter.Reset_all();
+				vol_info.Counter.Reset();
 				lock (vol_info_queue_lock)
 				{
 					vol_info_queue.Enqueue(vol_info); 
@@ -46,12 +47,14 @@ namespace ys.Web
 			for (int i = 0; i < Thread_count; i++)
 			{
 				Thread downloader = new Thread(new ThreadStart(Downloader));
-				downloader.Name = "Downloader";
+				downloader.Name = "Downloader" + i;
 				downloader.Start();
+				thread_list.Add(downloader);
 
 				Thread info_getter = new Thread(new ThreadStart(Get_page_info_list));
-				info_getter.Name = "Get_page_info_list";
+				info_getter.Name = "Get_page_info_list" + i;
 				info_getter.Start();
+				thread_list.Add(info_getter);
 			}
 
 			Report("Comic Spider start...");
@@ -59,10 +62,15 @@ namespace ys.Web
 
 		public void Stop()
 		{
+			stopped = true;
 			vol_info_queue.Clear();
 			file_info_queue.Clear();
-			
-			stopped = true;
+
+			foreach (Thread thread in thread_list)
+			{
+				thread.Abort();
+			}
+			thread_list.Clear();
 		}
 		public bool Stopped { get { return stopped; } }
 		public string Root_dir { get; set; }
@@ -73,11 +81,12 @@ namespace ys.Web
 		private Queue<Web_src_info> vol_info_queue;
 		private object file_info_queue_lock;
 		private object vol_info_queue_lock;
+		private List<Thread> thread_list;
 
 		private void Show_vol_list(object arg)
 		{
 			string url = arg as string;
-			List<Web_src_info> vol_info_list = Get_vol_info_list(url);
+			List<Web_src_info> vol_info_list = Get_vol_info_list(new Web_src_info(url, 0, "", null, "", "", null));
 
 			MainWindow.Main.Dispatcher.Invoke(
 				new MainWindow.Show_vol_list_delegate(MainWindow.Main.Show_vol_list),
@@ -114,7 +123,7 @@ namespace ys.Web
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
-		private List<Web_src_info> Get_vol_info_list(string comic_url)
+		private List<Web_src_info> Get_vol_info_list(Web_src_info comic_info)
 		{
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
 			string html = "";
@@ -122,7 +131,8 @@ namespace ys.Web
 			WebClient wc = new WebClient();
 			try
 			{
-				html = wc.DownloadString(comic_url);
+				html = wc.DownloadString(comic_info.Url);
+
 				string cookie = wc.ResponseHeaders["Set-Cookie"];
 
 				Regex reg = new Regex("<title>(?<comic>.+?) Manga .+</title>");
@@ -130,25 +140,28 @@ namespace ys.Web
 
 				reg = new Regex(@"color_0077"" href=""(?<url>.+?)"" (name="".*?"")?>(?<name>(\n|.)+?)</a>(\n|.)*?</span>(?<title>.*?)</span>");
 				MatchCollection mc = reg.Matches(html);
-				Counter counter = new Counter(mc.Count);
 				for (int i = 0; i < mc.Count; i++)
 				{
 					vol_info_list.Add(new Web_src_info(
 						mc[i].Groups["url"].Value,
 						i,
 						"",
-						counter,
+						null,
 						cookie,
 						ys.Common.Format_for_number_sort(mc[i].Groups["name"].Value.Trim()),
-						new Web_src_info(comic_url, 0, "", null, cookie, comic_name, null))
+						comic_info)
 					);
 				}
+				comic_info.Children = vol_info_list;
+				comic_info.Name = comic_name;
+				comic_info.Cookie = cookie;
+				comic_info.Counter = new Counter(mc.Count);
 
 				Report("Vol list: {0}", vol_info_list);
 			}
 			catch (Exception ex)
 			{
-				Log_error(ex, comic_url);
+				Log_error(ex, comic_info.Url);
 			}
 
 			return vol_info_list;
@@ -214,8 +227,8 @@ namespace ys.Web
 
 				if (page_info.State == "OK")
 				{
-					int downloaded = page_info.Counter.Increment();
-					if (downloaded == page_info.Counter.All)
+					int downloaded = page_info.Parent.Counter.Increment();
+					if (downloaded == page_info.Parent.Counter.All)
 					{
 						page_info.Parent.State = "OK";
 					}
@@ -236,6 +249,7 @@ namespace ys.Web
 				}
 				catch (Exception ex)
 				{
+					if (ex is ThreadAbortException) return;
 					page_info.State = "X";
 					Log_error(ex, page_info.Url);
 				}
@@ -281,29 +295,32 @@ namespace ys.Web
 				{
 					wc.DownloadFile(file_info.Url, file_path);
 					byte[] data = wc.DownloadData(file_info.Url);
+
 					FileStream sw = new FileStream(file_path, FileMode.Create);
 					sw.Write(data, 0, data.Length);
 					sw.Close();
 
-					int downloaded = file_info.Parent.Counter.Increment();
+					int downloaded = file_info.Parent.Parent.Counter.Increment();
 					file_info.Parent.State = "OK";
-					if (downloaded == file_info.Parent.Counter.All)
+					if (downloaded == file_info.Parent.Parent.Counter.All)
 					{
 						file_info.Parent.Parent.State = "OK";
 					}
 					else
 					{
-						file_info.Parent.Parent.State = string.Format("{0}/{1}", downloaded, file_info.Parent.Counter.All);
+						file_info.Parent.Parent.State = string.Format("{0}/{1}", downloaded, file_info.Parent.Parent.Counter.All);
 					}
 
 					Report("{0}: {1}/{2} , Downloaded: {3}",
 						file_info.Parent.Parent.Name,
 						downloaded,
-						file_info.Parent.Counter.All,
+						file_info.Parent.Parent.Counter.All,
 						file_info.Name);
 				}
 				catch (Exception ex)
 				{
+					if (ex is ThreadAbortException) return;
+
 					file_info.Parent.State = "X";
 					Log_error(ex, file_info.Url);
 				}
@@ -330,9 +347,6 @@ namespace ys.Web
 			{
 				html = wc.DownloadString(src_info.Url);
 
-				src_info.Children = list;
-				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
-
 				if (region_pattern != null)
 				{
 					Regex reg_region = new Regex(region_pattern);
@@ -341,7 +355,6 @@ namespace ys.Web
 
 				Regex reg_url = new Regex(url_pattern);
 				MatchCollection mc = reg_url.Matches(html);
-				Counter counter = new Counter(mc.Count);
 				for (int i = 0; i < mc.Count; i++)
 				{
 					string url = mc[i].Groups["url"].Value;
@@ -349,16 +362,21 @@ namespace ys.Web
 						url,
 						i,
 						"",
-						counter,
+						null,
 						"",
 						Path.GetFileName(url),
 						src_info);
 					list.Add(new_page_info);
 				}
+
+				src_info.Children = list;
+				src_info.Counter = new Counter(mc.Count);
+				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
 			}
 			catch (Exception ex)
 			{
-				Log_error(ex, src_info.Url);
+				if (!(ex is ThreadAbortException))
+					Log_error(ex, src_info.Url);
 			}
 
 			return list;
