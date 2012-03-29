@@ -5,7 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d"
 			 x:Name="this">
-	<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
+	<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9" Margin="10">
 		<Border.Background>
 			<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" />
 		</Border.Background>
@@ -13,8 +13,8 @@
 			<DropShadowEffect Color="#FF4B4B4B" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.7"></DropShadowEffect>
 		</Border.Effect>
 		<StackPanel>
-			<TextBlock Text="Comic Spider" />
-			<TextBlock Text="{Binding Text, ElementName=this}" />
+			<TextBlock Text="Comic Spider" FontSize="18" />
+			<TextBlock d:DataContext="test" Text="{Binding Text, ElementName=this}" FontSize="18" Margin="5" Foreground="IndianRed" FontFamily="Courier New" />
 		</StackPanel>
 	</Border>
 </UserControl>

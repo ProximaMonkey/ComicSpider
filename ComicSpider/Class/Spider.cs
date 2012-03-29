@@ -161,6 +161,8 @@ namespace ys.Web
 					}
 					catch (Exception ex)
 					{
+						if (ex is ThreadAbortException) return;
+
 						Log_error(ex, vol_info.Url);
 						continue;
 					}

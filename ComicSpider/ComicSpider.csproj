@@ -143,6 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ys_16.ico" />
+    <None Include="Audio\msg.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Lib\Hardcodet.Wpf.TaskbarNotification.dll" />
     <Content Include="Lib\System.Data.SQLite.dll" />
     <Resource Include="Images\main_bg.jpg" />

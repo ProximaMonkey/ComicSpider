@@ -9,6 +9,7 @@ using ComicSpider.App_dataTableAdapters;
 using ys.Web;
 using System.Windows.Threading;
 using System.IO;
+using System.Windows.Media;
 
 namespace ComicSpider
 {
@@ -72,13 +73,6 @@ namespace ComicSpider
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			comic_spider = new Comic_spider();
-
-			tray_balloon = new Tray_balloon();
-			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
-			{
-				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
-			});
-
 			
 			Init_settings();
 			Init_vol_info_list();
@@ -206,21 +200,40 @@ namespace ComicSpider
 		}
 		private void tray_TrayLeftMouseDown(object sender, RoutedEventArgs e)
 		{
-			if (!this.IsActive)
+			tray.ContextMenu.IsOpen = true;
+		}
+
+		private void Show_balloon()
+		{
+			tray_balloon = new Tray_balloon();
+			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
 			{
-				if (this.Visibility == System.Windows.Visibility.Visible)
-				{
-					this.Visibility = System.Windows.Visibility.Collapsed;
-					this.ShowInTaskbar = false;
-				}
-				else
-				{
-					this.Visibility = System.Windows.Visibility.Visible;
-					this.ShowInTaskbar = true;
-				}
+				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
+			});
+			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 5000);
+			tray_balloon.Text = this.Title;
+		}
+		private void tray_TrayToolTipOpen(object sender, RoutedEventArgs e)
+		{
+			int downloaded = 0;
+			foreach (Web_src_info item in vol_list.Items)
+			{
+				if (item.State == Web_src_info.State_downloaded)
+					downloaded++;
+			}
+			txt_main_progress.Text = string.Format("Progress: {0}/{1}", downloaded, vol_list.Items.Count);
+		}
+		private void ShowHide_window(object sender, RoutedEventArgs e)
+		{
+			if (this.Visibility == System.Windows.Visibility.Visible)
+			{
+				this.Visibility = System.Windows.Visibility.Collapsed;
+				this.ShowInTaskbar = false;
 			}
 			else
 			{
+				this.Visibility = System.Windows.Visibility.Visible;
+				this.ShowInTaskbar = true;
 				this.Activate();
 			}
 		}
@@ -229,25 +242,45 @@ namespace ComicSpider
 			this.Close();
 		}
 
+		private void Copy_name_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			foreach (Web_src_info list_item in list_view.SelectedItems)
+			{
+				Clipboard.SetText(list_item.Name);
+				break;
+			}
+		}
+		private void Copy_url_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			foreach (Web_src_info list_item in list_view.SelectedItems)
+			{
+				Clipboard.SetText(list_item.Url);
+				break;
+			}
+		}
 		private void Open_url_Click(object sender, RoutedEventArgs e)
 		{
-			MenuItem item = sender as MenuItem;
-			ListView list_view = (item.Parent as ContextMenu).PlacementTarget as ListView;
-			foreach (Web_src_info vol in list_view.SelectedItems)
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			foreach (Web_src_info list_item in list_view.SelectedItems)
 			{
-				System.Diagnostics.Process.Start(vol.Url);
+				System.Diagnostics.Process.Start(list_item.Url);
 			}
 		}
 		private void Open_folder_Click(object sender, RoutedEventArgs e)
 		{
-			MenuItem item = sender as MenuItem;
-			ListView list_view = (item.Parent as ContextMenu).PlacementTarget as ListView;
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			try
 			{
-				foreach (Web_src_info vol in list_view.SelectedItems)
+				foreach (Web_src_info list_item in list_view.SelectedItems)
 				{
 					string path = "";
-					Web_src_info parent = vol;
+					Web_src_info parent = list_item;
 					while ((parent = parent.Parent) != null)
 					{
 						path = Path.Combine(parent.Name, path);
@@ -264,6 +297,12 @@ namespace ComicSpider
 		}
 		private void Delelte_list_item_Click(object sender, RoutedEventArgs e)
 		{
+			if (!comic_spider.Stopped)
+			{
+				MessageBox.Show("Stop downloading before deleting.");
+				return;
+			}
+
 			MenuItem menu_item = sender as MenuItem;
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 
@@ -271,6 +310,18 @@ namespace ComicSpider
 			{
 				int index = list_view.SelectedIndex;
 				list_view.Items.RemoveAt(index);
+			}
+		}
+		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.Delete)
+			{
+				ListView list_view = sender as ListView;
+				while (list_view.SelectedItems.Count > 0)
+				{
+					int index = list_view.SelectedIndex;
+					list_view.Items.RemoveAt(index);
+				}
 			}
 		}
 
@@ -288,16 +339,15 @@ namespace ComicSpider
 
 		private void vol_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			List<Web_src_info> list = new List<Web_src_info>();
+			Page_list.Items.Clear();
 			foreach (Web_src_info vol in vol_list.SelectedItems)
 			{
 				if (vol.Children == null) continue;
 				foreach (var page in vol.Children)
 				{
-					list.Add(page);
+					Page_list.Items.Add(page);
 				}
 			}
-			Page_list.ItemsSource = list;
 		}
 
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
@@ -361,24 +411,30 @@ namespace ComicSpider
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			MessageBox.Show((e.ExceptionObject as Exception).Message);
+			Exception ex = e.ExceptionObject as Exception;
+			MessageBox.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
 			Window_Closed(null, null);
 		}
 
 		private void Monitor_Tick(object sender, EventArgs e)
 		{
+			if (comic_spider.Stopped) return;
+
 			if (Try_download_missed_files() == 0)
 			{
-				tray_balloon.Text = "All completed";
+				MediaPlayer mplayer = new MediaPlayer();
+				mplayer.Open(new Uri(@"Audio\msg.wav", UriKind.Relative));
+				mplayer.Play();
+
+				this.Title = "All completed.";
+				Show_balloon();
+				comic_spider.Stop();
 			}
 
 			Save_all();
 		}
 		private int Try_download_missed_files()
 		{
-			tray_balloon.Text = "Try to download missed files.";
-			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 8000);
-
 			int all_left = 0;
 			int missed = 0;
 			foreach (Web_src_info vol in vol_list.Items)
@@ -401,6 +457,9 @@ namespace ComicSpider
 			if (missed != 0 &&
 				missed == all_left)
 			{
+				this.Title = "Try to download missed files.";
+				Show_balloon();
+
 				comic_spider.Stop();
 				comic_spider.Async_start(vol_list.Items);
 			}
