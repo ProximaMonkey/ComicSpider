@@ -13,7 +13,6 @@ namespace ys.Web
 		public Web_src_info(string url,
 			int index,
 			string state = "",
-			Counter count = null,
 			string cookie = "",
 			string name = "",
 			Web_src_info parent = null,
@@ -22,13 +21,15 @@ namespace ys.Web
 			Url = url;
 			Index = index;
 			State = state;
-			Counter = count;
 			Name = name;
 			Cookie = cookie;
 			Parent = parent;
 			Children = children;
 			Missed = false;
 		}
+
+		public const string State_downloaded = "OK";
+		public const string State_missed = "X";
 
 		public string Url
 		{
@@ -66,11 +67,34 @@ namespace ys.Web
 				NotifyPropertyChanged("Children");
 			}
 		}
-		public Counter Counter;
 		public int Index { get; set; }
 		public string Cookie { get; set; }
 		public bool Missed { get; set; }
 		public Web_src_info Parent { get; protected set; }
+
+		public int Count
+		{
+			get
+			{
+				return children.Count;
+			}
+		}
+		public int Downloaded
+		{
+			get
+			{
+				int downloaded = 0;
+				if (children != null)
+				{
+					foreach (Web_src_info item in children)
+					{
+						if (item.state == Web_src_info.State_downloaded)
+							downloaded++;
+					}
+				}
+				return downloaded;
+			}
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -86,34 +110,5 @@ namespace ys.Web
 		private string name;
 		private string state;
 		private List<Web_src_info> children;
-	}
-
-	public class Counter
-	{
-		public Counter(int count)
-		{
-			All = count;
-			Downloaded = 0;
-		}
-		public int Increment()
-		{
-			return Interlocked.Increment(ref downloaded);
-		}
-		public void Increase_all()
-		{
-			   All++;
-		}
-		public void Reset()
-		{
-			Downloaded = 0;
-		}
-		public int All { get; private set; }
-		public int Downloaded
-		{
-			get { return downloaded; }
-			set { downloaded = value; }
-		}
-
-		private int downloaded;
 	}
 }

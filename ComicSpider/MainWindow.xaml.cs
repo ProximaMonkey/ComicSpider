@@ -58,20 +58,38 @@ namespace ComicSpider
 
 		private Comic_spider comic_spider;
 		private MainSettings settings;
+		private new string Title
+		{
+			get { return base.Title; }
+			set
+			{
+				base.Title = value;
+				tray.ToolTipText = value;
+			}
+		}
+		private Tray_balloon tray_balloon;
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			comic_spider = new Comic_spider();
+
+			tray_balloon = new Tray_balloon();
+			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
+			{
+				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
+			});
+
 			
 			Init_settings();
 			Init_vol_info_list();
 			Init_page_info_list();
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-			DispatcherTimer auto_saver = new DispatcherTimer();
-			auto_saver.Interval = TimeSpan.FromMinutes(5);
-			auto_saver.Tick += new EventHandler(auto_saver_Tick);
-			auto_saver.Start();
+
+			DispatcherTimer monitor = new DispatcherTimer();
+			monitor.Interval = TimeSpan.FromMinutes(3);
+			monitor.Tick += new EventHandler(Monitor_Tick);
+			monitor.Start();
 		}
 
 		private void Init_settings()
@@ -93,8 +111,12 @@ namespace ComicSpider
 			if (settings == null) settings = new MainSettings();
 
 			txt_main_url.Text = settings.Main_url;
+			txt_vol.Text = settings.Vol_url;
 			txt_page.Text = settings.Page_url;
 			txt_file.Text = settings.File_url;
+			txt_threshold_vol.Text = settings.Threshold_vol + "";
+			txt_threshold_page.Text = settings.Threshold_page + "";
+			txt_threshold_file.Text = settings.Threshold_file + "";
 			txt_dir.Text = settings.Root_dir;
 			txt_thread.Text = settings.Thread_count;
 		}
@@ -111,10 +133,9 @@ namespace ComicSpider
 						row.Url,
 						row.Index,
 						row.State,
-						new Counter(0),
 						row.Cookie,
 						row.Name,
-						new Web_src_info(row.Parent_url, 0, "", null, "", row.Parent_name));
+						new Web_src_info(row.Parent_url, 0, "", "", row.Parent_name));
 					src_info.Children = new List<Web_src_info>();
 					list.Add(src_info);
 				}
@@ -133,12 +154,10 @@ namespace ComicSpider
 					{
 						if (row.Parent_url == vol.Url)
 						{
-							vol.Counter.Increase_all();
 							vol.Children.Add(new Web_src_info(
 								row.Url,
 								row.Index,
 								row.State,
-								null,
 								row.Cookie,
 								row.Name,
 								vol)
@@ -173,25 +192,43 @@ namespace ComicSpider
 			comic_spider.Async_show_vol_list();
 			btn_get_list.IsEnabled = false;
 		}
-		private void btn_delelte_Click(object sender, RoutedEventArgs e)
-		{
-			while (vol_list.SelectedItems.Count > 0)
-			{
-				vol_list.Items.RemoveAt(vol_list.SelectedIndex);
-			}
-		}
 		private void btn_select_downloaded_Click(object sender, RoutedEventArgs e)
 		{
 			vol_list.Focus();
 			vol_list.SelectedIndex = -1;
 			foreach (Web_src_info item in vol_list.Items)
 			{
-				if (item.State == "OK")
+				if (item.State == Web_src_info.State_downloaded)
 				{
 					vol_list.SelectedItems.Add(item);
 				}
 			}
 		}
+		private void tray_TrayLeftMouseDown(object sender, RoutedEventArgs e)
+		{
+			if (!this.IsActive)
+			{
+				if (this.Visibility == System.Windows.Visibility.Visible)
+				{
+					this.Visibility = System.Windows.Visibility.Collapsed;
+					this.ShowInTaskbar = false;
+				}
+				else
+				{
+					this.Visibility = System.Windows.Visibility.Visible;
+					this.ShowInTaskbar = true;
+				}
+			}
+			else
+			{
+				this.Activate();
+			}
+		}
+		private void Close(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
+
 		private void Open_url_Click(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = sender as MenuItem;
@@ -225,6 +262,17 @@ namespace ComicSpider
 				MessageBox.Show(ex.Message);
 			}
 		}
+		private void Delelte_list_item_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+
+			while (list_view.SelectedItems.Count > 0)
+			{
+				int index = list_view.SelectedIndex;
+				list_view.Items.RemoveAt(index);
+			}
+		}
 
 		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
@@ -252,7 +300,7 @@ namespace ComicSpider
 			Page_list.ItemsSource = list;
 		}
 
-		private void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
+		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
 		{
 			GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
 			ListView clicked_view = sender as ListView;
@@ -302,6 +350,8 @@ namespace ComicSpider
 
 		private void Window_Closed(object sender, EventArgs e)
 		{
+			tray.Visibility = System.Windows.Visibility.Collapsed;
+
 			comic_spider.Stop();
 
 			Save_all();
@@ -315,9 +365,47 @@ namespace ComicSpider
 			Window_Closed(null, null);
 		}
 
-		private void auto_saver_Tick(object sender, EventArgs e)
+		private void Monitor_Tick(object sender, EventArgs e)
 		{
+			if (Try_download_missed_files() == 0)
+			{
+				tray_balloon.Text = "All completed";
+			}
+
 			Save_all();
+		}
+		private int Try_download_missed_files()
+		{
+			tray_balloon.Text = "Try to download missed files.";
+			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 8000);
+
+			int all_left = 0;
+			int missed = 0;
+			foreach (Web_src_info vol in vol_list.Items)
+			{
+				if (vol.State == Web_src_info.State_downloaded ||
+					vol.Children == null)
+					continue;
+
+				foreach (Web_src_info file in vol.Children)
+				{
+					if (file.State == Web_src_info.State_downloaded)
+						continue;
+
+					if (file.State == Web_src_info.State_missed)
+						missed++;
+
+					all_left++;
+				}
+			}
+			if (missed != 0 &&
+				missed == all_left)
+			{
+				comic_spider.Stop();
+				comic_spider.Async_start(vol_list.Items);
+			}
+
+			return all_left;
 		}
 
 		private void Save_all()
@@ -329,8 +417,12 @@ namespace ComicSpider
 		private void Save_settings()
 		{
 			settings.Main_url = txt_main_url.Text;
+			settings.Vol_url = txt_vol.Text;
 			settings.Page_url = txt_page.Text;
 			settings.File_url = txt_file.Text;
+			settings.Threshold_vol = int.Parse(txt_threshold_vol.Text);
+			settings.Threshold_page = int.Parse(txt_threshold_page.Text);
+			settings.Threshold_file = int.Parse(txt_threshold_file.Text);
 			settings.Root_dir = txt_dir.Text;
 			settings.Thread_count = txt_thread.Text;
 
@@ -415,11 +507,18 @@ namespace ComicSpider
 			public MainSettings()
 			{
 				Thread_count = "5";
+				Threshold_vol = 10;
+				Threshold_page = 10;
+				Threshold_file = 20;
 			}
 
 			public string Main_url { get; set; }
+			public string Vol_url { get; set; }
+			public int Threshold_vol { get; set; }
 			public string Page_url { get; set; }
+			public int Threshold_page { get; set; }
 			public string File_url { get; set; }
+			public int Threshold_file { get; set; }
 			public string Root_dir { get; set; }
 			public string Thread_count { get; set; }
 		}

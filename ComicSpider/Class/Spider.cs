@@ -35,7 +35,6 @@ namespace ys.Web
 
 			foreach (Web_src_info vol_info in vol_info_list)
 			{
-				vol_info.Counter.Reset();
 				lock (vol_info_queue_lock)
 				{
 					vol_info_queue.Enqueue(vol_info); 
@@ -82,7 +81,7 @@ namespace ys.Web
 		private void Show_vol_list(object arg)
 		{
 			string url = arg as string;
-			List<Web_src_info> vol_info_list = Get_vol_info_list(new Web_src_info(url, 0, "", null, "", "", null));
+			List<Web_src_info> vol_info_list = Get_vol_info_list(new Web_src_info(url, 0, "", "", "", null));
 
 			MainWindow.Main.Dispatcher.Invoke(
 				new MainWindow.Show_vol_list_delegate(MainWindow.Main.Show_vol_list),
@@ -125,9 +124,10 @@ namespace ys.Web
 
 			vol_info_list = Get_info_list_from_html(
 				comic_info,
-				@"<a(.|\n)+?href=""(?<url>.+?)""(.|\n)+?>(?<name>(.|\n)+?)</a>",
+				@"<div id=""chapters""(\n|.)+		<a(.|\n)+?href=""(?<url>.+?)""(.|\n)+?>(?<name>(.|\n)+?)</a>",
 				"{0}",
-				MainWindow.Main.Settings.Page_url
+				MainWindow.Main.Settings.Vol_url,
+				MainWindow.Main.Settings.Threshold_vol
 			);
 
 			return vol_info_list;
@@ -155,7 +155,9 @@ namespace ys.Web
 						vol_info.Children = Get_info_list_from_html(
 								vol_info,
 								@"<select[^<>]+change_page(.|\n)+?</select>		value=""(?<url>[1-9]\d?\d?)""",
-								vol_info.Url.Remove(vol_info.Url.LastIndexOf('/') + 1) + "{0}" + ".html");
+								vol_info.Url.Remove(vol_info.Url.LastIndexOf('/') + 1) + "{0}" + ".html",
+								MainWindow.Main.Settings.Page_url,
+								MainWindow.Main.Settings.Threshold_page);
 					}
 					catch (Exception ex)
 					{
@@ -179,6 +181,7 @@ namespace ys.Web
 				return;
 			}
 
+			#region Create folder
 			Web_src_info parent = page_info_list[0];
 			while ((parent = parent.Parent) != null)
 			{
@@ -190,29 +193,23 @@ namespace ys.Web
 				Directory.CreateDirectory(dir_path);
 				Report("Create dir: {0}", dir_path);
 			}
+			#endregion
 
-
-			for (int i = 0; i < page_info_list.Count; i++)
+			foreach (var page_info in page_info_list)
 			{
-				if (stopped) return;
-
-				Web_src_info page_info = page_info_list[i];
-
-				if (page_info.State == "OK")
-				{
-					int downloaded = page_info.Parent.Counter.Increment();
-					if (downloaded == page_info.Parent.Counter.All)
-					{
-						page_info.Parent.State = "OK";
-					}
+				if (stopped)
+					return;
+				if (page_info.State == Web_src_info.State_downloaded)
 					continue;
-				}
 
 				try
 				{
 					List<Web_src_info> file_info_list = Get_info_list_from_html(
 								page_info,
-								@"src=""(?<url>.+?((jpg)|(png)|(gif)|(bmp)))""");
+								@"src=""(?<url>.+?((jpg)|(png)|(gif)|(bmp)))""",
+								"{0}",
+								MainWindow.Main.Settings.File_url,
+								MainWindow.Main.Settings.Threshold_file);
 
 					lock (file_info_queue_lock)
 					{
@@ -223,7 +220,7 @@ namespace ys.Web
 				catch (Exception ex)
 				{
 					if (ex is ThreadAbortException) return;
-					page_info.State = "X";
+					page_info.State = Web_src_info.State_missed;
 					Log_error(ex, page_info.Url);
 				}
 			}
@@ -273,28 +270,29 @@ namespace ys.Web
 					sw.Write(data, 0, data.Length);
 					sw.Close();
 
-					int downloaded = file_info.Parent.Parent.Counter.Increment();
-					file_info.Parent.State = "OK";
-					if (downloaded == file_info.Parent.Parent.Counter.All)
+					file_info.Parent.State = Web_src_info.State_downloaded;
+
+					int downloaded = file_info.Parent.Parent.Downloaded;
+					if (downloaded == file_info.Parent.Parent.Count)
 					{
-						file_info.Parent.Parent.State = "OK";
+						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
 					}
 					else
 					{
-						file_info.Parent.Parent.State = string.Format("{0}/{1}", downloaded, file_info.Parent.Parent.Counter.All);
+						file_info.Parent.Parent.State = string.Format("{0}/{1}", downloaded, file_info.Parent.Parent.Count);
 					}
 
 					Report("{0}: {1}/{2} , Downloaded: {3}",
 						file_info.Parent.Parent.Name,
 						downloaded,
-						file_info.Parent.Parent.Counter.All,
+						file_info.Parent.Parent.Count,
 						file_info.Name);
 				}
 				catch (Exception ex)
 				{
 					if (ex is ThreadAbortException) return;
 
-					file_info.Parent.State = "X";
+					file_info.Parent.State = Web_src_info.State_missed;
 					Log_error(ex, file_info.Url);
 				}
 			}
@@ -332,17 +330,16 @@ namespace ys.Web
 				MatchCollection mc = Regex.Matches(html, patterns[patterns.Length - 1]);
 				for (int i = 0; i < mc.Count; i++)
 				{
-					if (anchor != null &&
+					if (!string.IsNullOrEmpty(anchor) &&
 						ys.Common.LevenshteinDistance(anchor, mc[i].Groups["url"].Value) > threshold)
 						continue;
 
 					string url = string.Format(url_format, mc[i].Groups["url"].Value);
-					string name = mc[i].Groups["name"].Value;
+					string name = ys.Common.Format_for_number_sort(mc[i].Groups["name"].Value);
 					Web_src_info new_page_info = new Web_src_info(
 						url,
 						i,
 						"",
-						null,
 						"",
 						name == "" ? Path.GetFileName(url) : name,
 						src_info);
@@ -350,7 +347,6 @@ namespace ys.Web
 				}
 
 				src_info.Children = list;
-				src_info.Counter = new Counter(mc.Count);
 				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
 			}
 			catch (Exception ex)

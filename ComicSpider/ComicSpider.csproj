@@ -55,6 +55,7 @@
     <ApplicationIcon>Images\y.s.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -78,6 +79,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\ys.common.cs" />
+    <Page Include="Contorl\Tray_balloon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -91,6 +96,9 @@
       <DependentUpon>App_data.xsd</DependentUpon>
     </Compile>
     <Compile Include="Class\Spider.cs" />
+    <Compile Include="Contorl\Tray_balloon.xaml.cs">
+      <DependentUpon>Tray_balloon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -127,7 +135,6 @@
     <None Include="App_data.xss">
       <DependentUpon>App_data.xsd</DependentUpon>
     </None>
-    <None Include="Images\running.psd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -135,6 +142,8 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\ys_16.ico" />
+    <Content Include="Lib\Hardcodet.Wpf.TaskbarNotification.dll" />
     <Content Include="Lib\System.Data.SQLite.dll" />
     <Resource Include="Images\main_bg.jpg" />
     <Resource Include="Images\Metro-Loading-Blue-100.png" />
