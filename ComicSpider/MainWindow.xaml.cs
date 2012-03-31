@@ -28,16 +28,16 @@ namespace ComicSpider
 		public static MainWindow Main;
 
 		public delegate void Show_vol_list_delegate(List<Web_src_info> list);
-		public void Show_vol_list(List<Web_src_info> list)
+		public void Show_volume_list(List<Web_src_info> list)
 		{
 			foreach (Web_src_info item in list)
 			{
-				foreach (Web_src_info vol in vol_list.Items)
+				foreach (Web_src_info vol in volume_list.Items)
 				{
 					if (vol.Url == item.Url)
 						goto contains;
 				}
-				vol_list.Items.Add(item);
+				volume_list.Items.Add(item);
 			contains: ;
 			}
 
@@ -50,6 +50,22 @@ namespace ComicSpider
 		public void Report_progress(string info)
 		{
 			this.Title = info;
+		}
+
+		public delegate void Report_download_progress_delegate();
+		public void Report_download_progress()
+		{
+			if (Try_download_missed_files() == 0)
+			{
+				MediaPlayer mplayer = new MediaPlayer();
+				mplayer.Open(new Uri(@"Audio\msg.wav", UriKind.Relative));
+				mplayer.Play();
+
+				this.Title = "All completed.";
+				Show_balloon();
+				comic_spider.Stop(true);
+				btn_start.Content = "Start";
+			}
 		}
 
 		public MainSettings Settings
@@ -105,44 +121,41 @@ namespace ComicSpider
 			if (settings == null) settings = new MainSettings();
 
 			txt_main_url.Text = settings.Main_url;
-			txt_vol.Text = settings.Vol_url;
-			txt_page.Text = settings.Page_url;
-			txt_file.Text = settings.File_url;
-			txt_threshold_vol.Text = settings.Threshold_vol + "";
-			txt_threshold_page.Text = settings.Threshold_page + "";
-			txt_threshold_file.Text = settings.Threshold_file + "";
 			txt_dir.Text = settings.Root_dir;
 			txt_thread.Text = settings.Thread_count;
 		}
 		private void Init_vol_info_list()
 		{
-			Vol_infoTableAdapter vol_adpter = new Vol_infoTableAdapter();
-			App_data.Vol_infoDataTable vol_info_table = vol_adpter.GetData();
+			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
+			App_data.Volume_listDataTable vol_info_table = vol_adpter.GetData();
 			if (vol_info_table.Count > 0)
 			{
 				List<Web_src_info> list = new List<Web_src_info>();
-				foreach (App_data.Vol_infoRow row in vol_info_table.Rows)
+
+				foreach (App_data.Volume_listRow row in vol_info_table.Rows)
 				{
 					Web_src_info src_info = new Web_src_info(
 						row.Url,
 						row.Index,
-						row.State,
-						row.Cookie,
 						row.Name,
-						new Web_src_info(row.Parent_url, 0, "", "", row.Parent_name));
+						new Web_src_info(row.Parent_url, 0, row.Parent_name))
+						{
+							State = row.State,
+							Cookie = row.Cookie,
+						};
 					src_info.Children = new List<Web_src_info>();
 					list.Add(src_info);
 				}
-				Show_vol_list(list);
+				Show_volume_list(list);
 			}
 		}
 		private void Init_page_info_list()
 		{
-			Page_infoTableAdapter page_adpter = new Page_infoTableAdapter();
-			App_data.Page_infoDataTable page_info_table = page_adpter.GetData();
+			Page_listTableAdapter page_adpter = new Page_listTableAdapter();
+			App_data.Page_listDataTable page_info_table = page_adpter.GetData();
 			if (page_info_table.Count > 0)
 			{
-				foreach (Web_src_info vol in vol_list.Items)
+				foreach (Web_src_info vol in volume_list.Items)
 				{
 					foreach (var row in page_info_table)
 					{
@@ -151,10 +164,12 @@ namespace ComicSpider
 							vol.Children.Add(new Web_src_info(
 								row.Url,
 								row.Index,
-								row.State,
-								row.Cookie,
 								row.Name,
 								vol)
+								{
+									State = row.State,
+									Cookie = row.Cookie,
+								}
 							);
 						}
 					}
@@ -171,7 +186,7 @@ namespace ComicSpider
 				btn_start.Content = "Stop";
 				btn_get_list.IsEnabled = false;
 
-				comic_spider.Async_start(vol_list.Items);
+				comic_spider.Async_start(volume_list.Items);
 			}
 			else
 			{
@@ -183,18 +198,18 @@ namespace ComicSpider
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
 			Save_settings();
-			comic_spider.Async_show_vol_list();
+			comic_spider.Async_show_volume_list();
 			btn_get_list.IsEnabled = false;
 		}
 		private void btn_select_downloaded_Click(object sender, RoutedEventArgs e)
 		{
-			vol_list.Focus();
-			vol_list.SelectedIndex = -1;
-			foreach (Web_src_info item in vol_list.Items)
+			volume_list.Focus();
+			volume_list.SelectedIndex = -1;
+			foreach (Web_src_info item in volume_list.Items)
 			{
 				if (item.State == Web_src_info.State_downloaded)
 				{
-					vol_list.SelectedItems.Add(item);
+					volume_list.SelectedItems.Add(item);
 				}
 			}
 		}
@@ -216,12 +231,12 @@ namespace ComicSpider
 		private void tray_TrayToolTipOpen(object sender, RoutedEventArgs e)
 		{
 			int downloaded = 0;
-			foreach (Web_src_info item in vol_list.Items)
+			foreach (Web_src_info item in volume_list.Items)
 			{
 				if (item.State == Web_src_info.State_downloaded)
 					downloaded++;
 			}
-			txt_main_progress.Text = string.Format("Progress: {0}/{1}", downloaded, vol_list.Items.Count);
+			txt_main_progress.Text = string.Format("Progress: {0}/{1}", downloaded, volume_list.Items.Count);
 		}
 		private void ShowHide_window(object sender, RoutedEventArgs e)
 		{
@@ -340,7 +355,7 @@ namespace ComicSpider
 		private void vol_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			Page_list.Items.Clear();
-			foreach (Web_src_info vol in vol_list.SelectedItems)
+			foreach (Web_src_info vol in volume_list.SelectedItems)
 			{
 				if (vol.Children == null) continue;
 				foreach (var page in vol.Children)
@@ -418,26 +433,13 @@ namespace ComicSpider
 
 		private void Monitor_Tick(object sender, EventArgs e)
 		{
-			if (comic_spider.Stopped) return;
-
-			if (Try_download_missed_files() == 0)
-			{
-				MediaPlayer mplayer = new MediaPlayer();
-				mplayer.Open(new Uri(@"Audio\msg.wav", UriKind.Relative));
-				mplayer.Play();
-
-				this.Title = "All completed.";
-				Show_balloon();
-				comic_spider.Stop();
-			}
-
 			Save_all();
 		}
 		private int Try_download_missed_files()
 		{
 			int all_left = 0;
 			int missed = 0;
-			foreach (Web_src_info vol in vol_list.Items)
+			foreach (Web_src_info vol in volume_list.Items)
 			{
 				if (vol.State == Web_src_info.State_downloaded ||
 					vol.Children == null)
@@ -461,7 +463,7 @@ namespace ComicSpider
 				Show_balloon();
 
 				comic_spider.Stop();
-				comic_spider.Async_start(vol_list.Items);
+				comic_spider.Async_start(volume_list.Items);
 			}
 
 			return all_left;
@@ -476,12 +478,6 @@ namespace ComicSpider
 		private void Save_settings()
 		{
 			settings.Main_url = txt_main_url.Text;
-			settings.Vol_url = txt_vol.Text;
-			settings.Page_url = txt_page.Text;
-			settings.File_url = txt_file.Text;
-			settings.Threshold_vol = int.Parse(txt_threshold_vol.Text);
-			settings.Threshold_page = int.Parse(txt_threshold_page.Text);
-			settings.Threshold_file = int.Parse(txt_threshold_file.Text);
 			settings.Root_dir = txt_dir.Text;
 			settings.Thread_count = txt_thread.Text;
 
@@ -498,9 +494,9 @@ namespace ComicSpider
 		}
 		private void Save_vol_info_list()
 		{
-			Vol_infoTableAdapter vol_adapter = new Vol_infoTableAdapter();
+			Volume_listTableAdapter vol_adapter = new Volume_listTableAdapter();
 			vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
-			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Vol_info where 1";
+			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Volume_list where 1";
 
 			vol_adapter.Connection.Open();
 
@@ -508,7 +504,7 @@ namespace ComicSpider
 
 			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
 
-			foreach (Web_src_info item in vol_list.Items)
+			foreach (Web_src_info item in volume_list.Items)
 			{
 				vol_adapter.Insert(
 					item.Url,
@@ -528,9 +524,9 @@ namespace ComicSpider
 		}
 		private void Save_page_info_list()
 		{
-			Page_infoTableAdapter page_adapter = new Page_infoTableAdapter();
+			Page_listTableAdapter page_adapter = new Page_listTableAdapter();
 			page_adapter.Adapter.DeleteCommand = page_adapter.Connection.CreateCommand();
-			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_info where 1";
+			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_list where 1";
 
 			page_adapter.Connection.Open();
 
@@ -538,7 +534,7 @@ namespace ComicSpider
 
 			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
 
-			foreach (Web_src_info vol in vol_list.Items)
+			foreach (Web_src_info vol in volume_list.Items)
 			{
 				if (vol.Children == null) continue;
 				foreach (Web_src_info item in vol.Children)
@@ -559,27 +555,18 @@ namespace ComicSpider
 			transaction.Commit();
 			page_adapter.Connection.Close();
 		}
+	}
 
-		[Serializable]
-		public class MainSettings
+	[Serializable]
+	public class MainSettings
+	{
+		public MainSettings()
 		{
-			public MainSettings()
-			{
-				Thread_count = "5";
-				Threshold_vol = 10;
-				Threshold_page = 10;
-				Threshold_file = 20;
-			}
-
-			public string Main_url { get; set; }
-			public string Vol_url { get; set; }
-			public int Threshold_vol { get; set; }
-			public string Page_url { get; set; }
-			public int Threshold_page { get; set; }
-			public string File_url { get; set; }
-			public int Threshold_file { get; set; }
-			public string Root_dir { get; set; }
-			public string Thread_count { get; set; }
+			Thread_count = "5";
 		}
+
+		public string Main_url { get; set; }
+		public string Root_dir { get; set; }
+		public string Thread_count { get; set; }
 	}
 }

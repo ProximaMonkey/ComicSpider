@@ -65,22 +65,5 @@ namespace UnitTest
 		//
 		#endregion
 
-
-		/// <summary>
-		///A test for Get_info_list_from_html
-		///</summary>
-		[TestMethod()]
-		[DeploymentItem("Comic Spider.exe")]
-		public void Get_info_list_from_htmlTest()
-		{
-			Comic_spider_Accessor target = new Comic_spider_Accessor();
-			Web_src_info src_info = new Web_src_info("http://www.mangahere.com/manga/nononono/v09/c087/", 0);
-			string url_pattern = @"src=""(?<url>http://c.mhcdn.net/store/manga/.+?((jpg)|(png)|(gif)|(bmp)))""";
-			int expected = 1;
-			List<Web_src_info> actual;
-			actual = target.Get_info_list_from_html(src_info, url_pattern);
-			Assert.AreEqual(expected, actual.Count);
-			Assert.Inconclusive("Verify the correctness of this test method.");
-		}
 	}
 }

@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using ComicSpider;
 using ComicSpider.App_dataTableAdapters;
+using System.Linq;
+using Jint;
+using System.Text;
 
 namespace ys.Web
 {
@@ -14,30 +17,35 @@ namespace ys.Web
 		public Comic_spider()
 		{
 			stopped = true;
-			file_info_queue = new Queue<Web_src_info>();
-			vol_info_queue = new Queue<Web_src_info>();
-			file_info_queue_lock = new object();
-			vol_info_queue_lock = new object();
+
+			file_queue = new Queue<Web_src_info>();
+			volume_queue = new Queue<Web_src_info>();
+			file_queue_lock = new object();
+			volume_queue_lock = new object();
 			thread_list = new List<Thread>();
 		}
 
-		public void Async_show_vol_list()
+		public void Async_show_volume_list()
 		{
-			Thread thread = new Thread(new ParameterizedThreadStart(Show_vol_list));
-			thread.Name = "Show_vol_list";
+			Load_script();
+
+			Thread thread = new Thread(new ParameterizedThreadStart(Show_volume_list));
+			thread.Name = "Show_volume_list";
 			thread.Start(MainWindow.Main.Settings.Main_url);
 
-			Report("Show vol list...");
+			Report("Show volume list...");
 		}
 		public void Async_start(System.Windows.Controls.ItemCollection vol_info_list)
 		{
 			stopped = false;
 
+			Load_script();
+
 			foreach (Web_src_info vol_info in vol_info_list)
 			{
-				lock (vol_info_queue_lock)
+				lock (volume_queue_lock)
 				{
-					vol_info_queue.Enqueue(vol_info); 
+					volume_queue.Enqueue(vol_info); 
 				}
 			}
 
@@ -48,8 +56,8 @@ namespace ys.Web
 				downloader.Start();
 				thread_list.Add(downloader);
 
-				Thread info_getter = new Thread(new ThreadStart(Get_page_info_list));
-				info_getter.Name = "Get_page_info_list" + i;
+				Thread info_getter = new Thread(new ThreadStart(Get_page_list));
+				info_getter.Name = "Get_page_list" + i;
 				info_getter.Start();
 				thread_list.Add(info_getter);
 			}
@@ -57,38 +65,44 @@ namespace ys.Web
 			Report("Comic Spider start...");
 		}
 
-		public void Stop()
+		public void Stop(bool completed = false)
 		{
 			stopped = true;
-			vol_info_queue.Clear();
-			file_info_queue.Clear();
+			volume_queue.Clear();
+			file_queue.Clear();
 
-			foreach (Thread thread in thread_list)
+			if (!completed)
 			{
-				thread.Abort();
+				foreach (Thread thread in thread_list)
+				{
+					thread.Abort();
+				}
 			}
 			thread_list.Clear();
 		}
 		public bool Stopped { get { return stopped; } }
 
 		private bool stopped;
-		private Queue<Web_src_info> file_info_queue;
-		private Queue<Web_src_info> vol_info_queue;
-		private object file_info_queue_lock;
-		private object vol_info_queue_lock;
+		private Queue<Web_src_info> file_queue;
+		private Queue<Web_src_info> volume_queue;
+		private object file_queue_lock;
+		private object volume_queue_lock;
 		private List<Thread> thread_list;
+		private string script;
 
-		private void Show_vol_list(object arg)
+		private void Show_volume_list(object arg)
 		{
 			string url = arg as string;
-			List<Web_src_info> vol_info_list = Get_vol_info_list(new Web_src_info(url, 0, "", "", "", null));
+			List<Web_src_info> vol_info_list = Get_volume_list(new Web_src_info(url, 0, ""));
 
 			MainWindow.Main.Dispatcher.Invoke(
-				new MainWindow.Show_vol_list_delegate(MainWindow.Main.Show_vol_list),
+				new MainWindow.Show_vol_list_delegate(MainWindow.Main.Show_volume_list),
 				vol_info_list);
 		}
 		private void Log_error(Exception ex, string url = "")
 		{
+			if (ex is ArgumentOutOfRangeException)
+				throw ex;
 			Report(ex.Message);
 
 			try
@@ -106,7 +120,7 @@ namespace ys.Web
 			{
 			}
 		}
-		private void Report(string info)
+		private void Report(object info)
 		{
 			Console.WriteLine(info);
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
@@ -118,33 +132,34 @@ namespace ys.Web
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
-		private List<Web_src_info> Get_vol_info_list(Web_src_info comic_info)
+		private void Load_script()
+		{
+			var sr = new StreamReader(@"comic_spider.js");
+			script = sr.ReadToEnd();
+			sr.Close();
+		}
+		private List<Web_src_info> Get_volume_list(Web_src_info comic_info)
 		{
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
 
-			vol_info_list = Get_info_list_from_html(
-				comic_info,
-				@"<div id=""chapters""(\n|.)+		<a(.|\n)+?href=""(?<url>.+?)""(.|\n)+?>(?<name>(.|\n)+?)</a>",
-				"{0}",
-				MainWindow.Main.Settings.Vol_url,
-				MainWindow.Main.Settings.Threshold_vol
-			);
+			vol_info_list = Get_info_list_from_html(comic_info, "get_comic_name", "get_volume_list");
+
+			Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children == null ? 0 : comic_info.Children.Count);
 
 			return vol_info_list;
 		}
-
-		private void Get_page_info_list()
+		private void Get_page_list()
 		{
 			while (!stopped)
 			{
 				Web_src_info vol_info;
-				lock (vol_info_queue_lock)
+				lock (volume_queue_lock)
 				{
-					if (vol_info_queue.Count == 0)
+					if (volume_queue.Count == 0)
 					{
 						return;
 					}
-					vol_info = vol_info_queue.Dequeue();
+					vol_info = volume_queue.Dequeue();
 				}
 
 				if (vol_info.Children == null ||
@@ -152,12 +167,7 @@ namespace ys.Web
 				{
 					try
 					{
-						vol_info.Children = Get_info_list_from_html(
-								vol_info,
-								@"<select[^<>]+change_page(.|\n)+?</select>		value=""(?<url>[1-9]\d?\d?)""",
-								vol_info.Url.Remove(vol_info.Url.LastIndexOf('/') + 1) + "{0}" + ".html",
-								MainWindow.Main.Settings.Page_url,
-								MainWindow.Main.Settings.Threshold_page);
+						vol_info.Children = Get_info_list_from_html(vol_info, "get_page_list");
 					}
 					catch (Exception ex)
 					{
@@ -170,10 +180,10 @@ namespace ys.Web
 
 				Report("Page list: {0}", vol_info.Name);
 
-				Get_file_info_list(vol_info.Children);
+				Get_file_list(vol_info.Children);
 			}
 		}
-		private void Get_file_info_list(List<Web_src_info> page_info_list)
+		private void Get_file_list(List<Web_src_info> page_info_list)
 		{
 			string dir_path = "";
 
@@ -206,16 +216,11 @@ namespace ys.Web
 
 				try
 				{
-					List<Web_src_info> file_info_list = Get_info_list_from_html(
-								page_info,
-								@"src=""(?<url>.+?((jpg)|(png)|(gif)|(bmp)))""",
-								"{0}",
-								MainWindow.Main.Settings.File_url,
-								MainWindow.Main.Settings.Threshold_file);
+					List<Web_src_info> file_info_list = Get_info_list_from_html(page_info, "get_file_list");
 
-					lock (file_info_queue_lock)
+					lock (file_queue_lock)
 					{
-						file_info_queue.Enqueue(file_info_list[0]);
+						file_queue.Enqueue(file_info_list[0]);
 					}
 					Report("Get file info: {0}", file_info_list[0].Url);
 				}
@@ -234,16 +239,17 @@ namespace ys.Web
 
 			while (!stopped)
 			{
-				lock (file_info_queue_lock)
+				lock (file_queue_lock)
 				{
-					if (file_info_queue.Count == 0)
+					if (file_queue.Count == 0)
 					{
 						Thread.Sleep(100);
 						continue;
 					}
 
-					file_info = file_info_queue.Dequeue();
+					file_info = file_queue.Dequeue();
 				}
+
 				#region Create file name
 
 				string file_path = "";
@@ -297,6 +303,14 @@ namespace ys.Web
 					file_info.Parent.State = Web_src_info.State_missed;
 					Log_error(ex, file_info.Url);
 				}
+				finally
+				{
+					MainWindow.Main.Dispatcher.Invoke(
+						new MainWindow.Report_download_progress_delegate(
+							MainWindow.Main.Report_download_progress
+						)
+					);
+				}
 			}
 		}
 
@@ -308,47 +322,31 @@ namespace ys.Web
 		/// <param name="anchor">Levenshtein Distance anchor</param>
 		/// <param name="threshold">Levenshtein Distance threshold</param>
 		/// <returns></returns>
-		private List<Web_src_info> Get_info_list_from_html(
-			Web_src_info src_info,
-			string pattern,
-			string url_format = "{0}",
-			string anchor = null,
-			int threshold = 10)
+		private List<Web_src_info> Get_info_list_from_html(Web_src_info src_info, params string[] func_list)
 		{
-			List<Web_src_info> list = new List<Web_src_info>();
+			List<Web_src_info> info_list = new List<Web_src_info>();
 			string html = "";
-			string[] patterns = pattern.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+			string host = get_host(src_info.Url);
 
 			WebClient wc = new WebClient();
 			try
 			{
 				html = wc.DownloadString(src_info.Url);
 
-				for (int i = 0; i < patterns.Length - 1; i++)
+				JintEngine js_engine = create_js_engine();
+				js_engine.SetParameter("settings", MainWindow.Main.Settings);
+				js_engine.SetParameter("html", html);
+				js_engine.SetParameter("src_info", src_info);
+				js_engine.SetParameter("info_list", info_list);
+
+				foreach (var func in func_list)
 				{
-					html = Regex.Match(html, patterns[i]).Groups[0].Value;
+					js_engine.Run(string.Format("{0}.{1}();", host, func));
 				}
 
-				MatchCollection mc = Regex.Matches(html, patterns[patterns.Length - 1]);
-				for (int i = 0; i < mc.Count; i++)
-				{
-					if (!string.IsNullOrEmpty(anchor) &&
-						ys.Common.LevenshteinDistance(anchor, mc[i].Groups["url"].Value) > threshold)
-						continue;
+				var distinct_list = info_list.Distinct(new Web_src_info.Comparer()).Cast<List<Web_src_info>>();
 
-					string url = string.Format(url_format, mc[i].Groups["url"].Value);
-					string name = ys.Common.Format_for_number_sort(mc[i].Groups["name"].Value);
-					Web_src_info new_page_info = new Web_src_info(
-						url,
-						i,
-						"",
-						"",
-						name == "" ? Path.GetFileName(url) : name,
-						src_info);
-					list.Add(new_page_info);
-				}
-
-				src_info.Children = list;
+				src_info.Children = distinct_list as List<Web_src_info>;
 				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
 			}
 			catch (Exception ex)
@@ -357,7 +355,42 @@ namespace ys.Web
 					Log_error(ex, src_info.Url);
 			}
 
-			return list;
+			return info_list;
+		}
+
+		private JintEngine create_js_engine()
+		{
+			JintEngine js_engine = new JintEngine();
+			js_engine.DisableSecurity();
+			js_engine.SetFunction(
+				"levenshtein_distance",
+				new Func<string, string, int>((s, t) => { return ys.Common.LevenshteinDistance(s, t); })
+			);
+			js_engine.SetFunction(
+				"matches",
+				new Func<string, object, MatchCollection>((input, pattern) => { return Regex.Matches(input, pattern.ToString().Trim('/'), RegexOptions.IgnoreCase); })
+			);
+			js_engine.SetFunction("tostr", new Func<string, string>((s) => { return s; }));
+			js_engine.SetFunction(
+				"report",
+				new Action<object>((info) => { Report(info.ToString()); })
+			);
+			js_engine.SetFunction(
+				"web_src_info",
+				new Func<string, double, string, Web_src_info, Web_src_info>((url, index, name, parent) => 
+				{
+					return new Web_src_info(url, (int)index, ys.Common.Format_for_number_sort(name.Trim()), parent);
+				})
+			);
+
+			js_engine.Run(script);
+
+			return js_engine;
+		}
+
+		private string get_host(string url)
+		{
+			return Regex.Match(url, @"(http://)?(.+?)?\.(?<host>.+?)/").Groups["host"].Value.Replace('.', '_');
 		}
 	}
 }

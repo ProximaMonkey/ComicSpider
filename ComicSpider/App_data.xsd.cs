@@ -1,9 +1,7 @@
-﻿namespace ComicSpider
-{
-
-
-	public partial class App_data
-	{
+﻿namespace ComicSpider {
+	
+	
+	public partial class App_data {
 		public static void CheckAndFix()
 		{
 			App_dataTableAdapters.Key_valueTableAdapter da = new App_dataTableAdapters.Key_valueTableAdapter();
@@ -22,7 +20,7 @@ create table if not exists [Error_log] (
 	[Title] nvarchar(100) NOT NULL,
 	[Detail] text
 );
-create table if not exists [Vol_info] (
+create table if not exists [Volume_list] (
 	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(100),
 	[State] nvarchar(50),
@@ -32,7 +30,7 @@ create table if not exists [Vol_info] (
 	[Cookie] text,
 	[Data_time] datetime NOT NULL
 );
-create table if not exists [Page_info] (
+create table if not exists [Page_list] (
 	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(100),
 	[State] nvarchar(50),

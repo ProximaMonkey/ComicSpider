@@ -10,22 +10,18 @@ namespace ys.Web
 		public Web_src_info()
 		{
 		}
-		public Web_src_info(string url,
+		public Web_src_info(
+			string url,
 			int index,
-			string state = "",
-			string cookie = "",
-			string name = "",
-			Web_src_info parent = null,
-			List<Web_src_info> children = null)
+			string name,
+			Web_src_info parent = null)
 		{
 			Url = url;
 			Index = index;
-			State = state;
 			Name = name;
-			Cookie = cookie;
 			Parent = parent;
-			Children = children;
-			Missed = false;
+			state = "";
+			Cookie = "";
 		}
 
 		public const string State_downloaded = "OK";
@@ -69,14 +65,16 @@ namespace ys.Web
 		}
 		public int Index { get; set; }
 		public string Cookie { get; set; }
-		public bool Missed { get; set; }
 		public Web_src_info Parent { get; protected set; }
 
 		public int Count
 		{
 			get
 			{
-				return children.Count;
+				if (children == null)
+					return 0;
+				else
+					return children.Count;
 			}
 		}
 		public int Downloaded
@@ -97,6 +95,24 @@ namespace ys.Web
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		public class Comparer : IEqualityComparer<Web_src_info>
+		{
+			public bool Equals(Web_src_info x, Web_src_info y)
+			{
+				if (x.Name == y.Name)
+				{
+					y.Name = x.Name + "'";
+				}
+				return x.Url == y.Url;
+			}
+			public int GetHashCode(Web_src_info src_info)
+			{
+				if (Object.ReferenceEquals(src_info, null)) return 0;
+
+				return src_info.Url.GetHashCode();
+			}
+		}
 
 		private void NotifyPropertyChanged(String info)
 		{

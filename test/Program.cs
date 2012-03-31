@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using ComicSpider;
+using ys.Web;
+using ys;
+using Jint;
+using LuaInterface;
 
 namespace test
 {
@@ -10,10 +15,20 @@ namespace test
 	{
 		static void Main(string[] args)
 		{
-			string str = "111abcabd111";
-			Regex reg = new Regex(@"(a.)");
-			Match mc = reg.Match(str);
-			Console.WriteLine(mc.Groups["test"]);
+			Run r = new Run();
+		}
+
+		public class Run
+		{
+			public Run()
+			{
+				Lua lua = new Lua();
+				var ret = lua.DoString(@"
+a = 10
+a");
+				Console.WriteLine(ret[0]);
+				Console.ReadLine();
+			}
 		}
 	}
 }

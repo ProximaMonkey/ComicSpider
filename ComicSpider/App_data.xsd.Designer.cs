@@ -26,11 +26,11 @@ namespace ComicSpider {
         
         private Error_logDataTable tableError_log;
         
-        private Vol_infoDataTable tableVol_info;
+        private Volume_listDataTable tableVolume_list;
         
         private Key_valueDataTable tableKey_value;
         
-        private Page_infoDataTable tablePage_info;
+        private Page_listDataTable tablePage_list;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -63,14 +63,14 @@ namespace ComicSpider {
                 if ((ds.Tables["Error_log"] != null)) {
                     base.Tables.Add(new Error_logDataTable(ds.Tables["Error_log"]));
                 }
-                if ((ds.Tables["Vol_info"] != null)) {
-                    base.Tables.Add(new Vol_infoDataTable(ds.Tables["Vol_info"]));
+                if ((ds.Tables["Volume_list"] != null)) {
+                    base.Tables.Add(new Volume_listDataTable(ds.Tables["Volume_list"]));
                 }
                 if ((ds.Tables["Key_value"] != null)) {
                     base.Tables.Add(new Key_valueDataTable(ds.Tables["Key_value"]));
                 }
-                if ((ds.Tables["Page_info"] != null)) {
-                    base.Tables.Add(new Page_infoDataTable(ds.Tables["Page_info"]));
+                if ((ds.Tables["Page_list"] != null)) {
+                    base.Tables.Add(new Page_listDataTable(ds.Tables["Page_list"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -104,9 +104,9 @@ namespace ComicSpider {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public Vol_infoDataTable Vol_info {
+        public Volume_listDataTable Volume_list {
             get {
-                return this.tableVol_info;
+                return this.tableVolume_list;
             }
         }
         
@@ -124,9 +124,9 @@ namespace ComicSpider {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public Page_infoDataTable Page_info {
+        public Page_listDataTable Page_list {
             get {
-                return this.tablePage_info;
+                return this.tablePage_list;
             }
         }
         
@@ -200,14 +200,14 @@ namespace ComicSpider {
                 if ((ds.Tables["Error_log"] != null)) {
                     base.Tables.Add(new Error_logDataTable(ds.Tables["Error_log"]));
                 }
-                if ((ds.Tables["Vol_info"] != null)) {
-                    base.Tables.Add(new Vol_infoDataTable(ds.Tables["Vol_info"]));
+                if ((ds.Tables["Volume_list"] != null)) {
+                    base.Tables.Add(new Volume_listDataTable(ds.Tables["Volume_list"]));
                 }
                 if ((ds.Tables["Key_value"] != null)) {
                     base.Tables.Add(new Key_valueDataTable(ds.Tables["Key_value"]));
                 }
-                if ((ds.Tables["Page_info"] != null)) {
-                    base.Tables.Add(new Page_infoDataTable(ds.Tables["Page_info"]));
+                if ((ds.Tables["Page_list"] != null)) {
+                    base.Tables.Add(new Page_listDataTable(ds.Tables["Page_list"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -248,10 +248,10 @@ namespace ComicSpider {
                     this.tableError_log.InitVars();
                 }
             }
-            this.tableVol_info = ((Vol_infoDataTable)(base.Tables["Vol_info"]));
+            this.tableVolume_list = ((Volume_listDataTable)(base.Tables["Volume_list"]));
             if ((initTable == true)) {
-                if ((this.tableVol_info != null)) {
-                    this.tableVol_info.InitVars();
+                if ((this.tableVolume_list != null)) {
+                    this.tableVolume_list.InitVars();
                 }
             }
             this.tableKey_value = ((Key_valueDataTable)(base.Tables["Key_value"]));
@@ -260,10 +260,10 @@ namespace ComicSpider {
                     this.tableKey_value.InitVars();
                 }
             }
-            this.tablePage_info = ((Page_infoDataTable)(base.Tables["Page_info"]));
+            this.tablePage_list = ((Page_listDataTable)(base.Tables["Page_list"]));
             if ((initTable == true)) {
-                if ((this.tablePage_info != null)) {
-                    this.tablePage_info.InitVars();
+                if ((this.tablePage_list != null)) {
+                    this.tablePage_list.InitVars();
                 }
             }
         }
@@ -278,12 +278,12 @@ namespace ComicSpider {
             this.SchemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
             this.tableError_log = new Error_logDataTable();
             base.Tables.Add(this.tableError_log);
-            this.tableVol_info = new Vol_infoDataTable();
-            base.Tables.Add(this.tableVol_info);
+            this.tableVolume_list = new Volume_listDataTable();
+            base.Tables.Add(this.tableVolume_list);
             this.tableKey_value = new Key_valueDataTable();
             base.Tables.Add(this.tableKey_value);
-            this.tablePage_info = new Page_infoDataTable();
-            base.Tables.Add(this.tablePage_info);
+            this.tablePage_list = new Page_listDataTable();
+            base.Tables.Add(this.tablePage_list);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -294,7 +294,7 @@ namespace ComicSpider {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializeVol_info() {
+        private bool ShouldSerializeVolume_list() {
             return false;
         }
         
@@ -306,7 +306,7 @@ namespace ComicSpider {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializePage_info() {
+        private bool ShouldSerializePage_list() {
             return false;
         }
         
@@ -369,13 +369,13 @@ namespace ComicSpider {
         public delegate void Error_logRowChangeEventHandler(object sender, Error_logRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void Vol_infoRowChangeEventHandler(object sender, Vol_infoRowChangeEvent e);
+        public delegate void Volume_listRowChangeEventHandler(object sender, Volume_listRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void Key_valueRowChangeEventHandler(object sender, Key_valueRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void Page_infoRowChangeEventHandler(object sender, Page_infoRowChangeEvent e);
+        public delegate void Page_listRowChangeEventHandler(object sender, Page_listRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -687,7 +687,7 @@ namespace ComicSpider {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class Vol_infoDataTable : global::System.Data.TypedTableBase<Vol_infoRow> {
+        public partial class Volume_listDataTable : global::System.Data.TypedTableBase<Volume_listRow> {
             
             private global::System.Data.DataColumn columnUrl;
             
@@ -707,8 +707,8 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoDataTable() {
-                this.TableName = "Vol_info";
+            public Volume_listDataTable() {
+                this.TableName = "Volume_list";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -716,7 +716,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal Vol_infoDataTable(global::System.Data.DataTable table) {
+            internal Volume_listDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -733,7 +733,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected Vol_infoDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected Volume_listDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -813,34 +813,34 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoRow this[int index] {
+            public Volume_listRow this[int index] {
                 get {
-                    return ((Vol_infoRow)(this.Rows[index]));
+                    return ((Volume_listRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Vol_infoRowChangeEventHandler Vol_infoRowChanging;
+            public event Volume_listRowChangeEventHandler Volume_listRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Vol_infoRowChangeEventHandler Vol_infoRowChanged;
+            public event Volume_listRowChangeEventHandler Volume_listRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Vol_infoRowChangeEventHandler Vol_infoRowDeleting;
+            public event Volume_listRowChangeEventHandler Volume_listRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Vol_infoRowChangeEventHandler Vol_infoRowDeleted;
+            public event Volume_listRowChangeEventHandler Volume_listRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddVol_infoRow(Vol_infoRow row) {
+            public void AddVolume_listRow(Volume_listRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoRow AddVol_infoRow(string Url, string Name, string State, string Parent_url, string Parent_name, int Index, string Cookie, System.DateTime Data_time) {
-                Vol_infoRow rowVol_infoRow = ((Vol_infoRow)(this.NewRow()));
+            public Volume_listRow AddVolume_listRow(string Url, string Name, string State, string Parent_url, string Parent_name, int Index, string Cookie, System.DateTime Data_time) {
+                Volume_listRow rowVolume_listRow = ((Volume_listRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Url,
                         Name,
@@ -850,22 +850,22 @@ namespace ComicSpider {
                         Index,
                         Cookie,
                         Data_time};
-                rowVol_infoRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowVol_infoRow);
-                return rowVol_infoRow;
+                rowVolume_listRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowVolume_listRow);
+                return rowVolume_listRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoRow FindByUrl(string Url) {
-                return ((Vol_infoRow)(this.Rows.Find(new object[] {
+            public Volume_listRow FindByUrl(string Url) {
+                return ((Volume_listRow)(this.Rows.Find(new object[] {
                             Url})));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                Vol_infoDataTable cln = ((Vol_infoDataTable)(base.Clone()));
+                Volume_listDataTable cln = ((Volume_listDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -873,7 +873,7 @@ namespace ComicSpider {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new Vol_infoDataTable();
+                return new Volume_listDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -923,28 +923,28 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoRow NewVol_infoRow() {
-                return ((Vol_infoRow)(this.NewRow()));
+            public Volume_listRow NewVolume_listRow() {
+                return ((Volume_listRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new Vol_infoRow(builder);
+                return new Volume_listRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(Vol_infoRow);
+                return typeof(Volume_listRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.Vol_infoRowChanged != null)) {
-                    this.Vol_infoRowChanged(this, new Vol_infoRowChangeEvent(((Vol_infoRow)(e.Row)), e.Action));
+                if ((this.Volume_listRowChanged != null)) {
+                    this.Volume_listRowChanged(this, new Volume_listRowChangeEvent(((Volume_listRow)(e.Row)), e.Action));
                 }
             }
             
@@ -952,8 +952,8 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.Vol_infoRowChanging != null)) {
-                    this.Vol_infoRowChanging(this, new Vol_infoRowChangeEvent(((Vol_infoRow)(e.Row)), e.Action));
+                if ((this.Volume_listRowChanging != null)) {
+                    this.Volume_listRowChanging(this, new Volume_listRowChangeEvent(((Volume_listRow)(e.Row)), e.Action));
                 }
             }
             
@@ -961,8 +961,8 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.Vol_infoRowDeleted != null)) {
-                    this.Vol_infoRowDeleted(this, new Vol_infoRowChangeEvent(((Vol_infoRow)(e.Row)), e.Action));
+                if ((this.Volume_listRowDeleted != null)) {
+                    this.Volume_listRowDeleted(this, new Volume_listRowChangeEvent(((Volume_listRow)(e.Row)), e.Action));
                 }
             }
             
@@ -970,14 +970,14 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.Vol_infoRowDeleting != null)) {
-                    this.Vol_infoRowDeleting(this, new Vol_infoRowChangeEvent(((Vol_infoRow)(e.Row)), e.Action));
+                if ((this.Volume_listRowDeleting != null)) {
+                    this.Volume_listRowDeleting(this, new Volume_listRowChangeEvent(((Volume_listRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemoveVol_infoRow(Vol_infoRow row) {
+            public void RemoveVolume_listRow(Volume_listRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -1004,7 +1004,7 @@ namespace ComicSpider {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "Vol_infoDataTable";
+                attribute2.FixedValue = "Volume_listDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -1323,7 +1323,7 @@ namespace ComicSpider {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class Page_infoDataTable : global::System.Data.TypedTableBase<Page_infoRow> {
+        public partial class Page_listDataTable : global::System.Data.TypedTableBase<Page_listRow> {
             
             private global::System.Data.DataColumn columnUrl;
             
@@ -1343,8 +1343,8 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoDataTable() {
-                this.TableName = "Page_info";
+            public Page_listDataTable() {
+                this.TableName = "Page_list";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -1352,7 +1352,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal Page_infoDataTable(global::System.Data.DataTable table) {
+            internal Page_listDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -1369,7 +1369,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected Page_infoDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected Page_listDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -1449,34 +1449,34 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoRow this[int index] {
+            public Page_listRow this[int index] {
                 get {
-                    return ((Page_infoRow)(this.Rows[index]));
+                    return ((Page_listRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Page_infoRowChangeEventHandler Page_infoRowChanging;
+            public event Page_listRowChangeEventHandler Page_listRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Page_infoRowChangeEventHandler Page_infoRowChanged;
+            public event Page_listRowChangeEventHandler Page_listRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Page_infoRowChangeEventHandler Page_infoRowDeleting;
+            public event Page_listRowChangeEventHandler Page_listRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event Page_infoRowChangeEventHandler Page_infoRowDeleted;
+            public event Page_listRowChangeEventHandler Page_listRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddPage_infoRow(Page_infoRow row) {
+            public void AddPage_listRow(Page_listRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoRow AddPage_infoRow(string Url, string Name, string State, string Parent_url, string Parent_name, int Index, string Cookie, System.DateTime Data_time) {
-                Page_infoRow rowPage_infoRow = ((Page_infoRow)(this.NewRow()));
+            public Page_listRow AddPage_listRow(string Url, string Name, string State, string Parent_url, string Parent_name, int Index, string Cookie, System.DateTime Data_time) {
+                Page_listRow rowPage_listRow = ((Page_listRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Url,
                         Name,
@@ -1486,22 +1486,22 @@ namespace ComicSpider {
                         Index,
                         Cookie,
                         Data_time};
-                rowPage_infoRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowPage_infoRow);
-                return rowPage_infoRow;
+                rowPage_listRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowPage_listRow);
+                return rowPage_listRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoRow FindByUrl(string Url) {
-                return ((Page_infoRow)(this.Rows.Find(new object[] {
+            public Page_listRow FindByUrl(string Url) {
+                return ((Page_listRow)(this.Rows.Find(new object[] {
                             Url})));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                Page_infoDataTable cln = ((Page_infoDataTable)(base.Clone()));
+                Page_listDataTable cln = ((Page_listDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -1509,7 +1509,7 @@ namespace ComicSpider {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new Page_infoDataTable();
+                return new Page_listDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1559,28 +1559,28 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoRow NewPage_infoRow() {
-                return ((Page_infoRow)(this.NewRow()));
+            public Page_listRow NewPage_listRow() {
+                return ((Page_listRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new Page_infoRow(builder);
+                return new Page_listRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(Page_infoRow);
+                return typeof(Page_listRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.Page_infoRowChanged != null)) {
-                    this.Page_infoRowChanged(this, new Page_infoRowChangeEvent(((Page_infoRow)(e.Row)), e.Action));
+                if ((this.Page_listRowChanged != null)) {
+                    this.Page_listRowChanged(this, new Page_listRowChangeEvent(((Page_listRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1588,8 +1588,8 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.Page_infoRowChanging != null)) {
-                    this.Page_infoRowChanging(this, new Page_infoRowChangeEvent(((Page_infoRow)(e.Row)), e.Action));
+                if ((this.Page_listRowChanging != null)) {
+                    this.Page_listRowChanging(this, new Page_listRowChangeEvent(((Page_listRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1597,8 +1597,8 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.Page_infoRowDeleted != null)) {
-                    this.Page_infoRowDeleted(this, new Page_infoRowChangeEvent(((Page_infoRow)(e.Row)), e.Action));
+                if ((this.Page_listRowDeleted != null)) {
+                    this.Page_listRowDeleted(this, new Page_listRowChangeEvent(((Page_listRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1606,14 +1606,14 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.Page_infoRowDeleting != null)) {
-                    this.Page_infoRowDeleting(this, new Page_infoRowChangeEvent(((Page_infoRow)(e.Row)), e.Action));
+                if ((this.Page_listRowDeleting != null)) {
+                    this.Page_listRowDeleting(this, new Page_listRowChangeEvent(((Page_listRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemovePage_infoRow(Page_infoRow row) {
+            public void RemovePage_listRow(Page_listRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -1640,7 +1640,7 @@ namespace ComicSpider {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "Page_infoDataTable";
+                attribute2.FixedValue = "Page_listDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -1760,25 +1760,25 @@ namespace ComicSpider {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class Vol_infoRow : global::System.Data.DataRow {
+        public partial class Volume_listRow : global::System.Data.DataRow {
             
-            private Vol_infoDataTable tableVol_info;
+            private Volume_listDataTable tableVolume_list;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal Vol_infoRow(global::System.Data.DataRowBuilder rb) : 
+            internal Volume_listRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableVol_info = ((Vol_infoDataTable)(this.Table));
+                this.tableVolume_list = ((Volume_listDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string Url {
                 get {
-                    return ((string)(this[this.tableVol_info.UrlColumn]));
+                    return ((string)(this[this.tableVolume_list.UrlColumn]));
                 }
                 set {
-                    this[this.tableVol_info.UrlColumn] = value;
+                    this[this.tableVolume_list.UrlColumn] = value;
                 }
             }
             
@@ -1787,14 +1787,14 @@ namespace ComicSpider {
             public string Name {
                 get {
                     try {
-                        return ((string)(this[this.tableVol_info.NameColumn]));
+                        return ((string)(this[this.tableVolume_list.NameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'Vol_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'Volume_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableVol_info.NameColumn] = value;
+                    this[this.tableVolume_list.NameColumn] = value;
                 }
             }
             
@@ -1803,14 +1803,14 @@ namespace ComicSpider {
             public string State {
                 get {
                     try {
-                        return ((string)(this[this.tableVol_info.StateColumn]));
+                        return ((string)(this[this.tableVolume_list.StateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'State\' in table \'Vol_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'State\' in table \'Volume_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableVol_info.StateColumn] = value;
+                    this[this.tableVolume_list.StateColumn] = value;
                 }
             }
             
@@ -1819,14 +1819,14 @@ namespace ComicSpider {
             public string Parent_url {
                 get {
                     try {
-                        return ((string)(this[this.tableVol_info.Parent_urlColumn]));
+                        return ((string)(this[this.tableVolume_list.Parent_urlColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_url\' in table \'Vol_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_url\' in table \'Volume_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableVol_info.Parent_urlColumn] = value;
+                    this[this.tableVolume_list.Parent_urlColumn] = value;
                 }
             }
             
@@ -1835,14 +1835,14 @@ namespace ComicSpider {
             public string Parent_name {
                 get {
                     try {
-                        return ((string)(this[this.tableVol_info.Parent_nameColumn]));
+                        return ((string)(this[this.tableVolume_list.Parent_nameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_name\' in table \'Vol_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_name\' in table \'Volume_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableVol_info.Parent_nameColumn] = value;
+                    this[this.tableVolume_list.Parent_nameColumn] = value;
                 }
             }
             
@@ -1851,14 +1851,14 @@ namespace ComicSpider {
             public int Index {
                 get {
                     try {
-                        return ((int)(this[this.tableVol_info.IndexColumn]));
+                        return ((int)(this[this.tableVolume_list.IndexColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Index\' in table \'Vol_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Index\' in table \'Volume_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableVol_info.IndexColumn] = value;
+                    this[this.tableVolume_list.IndexColumn] = value;
                 }
             }
             
@@ -1867,14 +1867,14 @@ namespace ComicSpider {
             public string Cookie {
                 get {
                     try {
-                        return ((string)(this[this.tableVol_info.CookieColumn]));
+                        return ((string)(this[this.tableVolume_list.CookieColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Cookie\' in table \'Vol_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Cookie\' in table \'Volume_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableVol_info.CookieColumn] = value;
+                    this[this.tableVolume_list.CookieColumn] = value;
                 }
             }
             
@@ -1882,83 +1882,83 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public System.DateTime Data_time {
                 get {
-                    return ((global::System.DateTime)(this[this.tableVol_info.Data_timeColumn]));
+                    return ((global::System.DateTime)(this[this.tableVolume_list.Data_timeColumn]));
                 }
                 set {
-                    this[this.tableVol_info.Data_timeColumn] = value;
+                    this[this.tableVolume_list.Data_timeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsNameNull() {
-                return this.IsNull(this.tableVol_info.NameColumn);
+                return this.IsNull(this.tableVolume_list.NameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetNameNull() {
-                this[this.tableVol_info.NameColumn] = global::System.Convert.DBNull;
+                this[this.tableVolume_list.NameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsStateNull() {
-                return this.IsNull(this.tableVol_info.StateColumn);
+                return this.IsNull(this.tableVolume_list.StateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetStateNull() {
-                this[this.tableVol_info.StateColumn] = global::System.Convert.DBNull;
+                this[this.tableVolume_list.StateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsParent_urlNull() {
-                return this.IsNull(this.tableVol_info.Parent_urlColumn);
+                return this.IsNull(this.tableVolume_list.Parent_urlColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetParent_urlNull() {
-                this[this.tableVol_info.Parent_urlColumn] = global::System.Convert.DBNull;
+                this[this.tableVolume_list.Parent_urlColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsParent_nameNull() {
-                return this.IsNull(this.tableVol_info.Parent_nameColumn);
+                return this.IsNull(this.tableVolume_list.Parent_nameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetParent_nameNull() {
-                this[this.tableVol_info.Parent_nameColumn] = global::System.Convert.DBNull;
+                this[this.tableVolume_list.Parent_nameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsIndexNull() {
-                return this.IsNull(this.tableVol_info.IndexColumn);
+                return this.IsNull(this.tableVolume_list.IndexColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetIndexNull() {
-                this[this.tableVol_info.IndexColumn] = global::System.Convert.DBNull;
+                this[this.tableVolume_list.IndexColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsCookieNull() {
-                return this.IsNull(this.tableVol_info.CookieColumn);
+                return this.IsNull(this.tableVolume_list.CookieColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetCookieNull() {
-                this[this.tableVol_info.CookieColumn] = global::System.Convert.DBNull;
+                this[this.tableVolume_list.CookieColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -2019,25 +2019,25 @@ namespace ComicSpider {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class Page_infoRow : global::System.Data.DataRow {
+        public partial class Page_listRow : global::System.Data.DataRow {
             
-            private Page_infoDataTable tablePage_info;
+            private Page_listDataTable tablePage_list;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal Page_infoRow(global::System.Data.DataRowBuilder rb) : 
+            internal Page_listRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tablePage_info = ((Page_infoDataTable)(this.Table));
+                this.tablePage_list = ((Page_listDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string Url {
                 get {
-                    return ((string)(this[this.tablePage_info.UrlColumn]));
+                    return ((string)(this[this.tablePage_list.UrlColumn]));
                 }
                 set {
-                    this[this.tablePage_info.UrlColumn] = value;
+                    this[this.tablePage_list.UrlColumn] = value;
                 }
             }
             
@@ -2046,14 +2046,14 @@ namespace ComicSpider {
             public string Name {
                 get {
                     try {
-                        return ((string)(this[this.tablePage_info.NameColumn]));
+                        return ((string)(this[this.tablePage_list.NameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'Page_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'Page_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablePage_info.NameColumn] = value;
+                    this[this.tablePage_list.NameColumn] = value;
                 }
             }
             
@@ -2062,14 +2062,14 @@ namespace ComicSpider {
             public string State {
                 get {
                     try {
-                        return ((string)(this[this.tablePage_info.StateColumn]));
+                        return ((string)(this[this.tablePage_list.StateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'State\' in table \'Page_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'State\' in table \'Page_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablePage_info.StateColumn] = value;
+                    this[this.tablePage_list.StateColumn] = value;
                 }
             }
             
@@ -2078,14 +2078,14 @@ namespace ComicSpider {
             public string Parent_url {
                 get {
                     try {
-                        return ((string)(this[this.tablePage_info.Parent_urlColumn]));
+                        return ((string)(this[this.tablePage_list.Parent_urlColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_url\' in table \'Page_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_url\' in table \'Page_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablePage_info.Parent_urlColumn] = value;
+                    this[this.tablePage_list.Parent_urlColumn] = value;
                 }
             }
             
@@ -2094,14 +2094,14 @@ namespace ComicSpider {
             public string Parent_name {
                 get {
                     try {
-                        return ((string)(this[this.tablePage_info.Parent_nameColumn]));
+                        return ((string)(this[this.tablePage_list.Parent_nameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_name\' in table \'Page_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_name\' in table \'Page_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablePage_info.Parent_nameColumn] = value;
+                    this[this.tablePage_list.Parent_nameColumn] = value;
                 }
             }
             
@@ -2110,14 +2110,14 @@ namespace ComicSpider {
             public int Index {
                 get {
                     try {
-                        return ((int)(this[this.tablePage_info.IndexColumn]));
+                        return ((int)(this[this.tablePage_list.IndexColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Index\' in table \'Page_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Index\' in table \'Page_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablePage_info.IndexColumn] = value;
+                    this[this.tablePage_list.IndexColumn] = value;
                 }
             }
             
@@ -2126,14 +2126,14 @@ namespace ComicSpider {
             public string Cookie {
                 get {
                     try {
-                        return ((string)(this[this.tablePage_info.CookieColumn]));
+                        return ((string)(this[this.tablePage_list.CookieColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Cookie\' in table \'Page_info\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Cookie\' in table \'Page_list\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tablePage_info.CookieColumn] = value;
+                    this[this.tablePage_list.CookieColumn] = value;
                 }
             }
             
@@ -2141,83 +2141,83 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public System.DateTime Data_time {
                 get {
-                    return ((global::System.DateTime)(this[this.tablePage_info.Data_timeColumn]));
+                    return ((global::System.DateTime)(this[this.tablePage_list.Data_timeColumn]));
                 }
                 set {
-                    this[this.tablePage_info.Data_timeColumn] = value;
+                    this[this.tablePage_list.Data_timeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsNameNull() {
-                return this.IsNull(this.tablePage_info.NameColumn);
+                return this.IsNull(this.tablePage_list.NameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetNameNull() {
-                this[this.tablePage_info.NameColumn] = global::System.Convert.DBNull;
+                this[this.tablePage_list.NameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsStateNull() {
-                return this.IsNull(this.tablePage_info.StateColumn);
+                return this.IsNull(this.tablePage_list.StateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetStateNull() {
-                this[this.tablePage_info.StateColumn] = global::System.Convert.DBNull;
+                this[this.tablePage_list.StateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsParent_urlNull() {
-                return this.IsNull(this.tablePage_info.Parent_urlColumn);
+                return this.IsNull(this.tablePage_list.Parent_urlColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetParent_urlNull() {
-                this[this.tablePage_info.Parent_urlColumn] = global::System.Convert.DBNull;
+                this[this.tablePage_list.Parent_urlColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsParent_nameNull() {
-                return this.IsNull(this.tablePage_info.Parent_nameColumn);
+                return this.IsNull(this.tablePage_list.Parent_nameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetParent_nameNull() {
-                this[this.tablePage_info.Parent_nameColumn] = global::System.Convert.DBNull;
+                this[this.tablePage_list.Parent_nameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsIndexNull() {
-                return this.IsNull(this.tablePage_info.IndexColumn);
+                return this.IsNull(this.tablePage_list.IndexColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetIndexNull() {
-                this[this.tablePage_info.IndexColumn] = global::System.Convert.DBNull;
+                this[this.tablePage_list.IndexColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsCookieNull() {
-                return this.IsNull(this.tablePage_info.CookieColumn);
+                return this.IsNull(this.tablePage_list.CookieColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetCookieNull() {
-                this[this.tablePage_info.CookieColumn] = global::System.Convert.DBNull;
+                this[this.tablePage_list.CookieColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -2259,22 +2259,22 @@ namespace ComicSpider {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class Vol_infoRowChangeEvent : global::System.EventArgs {
+        public class Volume_listRowChangeEvent : global::System.EventArgs {
             
-            private Vol_infoRow eventRow;
+            private Volume_listRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoRowChangeEvent(Vol_infoRow row, global::System.Data.DataRowAction action) {
+            public Volume_listRowChangeEvent(Volume_listRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Vol_infoRow Row {
+            public Volume_listRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -2327,22 +2327,22 @@ namespace ComicSpider {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class Page_infoRowChangeEvent : global::System.EventArgs {
+        public class Page_listRowChangeEvent : global::System.EventArgs {
             
-            private Page_infoRow eventRow;
+            private Page_listRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoRowChangeEvent(Page_infoRow row, global::System.Data.DataRowAction action) {
+            public Page_listRowChangeEvent(Page_listRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_infoRow Row {
+            public Page_listRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -2616,7 +2616,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString1;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2843,7 +2843,7 @@ namespace ComicSpider.App_dataTableAdapters {
     [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
         ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-    public partial class Vol_infoTableAdapter : global::System.ComponentModel.Component {
+    public partial class Volume_listTableAdapter : global::System.ComponentModel.Component {
         
         private global::System.Data.SQLite.SQLiteDataAdapter _adapter;
         
@@ -2857,7 +2857,7 @@ namespace ComicSpider.App_dataTableAdapters {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public Vol_infoTableAdapter() {
+        public Volume_listTableAdapter() {
             this.ClearBeforeFill = true;
         }
         
@@ -2954,7 +2954,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter = new global::System.Data.SQLite.SQLiteDataAdapter();
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
-            tableMapping.DataSetTable = "Vol_info";
+            tableMapping.DataSetTable = "Volume_list";
             tableMapping.ColumnMappings.Add("Url", "Url");
             tableMapping.ColumnMappings.Add("Name", "Name");
             tableMapping.ColumnMappings.Add("State", "State");
@@ -2966,7 +2966,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Vol_info] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Volume_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             global::System.Data.SQLite.SQLiteParameter param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -3068,9 +3068,9 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(param);
             this._adapter.InsertCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [Vol_info] ([Url], [Name], [State], [Parent_url], [Parent_name], [Ind" +
-                "ex], [Cookie], [Data_time]) VALUES (@Url, @Name, @State, @Parent_url, @Parent_na" +
-                "me, @Index, @Cookie, @Data_time)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [Volume_list] ([Url], [Name], [State], [Parent_url], [Parent_name], [" +
+                "Index], [Cookie], [Data_time]) VALUES (@Url, @Name, @State, @Parent_url, @Parent" +
+                "_name, @Index, @Cookie, @Data_time)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -3116,7 +3116,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(param);
             this._adapter.UpdateCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Vol_info] SET [Url] = @Url, [Name] = @Name, [State] = @State, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Index] = @Index, [Cookie] = @Cookie, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Volume_list] SET [Url] = @Url, [Name] = @Name, [State] = @State, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Index] = @Index, [Cookie] = @Cookie, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -3264,7 +3264,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString1;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3274,7 +3274,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._commandCollection[0] = new global::System.Data.SQLite.SQLiteCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT [Url], [Name], [State], [Parent_url], [Parent_name], [Index], [Cookie], [D" +
-                "ata_time] FROM [Vol_info]";
+                "ata_time] FROM [Volume_list]";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -3282,7 +3282,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(App_data.Vol_infoDataTable dataTable) {
+        public virtual int Fill(App_data.Volume_listDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -3295,9 +3295,9 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual App_data.Vol_infoDataTable GetData() {
+        public virtual App_data.Volume_listDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            App_data.Vol_infoDataTable dataTable = new App_data.Vol_infoDataTable();
+            App_data.Volume_listDataTable dataTable = new App_data.Volume_listDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -3305,7 +3305,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(App_data.Vol_infoDataTable dataTable) {
+        public virtual int Update(App_data.Volume_listDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
@@ -3313,7 +3313,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         public virtual int Update(App_data dataSet) {
-            return this.Adapter.Update(dataSet, "Vol_info");
+            return this.Adapter.Update(dataSet, "Volume_list");
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3824,7 +3824,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString1;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4023,7 +4023,7 @@ namespace ComicSpider.App_dataTableAdapters {
     [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
         ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
     [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-    public partial class Page_infoTableAdapter : global::System.ComponentModel.Component {
+    public partial class Page_listTableAdapter : global::System.ComponentModel.Component {
         
         private global::System.Data.SQLite.SQLiteDataAdapter _adapter;
         
@@ -4037,7 +4037,7 @@ namespace ComicSpider.App_dataTableAdapters {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public Page_infoTableAdapter() {
+        public Page_listTableAdapter() {
             this.ClearBeforeFill = true;
         }
         
@@ -4134,7 +4134,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter = new global::System.Data.SQLite.SQLiteDataAdapter();
             global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
             tableMapping.SourceTable = "Table";
-            tableMapping.DataSetTable = "Page_info";
+            tableMapping.DataSetTable = "Page_list";
             tableMapping.ColumnMappings.Add("Url", "Url");
             tableMapping.ColumnMappings.Add("Name", "Name");
             tableMapping.ColumnMappings.Add("State", "State");
@@ -4146,7 +4146,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Page_info] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Page_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             global::System.Data.SQLite.SQLiteParameter param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -4248,7 +4248,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(param);
             this._adapter.InsertCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [Page_info] ([Url], [Name], [State], [Parent_url], [Parent_name], [In" +
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [Page_list] ([Url], [Name], [State], [Parent_url], [Parent_name], [In" +
                 "dex], [Cookie], [Data_time]) VALUES (@Url, @Name, @State, @Parent_url, @Parent_n" +
                 "ame, @Index, @Cookie, @Data_time)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
@@ -4296,7 +4296,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(param);
             this._adapter.UpdateCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Page_info] SET [Url] = @Url, [Name] = @Name, [State] = @State, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Index] = @Index, [Cookie] = @Cookie, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Page_list] SET [Url] = @Url, [Name] = @Name, [State] = @State, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Index] = @Index, [Cookie] = @Cookie, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Cookie = 1 AND [Cookie] IS NULL) OR ([Cookie] = @Original_Cookie)) AND ([Data_time] = @Original_Data_time))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -4444,7 +4444,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.AppConnectionString1;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4454,7 +4454,7 @@ namespace ComicSpider.App_dataTableAdapters {
             this._commandCollection[0] = new global::System.Data.SQLite.SQLiteCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT [Url], [Name], [State], [Parent_url], [Parent_name], [Index], [Cookie], [D" +
-                "ata_time] FROM [Page_info]";
+                "ata_time] FROM [Page_list]";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -4462,7 +4462,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
-        public virtual int Fill(App_data.Page_infoDataTable dataTable) {
+        public virtual int Fill(App_data.Page_listDataTable dataTable) {
             this.Adapter.SelectCommand = this.CommandCollection[0];
             if ((this.ClearBeforeFill == true)) {
                 dataTable.Clear();
@@ -4475,9 +4475,9 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
-        public virtual App_data.Page_infoDataTable GetData() {
+        public virtual App_data.Page_listDataTable GetData() {
             this.Adapter.SelectCommand = this.CommandCollection[0];
-            App_data.Page_infoDataTable dataTable = new App_data.Page_infoDataTable();
+            App_data.Page_listDataTable dataTable = new App_data.Page_listDataTable();
             this.Adapter.Fill(dataTable);
             return dataTable;
         }
@@ -4485,7 +4485,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
-        public virtual int Update(App_data.Page_infoDataTable dataTable) {
+        public virtual int Update(App_data.Page_listDataTable dataTable) {
             return this.Adapter.Update(dataTable);
         }
         
@@ -4493,7 +4493,7 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         public virtual int Update(App_data dataSet) {
-            return this.Adapter.Update(dataSet, "Page_info");
+            return this.Adapter.Update(dataSet, "Page_list");
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4809,11 +4809,11 @@ namespace ComicSpider.App_dataTableAdapters {
         
         private Error_logTableAdapter _error_logTableAdapter;
         
-        private Vol_infoTableAdapter _vol_infoTableAdapter;
+        private Volume_listTableAdapter _volume_listTableAdapter;
         
         private Key_valueTableAdapter _key_valueTableAdapter;
         
-        private Page_infoTableAdapter _page_infoTableAdapter;
+        private Page_listTableAdapter _page_listTableAdapter;
         
         private bool _backupDataSetBeforeUpdate;
         
@@ -4849,12 +4849,12 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.ComponentModel.EditorAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterManagerPropertyEditor, Microso" +
             "ft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3" +
             "a", "System.Drawing.Design.UITypeEditor")]
-        public Vol_infoTableAdapter Vol_infoTableAdapter {
+        public Volume_listTableAdapter Volume_listTableAdapter {
             get {
-                return this._vol_infoTableAdapter;
+                return this._volume_listTableAdapter;
             }
             set {
-                this._vol_infoTableAdapter = value;
+                this._volume_listTableAdapter = value;
             }
         }
         
@@ -4877,12 +4877,12 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.ComponentModel.EditorAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterManagerPropertyEditor, Microso" +
             "ft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3" +
             "a", "System.Drawing.Design.UITypeEditor")]
-        public Page_infoTableAdapter Page_infoTableAdapter {
+        public Page_listTableAdapter Page_listTableAdapter {
             get {
-                return this._page_infoTableAdapter;
+                return this._page_listTableAdapter;
             }
             set {
-                this._page_infoTableAdapter = value;
+                this._page_listTableAdapter = value;
             }
         }
         
@@ -4909,17 +4909,17 @@ namespace ComicSpider.App_dataTableAdapters {
                             && (this._error_logTableAdapter.Connection != null))) {
                     return this._error_logTableAdapter.Connection;
                 }
-                if (((this._vol_infoTableAdapter != null) 
-                            && (this._vol_infoTableAdapter.Connection != null))) {
-                    return this._vol_infoTableAdapter.Connection;
+                if (((this._volume_listTableAdapter != null) 
+                            && (this._volume_listTableAdapter.Connection != null))) {
+                    return this._volume_listTableAdapter.Connection;
                 }
                 if (((this._key_valueTableAdapter != null) 
                             && (this._key_valueTableAdapter.Connection != null))) {
                     return this._key_valueTableAdapter.Connection;
                 }
-                if (((this._page_infoTableAdapter != null) 
-                            && (this._page_infoTableAdapter.Connection != null))) {
-                    return this._page_infoTableAdapter.Connection;
+                if (((this._page_listTableAdapter != null) 
+                            && (this._page_listTableAdapter.Connection != null))) {
+                    return this._page_listTableAdapter.Connection;
                 }
                 return null;
             }
@@ -4937,13 +4937,13 @@ namespace ComicSpider.App_dataTableAdapters {
                 if ((this._error_logTableAdapter != null)) {
                     count = (count + 1);
                 }
-                if ((this._vol_infoTableAdapter != null)) {
+                if ((this._volume_listTableAdapter != null)) {
                     count = (count + 1);
                 }
                 if ((this._key_valueTableAdapter != null)) {
                     count = (count + 1);
                 }
-                if ((this._page_infoTableAdapter != null)) {
+                if ((this._page_listTableAdapter != null)) {
                     count = (count + 1);
                 }
                 return count;
@@ -4966,12 +4966,12 @@ namespace ComicSpider.App_dataTableAdapters {
                     allChangedRows.AddRange(updatedRows);
                 }
             }
-            if ((this._page_infoTableAdapter != null)) {
-                global::System.Data.DataRow[] updatedRows = dataSet.Page_info.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
+            if ((this._page_listTableAdapter != null)) {
+                global::System.Data.DataRow[] updatedRows = dataSet.Page_list.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
                 updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
                 if (((updatedRows != null) 
                             && (0 < updatedRows.Length))) {
-                    result = (result + this._page_infoTableAdapter.Update(updatedRows));
+                    result = (result + this._page_listTableAdapter.Update(updatedRows));
                     allChangedRows.AddRange(updatedRows);
                 }
             }
@@ -4984,12 +4984,12 @@ namespace ComicSpider.App_dataTableAdapters {
                     allChangedRows.AddRange(updatedRows);
                 }
             }
-            if ((this._vol_infoTableAdapter != null)) {
-                global::System.Data.DataRow[] updatedRows = dataSet.Vol_info.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
+            if ((this._volume_listTableAdapter != null)) {
+                global::System.Data.DataRow[] updatedRows = dataSet.Volume_list.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
                 updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
                 if (((updatedRows != null) 
                             && (0 < updatedRows.Length))) {
-                    result = (result + this._vol_infoTableAdapter.Update(updatedRows));
+                    result = (result + this._volume_listTableAdapter.Update(updatedRows));
                     allChangedRows.AddRange(updatedRows);
                 }
             }
@@ -5011,11 +5011,11 @@ namespace ComicSpider.App_dataTableAdapters {
                     allAddedRows.AddRange(addedRows);
                 }
             }
-            if ((this._page_infoTableAdapter != null)) {
-                global::System.Data.DataRow[] addedRows = dataSet.Page_info.Select(null, null, global::System.Data.DataViewRowState.Added);
+            if ((this._page_listTableAdapter != null)) {
+                global::System.Data.DataRow[] addedRows = dataSet.Page_list.Select(null, null, global::System.Data.DataViewRowState.Added);
                 if (((addedRows != null) 
                             && (0 < addedRows.Length))) {
-                    result = (result + this._page_infoTableAdapter.Update(addedRows));
+                    result = (result + this._page_listTableAdapter.Update(addedRows));
                     allAddedRows.AddRange(addedRows);
                 }
             }
@@ -5027,11 +5027,11 @@ namespace ComicSpider.App_dataTableAdapters {
                     allAddedRows.AddRange(addedRows);
                 }
             }
-            if ((this._vol_infoTableAdapter != null)) {
-                global::System.Data.DataRow[] addedRows = dataSet.Vol_info.Select(null, null, global::System.Data.DataViewRowState.Added);
+            if ((this._volume_listTableAdapter != null)) {
+                global::System.Data.DataRow[] addedRows = dataSet.Volume_list.Select(null, null, global::System.Data.DataViewRowState.Added);
                 if (((addedRows != null) 
                             && (0 < addedRows.Length))) {
-                    result = (result + this._vol_infoTableAdapter.Update(addedRows));
+                    result = (result + this._volume_listTableAdapter.Update(addedRows));
                     allAddedRows.AddRange(addedRows);
                 }
             }
@@ -5045,11 +5045,11 @@ namespace ComicSpider.App_dataTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private int UpdateDeletedRows(App_data dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
-            if ((this._vol_infoTableAdapter != null)) {
-                global::System.Data.DataRow[] deletedRows = dataSet.Vol_info.Select(null, null, global::System.Data.DataViewRowState.Deleted);
+            if ((this._volume_listTableAdapter != null)) {
+                global::System.Data.DataRow[] deletedRows = dataSet.Volume_list.Select(null, null, global::System.Data.DataViewRowState.Deleted);
                 if (((deletedRows != null) 
                             && (0 < deletedRows.Length))) {
-                    result = (result + this._vol_infoTableAdapter.Update(deletedRows));
+                    result = (result + this._volume_listTableAdapter.Update(deletedRows));
                     allChangedRows.AddRange(deletedRows);
                 }
             }
@@ -5061,11 +5061,11 @@ namespace ComicSpider.App_dataTableAdapters {
                     allChangedRows.AddRange(deletedRows);
                 }
             }
-            if ((this._page_infoTableAdapter != null)) {
-                global::System.Data.DataRow[] deletedRows = dataSet.Page_info.Select(null, null, global::System.Data.DataViewRowState.Deleted);
+            if ((this._page_listTableAdapter != null)) {
+                global::System.Data.DataRow[] deletedRows = dataSet.Page_list.Select(null, null, global::System.Data.DataViewRowState.Deleted);
                 if (((deletedRows != null) 
                             && (0 < deletedRows.Length))) {
-                    result = (result + this._page_infoTableAdapter.Update(deletedRows));
+                    result = (result + this._page_listTableAdapter.Update(deletedRows));
                     allChangedRows.AddRange(deletedRows);
                 }
             }
@@ -5121,8 +5121,8 @@ namespace ComicSpider.App_dataTableAdapters {
                 throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
                         "tring.");
             }
-            if (((this._vol_infoTableAdapter != null) 
-                        && (this.MatchTableAdapterConnection(this._vol_infoTableAdapter.Connection) == false))) {
+            if (((this._volume_listTableAdapter != null) 
+                        && (this.MatchTableAdapterConnection(this._volume_listTableAdapter.Connection) == false))) {
                 throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
                         "tring.");
             }
@@ -5131,8 +5131,8 @@ namespace ComicSpider.App_dataTableAdapters {
                 throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
                         "tring.");
             }
-            if (((this._page_infoTableAdapter != null) 
-                        && (this.MatchTableAdapterConnection(this._page_infoTableAdapter.Connection) == false))) {
+            if (((this._page_listTableAdapter != null) 
+                        && (this.MatchTableAdapterConnection(this._page_listTableAdapter.Connection) == false))) {
                 throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
                         "tring.");
             }
@@ -5177,13 +5177,13 @@ namespace ComicSpider.App_dataTableAdapters {
                         adaptersWithAcceptChangesDuringUpdate.Add(this._error_logTableAdapter.Adapter);
                     }
                 }
-                if ((this._vol_infoTableAdapter != null)) {
-                    revertConnections.Add(this._vol_infoTableAdapter, this._vol_infoTableAdapter.Connection);
-                    this._vol_infoTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(workConnection));
-                    this._vol_infoTableAdapter.Transaction = ((global::System.Data.SQLite.SQLiteTransaction)(workTransaction));
-                    if (this._vol_infoTableAdapter.Adapter.AcceptChangesDuringUpdate) {
-                        this._vol_infoTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
-                        adaptersWithAcceptChangesDuringUpdate.Add(this._vol_infoTableAdapter.Adapter);
+                if ((this._volume_listTableAdapter != null)) {
+                    revertConnections.Add(this._volume_listTableAdapter, this._volume_listTableAdapter.Connection);
+                    this._volume_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(workConnection));
+                    this._volume_listTableAdapter.Transaction = ((global::System.Data.SQLite.SQLiteTransaction)(workTransaction));
+                    if (this._volume_listTableAdapter.Adapter.AcceptChangesDuringUpdate) {
+                        this._volume_listTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
+                        adaptersWithAcceptChangesDuringUpdate.Add(this._volume_listTableAdapter.Adapter);
                     }
                 }
                 if ((this._key_valueTableAdapter != null)) {
@@ -5195,13 +5195,13 @@ namespace ComicSpider.App_dataTableAdapters {
                         adaptersWithAcceptChangesDuringUpdate.Add(this._key_valueTableAdapter.Adapter);
                     }
                 }
-                if ((this._page_infoTableAdapter != null)) {
-                    revertConnections.Add(this._page_infoTableAdapter, this._page_infoTableAdapter.Connection);
-                    this._page_infoTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(workConnection));
-                    this._page_infoTableAdapter.Transaction = ((global::System.Data.SQLite.SQLiteTransaction)(workTransaction));
-                    if (this._page_infoTableAdapter.Adapter.AcceptChangesDuringUpdate) {
-                        this._page_infoTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
-                        adaptersWithAcceptChangesDuringUpdate.Add(this._page_infoTableAdapter.Adapter);
+                if ((this._page_listTableAdapter != null)) {
+                    revertConnections.Add(this._page_listTableAdapter, this._page_listTableAdapter.Connection);
+                    this._page_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(workConnection));
+                    this._page_listTableAdapter.Transaction = ((global::System.Data.SQLite.SQLiteTransaction)(workTransaction));
+                    if (this._page_listTableAdapter.Adapter.AcceptChangesDuringUpdate) {
+                        this._page_listTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
+                        adaptersWithAcceptChangesDuringUpdate.Add(this._page_listTableAdapter.Adapter);
                     }
                 }
                 // 
@@ -5266,17 +5266,17 @@ namespace ComicSpider.App_dataTableAdapters {
                     this._error_logTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._error_logTableAdapter]));
                     this._error_logTableAdapter.Transaction = null;
                 }
-                if ((this._vol_infoTableAdapter != null)) {
-                    this._vol_infoTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._vol_infoTableAdapter]));
-                    this._vol_infoTableAdapter.Transaction = null;
+                if ((this._volume_listTableAdapter != null)) {
+                    this._volume_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._volume_listTableAdapter]));
+                    this._volume_listTableAdapter.Transaction = null;
                 }
                 if ((this._key_valueTableAdapter != null)) {
                     this._key_valueTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._key_valueTableAdapter]));
                     this._key_valueTableAdapter.Transaction = null;
                 }
-                if ((this._page_infoTableAdapter != null)) {
-                    this._page_infoTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._page_infoTableAdapter]));
-                    this._page_infoTableAdapter.Transaction = null;
+                if ((this._page_listTableAdapter != null)) {
+                    this._page_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._page_listTableAdapter]));
+                    this._page_listTableAdapter.Transaction = null;
                 }
                 if ((0 < adaptersWithAcceptChangesDuringUpdate.Count)) {
                     global::System.Data.Common.DataAdapter[] adapters = new System.Data.Common.DataAdapter[adaptersWithAcceptChangesDuringUpdate.Count];
