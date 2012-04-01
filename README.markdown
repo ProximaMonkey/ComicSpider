@@ -1,13 +1,15 @@
 Just a personal tool.
 
 Maybe use mono will make the project more open, but now windows only.
-I provide a programmable interface to control the search behavior of producer: [Jint](http://jint.codeplex.com/).
+I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).
+VC++ runtime is required for Lua, I put it in the ComicSpider/Asset/vcredist_x86.exe
 
 Techniques required
 
 * C#, .NET3.5, WPF, http
 * SQLite
 * html5, css3, js, jQuery
+* Lua
 
 # Spider main work flow
 There are two main task queues:
@@ -24,7 +26,7 @@ File downloader threads will simply download files in the file info queue.
 Most unpredictable part is the producer part. Every site has is way handling with info presentation.
 But most sites has a same routine:
 
-1. Load js controller
+1. Load lua controller
 2. Volume list
 3. Page list
 

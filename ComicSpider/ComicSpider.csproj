@@ -56,7 +56,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="Jint, Version=0.9.2.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL" />
+    <Reference Include="LuaInterface, Version=2.0.0.16708, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -75,20 +75,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="App_data.xsd.cs">
-      <DependentUpon>App_data.xsd.xsd</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="App_data.xsd.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>App_data.xsd.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Browser.xaml.cs">
+    <Compile Include="Contorl\Browser.xaml.cs">
       <DependentUpon>Browser.xaml</DependentUpon>
     </Compile>
     <Compile Include="Class\ys.common.cs" />
-    <Page Include="Browser.xaml">
+    <Page Include="Contorl\Browser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -106,6 +97,18 @@
     <Compile Include="Class\Spider.cs" />
     <Compile Include="Contorl\Tray_balloon.xaml.cs">
       <DependentUpon>Tray_balloon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\App_data.cs">
+      <DependentUpon>App_data.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Data\App_data.designer.cs">
+      <DependentUpon>App_data.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Data\App_data1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>App_data.xsd</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -132,16 +135,19 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="App_data.xsd.xsc">
-      <DependentUpon>App_data.xsd.xsd</DependentUpon>
+    <None Include="comic_spider.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="App_data.xsd.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Data\App_data.xsc">
+      <DependentUpon>App_data.xsd</DependentUpon>
+    </None>
+    <None Include="Data\App_data.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>App_data.xsd.Designer.cs</LastGenOutput>
+      <LastGenOutput>App_data1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
-    <None Include="App_data.xsd.xss">
-      <DependentUpon>App_data.xsd.xsd</DependentUpon>
+    <None Include="Data\App_data.xss">
+      <DependentUpon>App_data.xsd</DependentUpon>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -150,17 +156,30 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\lua51.dll" />
+    <None Include="Asset\jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Asset\layout.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Asset\layout.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Asset\layout.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="lua51.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\LuaInterface.dll" />
-    <Content Include="comic_spider.js">
+    <Content Include="vcredist_x86.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Images\ys_16.ico" />
-    <None Include="Audio\msg.wav">
+    <None Include="Asset\msg.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Lib\Hardcodet.Wpf.TaskbarNotification.dll" />
-    <Content Include="Lib\Jint.dll" />
     <Content Include="Lib\System.Data.SQLite.dll" />
     <Resource Include="Images\main_bg.jpg" />
     <Resource Include="Images\Metro-Loading-Blue-100.png" />

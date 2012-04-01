@@ -7,7 +7,7 @@ using System.Threading;
 using ComicSpider;
 using ComicSpider.App_dataTableAdapters;
 using System.Linq;
-using Jint;
+using LuaInterface;
 using System.Text;
 
 namespace ys.Web
@@ -32,7 +32,7 @@ namespace ys.Web
 			Thread thread = new Thread(new ParameterizedThreadStart(Show_volume_list));
 			thread.Name = "Show_volume_list";
 			thread.Start(MainWindow.Main.Settings.Main_url);
-
+			
 			Report("Show volume list...");
 		}
 		public void Async_start(System.Windows.Controls.ItemCollection vol_info_list)
@@ -132,9 +132,14 @@ namespace ys.Web
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
+		private string get_host(string url)
+		{
+			return Regex.Match(url, @"(http://)?(?<host>.+?)/").Groups["host"].Value;
+		}
+
 		private void Load_script()
 		{
-			var sr = new StreamReader(@"comic_spider.js");
+			var sr = new StreamReader(@"comic_spider.lua");
 			script = sr.ReadToEnd();
 			sr.Close();
 		}
@@ -251,18 +256,15 @@ namespace ys.Web
 				}
 
 				#region Create file name
-
-				string file_path = "";
+				string file_name = string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url));
+				string dir = "";
 				Web_src_info parent = file_info.Parent;
 				while ((parent = parent.Parent) != null)
 				{
-					file_path = Path.Combine(parent.Name, file_path);
+					dir = Path.Combine(parent.Name, dir);
 				}
-				file_path = Path.Combine(file_path,
-					string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url))
-				);
-				file_path = Path.Combine(MainWindow.Main.Settings.Root_dir, file_path);
-
+				dir = Path.Combine(MainWindow.Main.Settings.Root_dir, dir);
+				file_name = Path.Combine(dir, file_name);
 				#endregion
 
 				WebClient wc = new WebClient();
@@ -271,10 +273,10 @@ namespace ys.Web
 				wc.Headers.Add("Referer", file_info.Parent.Url);
 				try
 				{
-					wc.DownloadFile(file_info.Url, file_path);
+					wc.DownloadFile(file_info.Url, file_name);
 					byte[] data = wc.DownloadData(file_info.Url);
 
-					FileStream sw = new FileStream(file_path, FileMode.Create);
+					FileStream sw = new FileStream(file_name, FileMode.Create);
 					sw.Write(data, 0, data.Length);
 					sw.Close();
 
@@ -284,6 +286,7 @@ namespace ys.Web
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
 						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
+						Create_display_doc(dir, file_info);
 					}
 					else
 					{
@@ -303,15 +306,47 @@ namespace ys.Web
 					file_info.Parent.State = Web_src_info.State_missed;
 					Log_error(ex, file_info.Url);
 				}
-				finally
-				{
-					MainWindow.Main.Dispatcher.Invoke(
-						new MainWindow.Report_download_progress_delegate(
-							MainWindow.Main.Report_download_progress
-						)
-					);
-				}
+
+				MainWindow.Main.Dispatcher.Invoke(
+					new MainWindow.Report_download_progress_delegate(
+						MainWindow.Main.Report_download_progress
+					)
+				);
 			}
+		}
+
+		private void Create_display_doc(string folder_path, Web_src_info file_info)
+		{
+			string parent_dir = Path.Combine(MainWindow.Main.Settings.Root_dir, file_info.Parent.Parent.Parent.Name);
+			string layout_js = Path.Combine(parent_dir, "layout.js");
+			if(!File.Exists(layout_js))
+			{
+				File.Copy(@"Asset\layout.js", layout_js);
+				File.Copy(@"Asset\jquery.js", Path.Combine(parent_dir, "jquery.js"));
+				File.Copy(@"Asset\layout.css", Path.Combine(parent_dir, "layout.css"));
+			}
+
+			string img_dom_list = "";
+			int index = 0;
+			string[] files = Directory.GetFiles(folder_path);
+			for (int i = 0; i < files.Length; i++)
+			{
+				img_dom_list += string.Format(
+					@"<div class=""img_frame"" index=""{0:D3}"">
+						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
+						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
+					</div>", index++, files.Length, files[i]
+				);
+			}
+			StreamReader sr = new StreamReader(@"Asset\layout.html");
+			string layout_html = sr.ReadToEnd();
+			sr.Close();
+
+			layout_html = layout_html.Replace("<?= img_dom_list ?>", img_dom_list);
+
+			StreamWriter sw = new StreamWriter(Path.Combine(folder_path, "index.html"));
+			sw.Write(layout_html);
+			sw.Close();
 		}
 
 		/// <summary>
@@ -328,20 +363,59 @@ namespace ys.Web
 			string html = "";
 			string host = get_host(src_info.Url);
 
+			Lua lua = new Lua();
+			lua.DoString(script);
+			lua["cs.settings"] = MainWindow.Main.Settings;
+			lua["cs.src_info"] = src_info;
+			lua["cs.info_list"] = info_list;
+
 			WebClient wc = new WebClient();
+			wc.Headers.Add("Accept", "text/html");
+			wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
 			try
 			{
 				html = wc.DownloadString(src_info.Url);
 
-				JintEngine js_engine = create_js_engine();
-				js_engine.SetParameter("settings", MainWindow.Main.Settings);
-				js_engine.SetParameter("html", html);
-				js_engine.SetParameter("src_info", src_info);
-				js_engine.SetParameter("info_list", info_list);
+				lua["cs.html"] = html;
+
+				Func<string, string> find = new Func<string, string>((pattern) =>
+				{
+					return Regex.Match(lua.GetString("cs.html"), pattern).Groups["find"].Value;
+				});
+				lua.RegisterFunction("cs.find", find.Target, find.Method);
+
+				Action<string> filtrate = new Action<string>((pattern) =>
+				{
+					lua["cs.html"] = Regex.Match(lua.GetString("cs.html"), pattern).Groups[0].Value;
+				});
+				lua.RegisterFunction("cs.filtrate", filtrate.Target, filtrate.Method);
+
+				Func<string, string> match = new Func<string, string>((pattern) =>
+				{
+					return Regex.Match(lua.GetString("cs.html"), pattern).Groups["match"].Value;
+				});
+				lua.RegisterFunction("cs.match", match.Target, match.Method);
+
+				Action<string, LuaFunction> matches = new Action<string, LuaFunction>((pattern, step) =>
+				{
+					MatchCollection mc = Regex.Matches(lua.GetString("cs.html"), pattern, RegexOptions.IgnoreCase);
+					for (var i = 0; i < mc.Count; i++)
+					{
+						lua["cs.url"] = mc[i].Groups["url"].Value;
+						lua["cs.name"] = mc[i].Groups["name"].Value.Trim();
+
+						step.Call(i, mc[i].Groups, mc);
+
+						info_list.Add(new Web_src_info(lua.GetString("cs.url"), i, lua.GetString("cs.name"), src_info));
+					}
+				});
+				lua.RegisterFunction("cs.matches", matches.Target, matches.Method);
+
+				lua.RegisterFunction("cs.levenshtein_distance", null, typeof(Common).GetMethod("LevenshteinDistance"));
 
 				foreach (var func in func_list)
 				{
-					js_engine.Run(string.Format("{0}.{1}();", host, func));
+					lua.DoString(string.Format("cs['{0}'].{1}();", host, func));
 				}
 
 				var distinct_list = info_list.Distinct(new Web_src_info.Comparer()).Cast<List<Web_src_info>>();
@@ -356,41 +430,6 @@ namespace ys.Web
 			}
 
 			return info_list;
-		}
-
-		private JintEngine create_js_engine()
-		{
-			JintEngine js_engine = new JintEngine();
-			js_engine.DisableSecurity();
-			js_engine.SetFunction(
-				"levenshtein_distance",
-				new Func<string, string, int>((s, t) => { return ys.Common.LevenshteinDistance(s, t); })
-			);
-			js_engine.SetFunction(
-				"matches",
-				new Func<string, object, MatchCollection>((input, pattern) => { return Regex.Matches(input, pattern.ToString().Trim('/'), RegexOptions.IgnoreCase); })
-			);
-			js_engine.SetFunction("tostr", new Func<string, string>((s) => { return s; }));
-			js_engine.SetFunction(
-				"report",
-				new Action<object>((info) => { Report(info.ToString()); })
-			);
-			js_engine.SetFunction(
-				"web_src_info",
-				new Func<string, double, string, Web_src_info, Web_src_info>((url, index, name, parent) => 
-				{
-					return new Web_src_info(url, (int)index, ys.Common.Format_for_number_sort(name.Trim()), parent);
-				})
-			);
-
-			js_engine.Run(script);
-
-			return js_engine;
-		}
-
-		private string get_host(string url)
-		{
-			return Regex.Match(url, @"(http://)?(.+?)?\.(?<host>.+?)/").Groups["host"].Value.Replace('.', '_');
 		}
 	}
 }

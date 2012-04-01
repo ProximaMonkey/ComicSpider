@@ -58,7 +58,7 @@ namespace ComicSpider
 			if (Try_download_missed_files() == 0)
 			{
 				MediaPlayer mplayer = new MediaPlayer();
-				mplayer.Open(new Uri(@"Audio\msg.wav", UriKind.Relative));
+				mplayer.Open(new Uri(@"Asset\msg.wav", UriKind.Relative));
 				mplayer.Play();
 
 				this.Title = "All completed.";
@@ -68,13 +68,13 @@ namespace ComicSpider
 			}
 		}
 
-		public MainSettings Settings
+		public Main_settings Settings
 		{
 			get { return settings; }
 		}
 
 		private Comic_spider comic_spider;
-		private MainSettings settings;
+		private Main_settings settings;
 		private new string Title
 		{
 			get { return base.Title; }
@@ -113,12 +113,12 @@ namespace ComicSpider
 			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
 			if (data_reader.Read())
 			{
-				settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as MainSettings;
+				settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
 			}
 
 			kv_adpter.Connection.Close();
 
-			if (settings == null) settings = new MainSettings();
+			if (settings == null) settings = new Main_settings();
 
 			txt_main_url.Text = settings.Main_url;
 			txt_dir.Text = settings.Root_dir;
@@ -352,7 +352,7 @@ namespace ComicSpider
 			}
 		}
 
-		private void vol_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void volume_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			Page_list.Items.Clear();
 			foreach (Web_src_info vol in volume_list.SelectedItems)
@@ -363,6 +363,10 @@ namespace ComicSpider
 					Page_list.Items.Add(page);
 				}
 			}
+		}
+		private void volume_list_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			volume_list_SelectionChanged(null, null);
 		}
 
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
@@ -558,9 +562,9 @@ namespace ComicSpider
 	}
 
 	[Serializable]
-	public class MainSettings
+	public class Main_settings
 	{
-		public MainSettings()
+		public Main_settings()
 		{
 			Thread_count = "5";
 		}

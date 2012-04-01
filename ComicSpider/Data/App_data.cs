@@ -1,4 +1,5 @@
-﻿namespace ComicSpider {
+﻿namespace ComicSpider
+{
 	
 	
 	public partial class App_data {

@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace ys
 {
-	public static class Common
+	public class Common
 	{
 		/// <summary>
 		/// Function to get byte array from adpter object

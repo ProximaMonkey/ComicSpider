@@ -74,7 +74,7 @@
 				<ColumnDefinition Width="1.7*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
-			<ListView Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="vol_list_SelectionChanged" GridViewColumnHeader.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp">
+			<ListView Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" GridViewColumnHeader.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"></GridViewColumn>

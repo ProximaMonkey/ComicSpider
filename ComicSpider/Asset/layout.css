@@ -1,0 +1,44 @@
+body {
+	color: #333;
+	font: 14px Verdana;
+	text-align: center;
+	background: #eee;
+	margin: 0;
+}
+
+.img_frame {
+	margin: auto;
+}
+
+.img_frame div {
+	padding-top: 30px;
+}
+
+#url {
+	position: absolute;
+	width: 100%;
+	left: 0;
+}
+
+#container {
+	cursor: move;
+}
+
+#navibar {
+	position: fixed;
+	right: 0;
+	top: 0;
+}
+
+#url, #navibar, .page_num, .page {
+	background: #fff;
+
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+
+	-webkit-box-shadow: 0 1px 3px #777;
+	-moz-box-shadow: 0 1px 3px #777;
+	box-shadow: 0 1px 3px #777;
+	padding: 5px;
+}
