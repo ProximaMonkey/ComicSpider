@@ -130,13 +130,104 @@ namespace ys.Web
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
+		private void Create_display_doc(string folder_path, Web_src_info file_info)
+		{
+			string parent_dir = Path.Combine(MainWindow.Main.Settings.Root_dir, file_info.Parent.Parent.Parent.Name);
+
+			if (!File.Exists(Path.Combine(parent_dir, "layout.js")))
+			{
+				File.Copy(@"Asset\layout.js", Path.Combine(parent_dir, "layout.js"), true);
+				File.Copy(@"Asset\jquery.js", Path.Combine(parent_dir, "jquery.js"), true);
+				File.Copy(@"Asset\layout.css", Path.Combine(parent_dir, "layout.css"), true);
+			}
+
+			string img_dom_list = "";
+			List<string> files = new List<string>();
+			foreach (var pattern in file_types.Values)
+			{
+				files.AddRange(Directory.GetFiles(folder_path, "*" + pattern.ToString()));
+			}
+
+			for (int i = 0; i < files.Count; i++)
+			{
+				img_dom_list += string.Format(
+					@"<div class=""img_frame"" index=""{0:D3}"">
+						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
+						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
+					</div>", i, files.Count, Path.GetFileName(files[i])
+				);
+			}
+			StreamReader sr = new StreamReader(@"Asset\layout.html");
+			string layout_html = sr.ReadToEnd();
+			sr.Close();
+
+			string previous = ".";
+			string next = ".";
+			int vol_index = file_info.Parent.Parent.Index;
+			List<Web_src_info> vol_list = file_info.Parent.Parent.Parent.Children;
+			Web_src_info vol = file_info.Parent.Parent;
+			if (vol_list != null && vol_list.Count > 1)
+			{
+				if (vol_index == vol_list.Count - 1)
+				{
+					if (vol.Name.CompareTo(vol_list[vol_index - 1].Name) > 0)
+						previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+					else
+						next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+				}
+				else if (vol_index == 0)
+				{
+					if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
+						previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+					else
+						next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+				}
+				else if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
+				{
+					previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+					next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+				}
+				else
+				{
+					previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+					next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+				}
+			}
+
+			layout_html = layout_html.Replace("<?= previous ?>", previous + @"\index.html");
+			layout_html = layout_html.Replace("<?= next ?>", next + @"\index.html");
+			layout_html = layout_html.Replace("<?= img_dom_list ?>", img_dom_list);
+
+			StreamWriter sw = new StreamWriter(Path.Combine(folder_path, "index.html"));
+			sw.Write(layout_html);
+			sw.Close();
+		}
+		private void Fix_display_doc(string root_dir)
+		{
+			foreach (var comic_dir in Directory.GetDirectories(root_dir).OrderBy(d => d))
+			{
+				File.Copy(@"Asset\layout.js", Path.Combine(comic_dir, "layout.js"), true);
+				File.Copy(@"Asset\jquery.js", Path.Combine(comic_dir, "jquery.js"), true);
+				File.Copy(@"Asset\layout.css", Path.Combine(comic_dir, "layout.css"), true);
+
+				var volume_dirs = Directory.GetDirectories(comic_dir).OrderBy(d => d);
+				for (int i = 0; i < volume_dirs.Count(); i++)
+				{
+					var files = Directory.GetFiles(volume_dirs.ElementAt(i)).OrderBy(d => d);
+					for (int j = 0; j < files.Count(); j++)
+					{
+
+					}
+				}
+			}
+		}
+
 		private string get_host(string url)
 		{
 			string main = Regex.Match(url, @"(http://)?(?<host>.+?)/").Groups["host"].Value;
 			string[] sections = main.Split('.');
 			return sections[sections.Length - 2] + '.' + sections[sections.Length - 1];
 		}
-
 		private void Load_script()
 		{
 			var sr = new StreamReader(@"comic_spider.lua");
@@ -241,7 +332,64 @@ namespace ys.Web
 				}
 			}
 		}
+		private List<Web_src_info> Get_info_list_from_html(Web_src_info src_info, params string[] func_list)
+		{
+			List<Web_src_info> info_list = new List<Web_src_info>();
+			src_info.Children = info_list;
 
+			string host = get_host(src_info.Url);
+
+			Lua_controller lua_c = new Lua_controller(script);
+			lua_c["lc"] = lua_c;
+			lua_c["settings"] = MainWindow.Main.Settings;
+			lua_c["src_info"] = src_info;
+			lua_c["info_list"] = info_list;
+
+
+			WebClientEx wc = new WebClientEx();
+			wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
+			try
+			{
+				#region Lua script controller
+				bool exists_method = false;
+				foreach (var func in func_list)
+				{
+					exists_method = lua_c.DoString(string.Format("return comic_spider['{0}']['{1}']", host, func))[0] != null;
+				}
+				if (exists_method)
+				{
+					if (lua_c.DoString(string.Format("return comic_spider['{0}']", host))[0] == null)
+						throw new Exception("No controller found for this site.");
+
+					string encoding = lua_c.DoString(string.Format("return comic_spider['{0}']['charset']", host))[0] as string;
+
+					wc.Encoding = System.Text.Encoding.GetEncoding(
+						string.IsNullOrEmpty(encoding) ? "utf-8" : encoding);
+
+					lua_c["html"] = wc.DownloadString(src_info.Url);
+
+					foreach (var func in func_list)
+					{
+						lua_c.DoString(string.Format("comic_spider['{0}']['{1}']();", host, func));
+					}
+
+					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
+				}
+				else
+				{
+					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, src_info));
+					src_info.Cookie = src_info.Parent.Cookie;
+				}
+				#endregion
+			}
+			catch (Exception ex)
+			{
+				if (!(ex is ThreadAbortException))
+					Log_error(ex, src_info.Url);
+			}
+
+			return info_list;
+		}
 		private void Downloader()
 		{
 			Web_src_info file_info;
@@ -316,146 +464,6 @@ namespace ys.Web
 					)
 				);
 			}
-		}
-
-		private void Create_display_doc(string folder_path, Web_src_info file_info)
-		{
-			string parent_dir = Path.Combine(MainWindow.Main.Settings.Root_dir, file_info.Parent.Parent.Parent.Name);
-			string layout_js = Path.Combine(parent_dir, "layout.js");
-			if(!File.Exists(layout_js))
-			{
-				File.Copy(@"Asset\layout.js", layout_js);
-				File.Copy(@"Asset\jquery.js", Path.Combine(parent_dir, "jquery.js"));
-				File.Copy(@"Asset\layout.css", Path.Combine(parent_dir, "layout.css"));
-			}
-
-			string img_dom_list = "";
-			List<string> files = new List<string>();
-			foreach (var pattern in file_types.Values)
-			{
-				files.AddRange(Directory.GetFiles(folder_path, "*" + pattern.ToString()));
-			}
-
-			for (int i = 0; i < files.Count; i++)
-			{
-				img_dom_list += string.Format(
-					@"<div class=""img_frame"" index=""{0:D3}"">
-						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
-						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
-					</div>", i, files.Count, Path.GetFileName(files[i])
-				);
-			}
-			StreamReader sr = new StreamReader(@"Asset\layout.html");
-			string layout_html = sr.ReadToEnd();
-			sr.Close();
-
-			string previous = ".";
-			string next = ".";
-			int vol_index = file_info.Parent.Parent.Index;
-			List<Web_src_info> vol_list = file_info.Parent.Parent.Parent.Children;
-			Web_src_info vol = file_info.Parent.Parent;
-			if (vol_list != null && vol_list.Count > 1)
-			{
-				if (vol_index == vol_list.Count - 1)
-				{
-					if (vol.Name.CompareTo(vol_list[vol_index - 1].Name) > 0)
-						previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-					else
-						next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-				}
-				else if (vol_index == 0)
-				{
-					if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
-						previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-					else
-						next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-				}
-				else if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
-				{
-					previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-					next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-				}
-				else
-				{
-					previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-					next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-				}
-			}
-
-			layout_html = layout_html.Replace("<?= previous ?>", previous + @"\index.html");
-			layout_html = layout_html.Replace("<?= next ?>", next + @"\index.html");
-			layout_html = layout_html.Replace("<?= img_dom_list ?>", img_dom_list);
-
-			StreamWriter sw = new StreamWriter(Path.Combine(folder_path, "index.html"));
-			sw.Write(layout_html);
-			sw.Close();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="src_info"></param>
-		/// <param name="pattern">Regex pattern</param>
-		/// <param name="anchor">Levenshtein Distance anchor</param>
-		/// <param name="threshold">Levenshtein Distance threshold</param>
-		/// <returns></returns>
-		private List<Web_src_info> Get_info_list_from_html(Web_src_info src_info, params string[] func_list)
-		{
-			List<Web_src_info> info_list = new List<Web_src_info>();
-			src_info.Children = info_list;
-
-			string host = get_host(src_info.Url);
-
-			Lua_controller lua_c = new Lua_controller(script);
-			lua_c["lc"] = lua_c;
-			lua_c["settings"] = MainWindow.Main.Settings;
-			lua_c["src_info"] = src_info;
-			lua_c["info_list"] = info_list;
-
-
-			WebClientEx wc = new WebClientEx();
-			wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
-			try
-			{
-				#region Lua script controller
-				bool exists_method = false;
-				foreach (var func in func_list)
-				{
-					exists_method = lua_c.DoString(string.Format("return comic_spider['{0}']['{1}']", host, func))[0] != null;
-				}
-				if (exists_method)
-				{
-					if (lua_c.DoString(string.Format("return comic_spider['{0}']", host))[0] == null)
-						throw new Exception("No controller found for this site.");
-
-					string encoding = lua_c.DoString(string.Format("return comic_spider['{0}']['charset']", host))[0] as string;
-
-					wc.Encoding = System.Text.Encoding.GetEncoding(
-						string.IsNullOrEmpty(encoding) ? "utf-8" : encoding);
-
-					lua_c["html"] = wc.DownloadString(src_info.Url);
-
-					foreach (var func in func_list)
-					{
-						lua_c.DoString(string.Format("comic_spider['{0}']['{1}']();", host, func));
-					}
-
-					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
-				}
-				else
-				{
-					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, src_info));
-					src_info.Cookie = src_info.Parent.Cookie;
-				}
-				#endregion
-			}
-			catch (Exception ex)
-			{
-				if (!(ex is ThreadAbortException))
-					Log_error(ex, src_info.Url);
-			}
-
-			return info_list;
 		}
 
 		private class Lua_controller : Lua
@@ -540,16 +548,6 @@ namespace ys.Web
 			{
 				return Newtonsoft.Json.JsonConvert.DeserializeObject(input);
 			}
-		}
-	}
-
-	public class WebClientEx : WebClient
-	{
-		protected override WebRequest GetWebRequest(Uri address)
-		{
-			HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
-			request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-			return request;
 		}
 	}
 }

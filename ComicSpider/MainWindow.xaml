@@ -36,6 +36,30 @@
 			<MenuItem Header="Open folder" Click="Open_folder_Click" />
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
+		<Storyboard x:Name="sb_working" x:Key="sb_working" RepeatBehavior="Forever">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="img_working">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="180"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:1.4" Value="360" KeySpline="0.32,0.69,1,1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="img_working">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="1.2"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:1.4" Value="1" KeySpline="0.32,0.69,1,1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="img_working">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="1.2"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:1.4" Value="1" KeySpline="0.32,0.69,1,1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="sb_show_working">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="img_working">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="sb_hide_working">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="img_working">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
 	</Window.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -56,9 +80,12 @@
 						<DropShadowEffect Color="#FF4B4B4B" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.7"></DropShadowEffect>
 					</Border.Effect>
 					<StackPanel>
-						<TextBlock Text="Comic Spider" Foreground="Black" />
-						<TextBlock x:Name="txt_main_progress" Foreground="Black" />
-						<TextBlock Text="{Binding ToolTipText}" Foreground="Black" />
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="Comic Spider" Margin="5" Foreground="Black" FontSize="16" />
+							<TextBlock Text="Download volume: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
+							<TextBlock x:Name="txt_main_progress" Text="10/90" Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" />
+						</StackPanel>
+						<TextBox x:Name="txt_console" Text="12345 asil 111111111111" Margin="5" Foreground="#FF405493" Background="{x:Null}" IsReadOnly="True" MaxLines="30" MinLines="1" BorderBrush="{x:Null}" FontFamily="Courier New" />
 					</StackPanel>
 				</Border>
 			</tb:TaskbarIcon.TrayToolTip>
@@ -117,5 +144,15 @@
 			<Button Content="Get List" Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 			<Button Content="Select downloaded" Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" />
 		</StackPanel>
+		<Image x:Name="img_working" Margin="265,0,269,26" Grid.Row="2" Source="Images/running.png" Stretch="Fill" RenderTransformOrigin="0.5,0.5" Opacity="0" Height="100" VerticalAlignment="Bottom">
+			<Image.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform/>
+					<SkewTransform/>
+					<RotateTransform/>
+					<TranslateTransform/>
+				</TransformGroup>
+			</Image.RenderTransform>
+		</Image>
 	</Grid>
 </Window>

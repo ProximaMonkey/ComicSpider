@@ -85,10 +85,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>App_data.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Class\ys.Web.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Contorl\Browser.xaml.cs">
       <DependentUpon>Browser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Class\ys.common.cs" />
+    <Compile Include="Class\ys.Common.cs" />
     <Page Include="Contorl\Browser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -104,9 +107,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Class\Spider.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Class\Spider.cs" />
     <Compile Include="Contorl\Tray_balloon.xaml.cs">
       <DependentUpon>Tray_balloon.xaml</DependentUpon>
     </Compile>

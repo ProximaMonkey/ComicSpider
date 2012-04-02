@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using ComicSpider.App_dataTableAdapters;
 using ys.Web;
+using System.Windows.Media.Animation;
 
 namespace ComicSpider
 {
@@ -42,7 +43,7 @@ namespace ComicSpider
 
 			btn_get_list.IsEnabled = true;
 			btn_start.IsEnabled = true;
-
+			Hide_working();
 		}
 
 		public delegate void Report_progress_delegate(string info);
@@ -64,6 +65,7 @@ namespace ComicSpider
 				Show_balloon();
 				comic_spider.Stop(true);
 				btn_start.Content = "Start";
+				Hide_working();
 			}
 		}
 
@@ -80,13 +82,19 @@ namespace ComicSpider
 			set
 			{
 				base.Title = value;
-				tray.ToolTipText = value;
+				txt_console.Text = value + '\n' + txt_console.Text;
 			}
 		}
 		private Tray_balloon tray_balloon;
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			sb_show_working = Resources["sb_show_working"] as Storyboard;
+			sb_working = Resources["sb_working"] as Storyboard;
+			sb_hide_working = Resources["sb_hide_working"] as Storyboard;
+			sb_working.Begin();
+			sb_working.Pause();
+
 			comic_spider = new Comic_spider();
 			
 			Init_settings();
@@ -193,16 +201,19 @@ namespace ComicSpider
 				btn_get_list.IsEnabled = false;
 
 				comic_spider.Async_start(volume_list.Items);
+				Show_working();
 			}
 			else
 			{
 				btn_start.Content = "Start";
 				btn_get_list.IsEnabled = true;
 				comic_spider.Stop();
+				Hide_working();
 			}
 		}
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
+			Show_working();
 			Save_settings();
 			comic_spider.Async_show_volume_list();
 			btn_get_list.IsEnabled = false;
@@ -249,7 +260,7 @@ namespace ComicSpider
 				if (item.State == Web_src_info.State_downloaded)
 					downloaded++;
 			}
-			txt_main_progress.Text = string.Format("Progress: {0}/{1}", downloaded, volume_list.Items.Count);
+			txt_main_progress.Text = string.Format("{0}/{1}", downloaded, volume_list.Items.Count);
 		}
 		private void ShowHide_window(object sender, RoutedEventArgs e)
 		{
@@ -347,6 +358,20 @@ namespace ComicSpider
 					list_view.Items.RemoveAt(index);
 				}
 			}
+		}
+
+		private Storyboard sb_show_working;
+		private Storyboard sb_working;
+		private Storyboard sb_hide_working;
+		private void Show_working()
+		{
+			sb_show_working.Begin();
+			sb_working.Resume();
+		}
+		private void Hide_working()
+		{
+			sb_hide_working.Begin();
+			sb_working.Pause();
 		}
 
 		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -543,7 +568,7 @@ namespace ComicSpider
 			foreach (Web_src_info vol in volume_list.Items)
 			{
 				if (vol.Children == null) continue;
-				foreach (Web_src_info item in vol.Children)
+				foreach (Web_src_info item in vol.Children.Distinct(new Web_src_info.Comparer()))
 				{
 					page_adapter.Insert(
 											item.Url,
