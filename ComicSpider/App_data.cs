@@ -1,8 +1,7 @@
 ﻿namespace ComicSpider
 {
-	
-	
-	public partial class App_data {
+	public partial class App_data
+	{
 		public static void CheckAndFix()
 		{
 			App_dataTableAdapters.Key_valueTableAdapter da = new App_dataTableAdapters.Key_valueTableAdapter();
@@ -24,21 +23,21 @@ create table if not exists [Error_log] (
 create table if not exists [Volume_list] (
 	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(100),
+	[Index] int,
 	[State] nvarchar(50),
 	[Parent_url] nvarchar(200),
 	[Parent_name] nvarchar(100),
-	[Index] int,
-	[Cookie] text,
+	[Parent_cookie] text,
 	[Data_time] datetime NOT NULL
 );
 create table if not exists [Page_list] (
 	[Url] nvarchar(200) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(100),
+	[Index] int,
 	[State] nvarchar(50),
 	[Parent_url] nvarchar(200),
 	[Parent_name] nvarchar(100),
-	[Index] int,
-	[Cookie] text,
+	[Parent_cookie] text,
 	[Data_time] datetime NOT NULL
 );
 insert or ignore into [Key_value] ([Key], [Value]) values ('Settings', NULL);";

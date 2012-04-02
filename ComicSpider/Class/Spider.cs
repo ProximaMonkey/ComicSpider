@@ -7,6 +7,7 @@ using System.Threading;
 using ComicSpider;
 using ComicSpider.App_dataTableAdapters;
 using LuaInterface;
+using System.Linq;
 
 namespace ys.Web
 {
@@ -33,7 +34,7 @@ namespace ys.Web
 			
 			Report("Show volume list...");
 		}
-		public void Async_start(IEnumerable<Web_src_info> vol_info_list)
+		public void Async_start(System.Collections.IEnumerable vol_info_list)
 		{
 			stopped = false;
 
@@ -86,6 +87,7 @@ namespace ys.Web
 		private object file_queue_lock;
 		private object volume_queue_lock;
 		private List<Thread> thread_list;
+		private LuaTable file_types;
 		private string script;
 
 		private void Show_volume_list(object arg)
@@ -130,7 +132,9 @@ namespace ys.Web
 
 		private string get_host(string url)
 		{
-			return Regex.Match(url, @"(http://)?(?<host>.+?)/").Groups["host"].Value;
+			string main = Regex.Match(url, @"(http://)?(?<host>.+?)/").Groups["host"].Value;
+			string[] sections = main.Split('.');
+			return sections[sections.Length - 2] + '.' + sections[sections.Length - 1];
 		}
 
 		private void Load_script()
@@ -138,6 +142,10 @@ namespace ys.Web
 			var sr = new StreamReader(@"comic_spider.lua");
 			script = sr.ReadToEnd();
 			sr.Close();
+
+			Lua lua = new Lua();
+			lua.DoString(script);
+			file_types = lua.GetTable("comic_spider.file_types");
 		}
 		private List<Web_src_info> Get_volume_list(Web_src_info comic_info)
 		{
@@ -266,7 +274,6 @@ namespace ys.Web
 				WebClient wc = new WebClient();
 				wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
 				wc.Headers.Add("Cookie", file_info.Parent.Cookie);
-				wc.Headers.Add("Referer", file_info.Parent.Url);
 				try
 				{
 					wc.DownloadFile(file_info.Url, file_name);
@@ -323,15 +330,19 @@ namespace ys.Web
 			}
 
 			string img_dom_list = "";
-			int index = 0;
-			string[] files = Directory.GetFiles(folder_path);
-			for (int i = 0; i < files.Length; i++)
+			List<string> files = new List<string>();
+			foreach (var pattern in file_types.Values)
+			{
+				files.AddRange(Directory.GetFiles(folder_path, "*" + pattern.ToString()));
+			}
+
+			for (int i = 0; i < files.Count; i++)
 			{
 				img_dom_list += string.Format(
 					@"<div class=""img_frame"" index=""{0:D3}"">
 						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
 						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
-					</div>", index++, files.Length, Path.GetFileName(files[i])
+					</div>", i, files.Count, Path.GetFileName(files[i])
 				);
 			}
 			StreamReader sr = new StreamReader(@"Asset\layout.html");
@@ -391,73 +402,52 @@ namespace ys.Web
 		private List<Web_src_info> Get_info_list_from_html(Web_src_info src_info, params string[] func_list)
 		{
 			List<Web_src_info> info_list = new List<Web_src_info>();
-			string html = "";
+			src_info.Children = info_list;
+
 			string host = get_host(src_info.Url);
 
-			Lua lua = new Lua();
-			lua.DoString(script);
-			lua["cs.settings"] = MainWindow.Main.Settings;
-			lua["cs.src_info"] = src_info;
-			lua["cs.info_list"] = info_list;
+			Lua_controller lua_c = new Lua_controller(script);
+			lua_c["lc"] = lua_c;
+			lua_c["settings"] = MainWindow.Main.Settings;
+			lua_c["src_info"] = src_info;
+			lua_c["info_list"] = info_list;
 
-			WebClient wc = new WebClient();
-			wc.Headers.Add("Accept", "text/html");
+
+			WebClientEx wc = new WebClientEx();
 			wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
 			try
 			{
-				html = wc.DownloadString(src_info.Url);
-
-				lua["cs.html"] = html;
-
-				Func<string, string> find = new Func<string, string>((pattern) =>
-				{
-					return Regex.Match(lua.GetString("cs.html"), pattern).Groups["find"].Value;
-				});
-				lua.RegisterFunction("cs.find", find.Target, find.Method);
-
-				Action<string> filtrate = new Action<string>((pattern) =>
-				{
-					lua["cs.html"] = Regex.Match(lua.GetString("cs.html"), pattern).Groups[0].Value;
-				});
-				lua.RegisterFunction("cs.filtrate", filtrate.Target, filtrate.Method);
-
-				Func<string, string> match = new Func<string, string>((pattern) =>
-				{
-					return Regex.Match(lua.GetString("cs.html"), pattern).Groups["match"].Value;
-				});
-				lua.RegisterFunction("cs.match", match.Target, match.Method);
-
-				Action<string, LuaFunction> matches = new Action<string, LuaFunction>((pattern, step) =>
-				{
-					MatchCollection mc = Regex.Matches(lua.GetString("cs.html"), pattern, RegexOptions.IgnoreCase);
-					for (var i = 0; i < mc.Count; i++)
-					{
-						lua["cs.url"] = mc[i].Groups["url"].Value;
-						lua["cs.name"] = mc[i].Groups["name"].Value.Trim();
-
-						step.Call(i, mc[i].Groups, mc);
-
-						info_list.Add(
-							new Web_src_info(
-								lua.GetString("cs.url"),
-								i,
-								ys.Common.Format_for_number_sort(lua.GetString("cs.name")),
-								src_info
-							)
-						);
-					}
-				});
-				lua.RegisterFunction("cs.matches", matches.Target, matches.Method);
-
-				lua.RegisterFunction("cs.levenshtein_distance", null, typeof(Common).GetMethod("LevenshteinDistance"));
-
+				#region Lua script controller
+				bool exists_method = false;
 				foreach (var func in func_list)
 				{
-					lua.DoString(string.Format("cs['{0}'].{1}();", host, func));
+					exists_method = lua_c.DoString(string.Format("return comic_spider['{0}']['{1}']", host, func))[0] != null;
 				}
+				if (exists_method)
+				{
+					if (lua_c.DoString(string.Format("return comic_spider['{0}']", host))[0] == null)
+						throw new Exception("No controller found for this site.");
 
-				src_info.Children = info_list;
-				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
+					string encoding = lua_c.DoString(string.Format("return comic_spider['{0}']['charset']", host))[0] as string;
+
+					wc.Encoding = System.Text.Encoding.GetEncoding(
+						string.IsNullOrEmpty(encoding) ? "utf-8" : encoding);
+
+					lua_c["html"] = wc.DownloadString(src_info.Url);
+
+					foreach (var func in func_list)
+					{
+						lua_c.DoString(string.Format("comic_spider['{0}']['{1}']();", host, func));
+					}
+
+					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
+				}
+				else
+				{
+					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, src_info));
+					src_info.Cookie = src_info.Parent.Cookie;
+				}
+				#endregion
 			}
 			catch (Exception ex)
 			{
@@ -466,6 +456,100 @@ namespace ys.Web
 			}
 
 			return info_list;
+		}
+
+		private class Lua_controller : Lua
+		{
+			public Lua_controller(string script)
+			{
+				this.DoString(script);
+			}
+
+			public string find(string pattern)
+			{
+				return Regex.Match(this.GetString("html"), pattern, RegexOptions.IgnoreCase).Groups["find"].Value;
+			}
+			public void filtrate(string pattern)
+			{
+				string html = string.Empty;
+				MatchCollection mc = Regex.Matches(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
+				foreach (Match m in mc)
+				{
+					html += m.Groups[0].Value;
+				}
+				this["html"] = html;
+			}
+			public void fill_list(string pattern, LuaFunction step = null)
+			{
+				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				MatchCollection mc = Regex.Matches(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
+				for (var i = 0; i < mc.Count; i++)
+				{
+					this["url"] = mc[i].Groups["url"].Value;
+					this["name"] = mc[i].Groups["name"].Value.Trim();
+
+					if (string.IsNullOrEmpty(this.GetString("name")))
+						this["name"] = Path.GetFileName(this.GetString("url"));
+
+					if (step != null)
+						(step as LuaFunction).Call(i, mc[i].Groups, mc);
+
+					list.Add(
+						new Web_src_info(
+							this.GetString("url"),
+							i,
+							ys.Common.Format_for_number_sort(this.GetString("name")),
+							this["src_info"] as Web_src_info
+						)
+					);
+				}
+			}
+			public void fill_list(Newtonsoft.Json.Linq.JArray arr, LuaFunction step = null)
+			{
+				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				for (int i = 0; i < arr.Count; i++)
+				{
+					this["url"] = arr[i].ToString();
+					this["name"] = Path.GetFileName(this.GetString("url"));
+
+					if (step != null)
+						(step as LuaFunction).Call(i, arr[i].ToString(), arr);
+
+					list.Add(
+						new Web_src_info(
+							this.GetString("url"),
+							i,
+							ys.Common.Format_for_number_sort(this.GetString("name")),
+							this["src_info"] as Web_src_info
+						)
+					);
+				}
+			}
+
+			public Web_src_info web_src_info(string url, int index, string name, Web_src_info parent = null)
+			{
+				return new Web_src_info(url, index, name, parent);
+			}
+
+			public int levenshtein_distance(string s, string t)
+			{
+				return ys.Common.LevenshteinDistance(s, t);
+			}
+
+			public object json_decode(string input)
+			{
+				return Newtonsoft.Json.JsonConvert.DeserializeObject(input);
+			}
+		}
+	}
+
+	public class WebClientEx : WebClient
+	{
+		protected override WebRequest GetWebRequest(Uri address)
+		{
+			HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
+			request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+			return request;
 		}
 	}
 }

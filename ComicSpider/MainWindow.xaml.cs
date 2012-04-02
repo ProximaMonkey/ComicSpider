@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using ComicSpider.App_dataTableAdapters;
 using ys.Web;
-using System.Windows.Threading;
-using System.IO;
-using System.Windows.Media;
 
 namespace ComicSpider
 {
@@ -95,11 +94,6 @@ namespace ComicSpider
 			Init_page_info_list();
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
-			DispatcherTimer monitor = new DispatcherTimer();
-			monitor.Interval = TimeSpan.FromMinutes(3);
-			monitor.Tick += new EventHandler(Monitor_Tick);
-			monitor.Start();
 		}
 
 		private void Init_settings()
@@ -128,23 +122,32 @@ namespace ComicSpider
 		{
 			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
 			App_data.Volume_listDataTable vol_info_table = vol_adpter.GetData();
+			List<Web_src_info> list = new List<Web_src_info>();
+
 			if (vol_info_table.Count > 0)
 			{
-				List<Web_src_info> list = new List<Web_src_info>();
-
-				foreach (App_data.Volume_listRow row in vol_info_table.Rows)
+				var groups = vol_info_table.GroupBy(v => v.Parent_url);
+				foreach (var group in groups)
 				{
-					Web_src_info src_info = new Web_src_info(
-						row.Url,
-						row.Index,
-						row.Name,
-						new Web_src_info(row.Parent_url, 0, row.Parent_name))
+					Web_src_info comic = null;
+					foreach (App_data.Volume_listRow row in group)
+					{
+						if (comic == null)
 						{
-							State = row.State,
-							Cookie = row.Cookie,
+							comic = new Web_src_info(row.Parent_url, 0, row.Parent_name);
+							comic.Children = new List<Web_src_info>();
+						}
+						Web_src_info src_info = new Web_src_info(
+							row.Url,
+							row.Index,
+							row.Name,
+							comic)
+						{
+							State = row.State
 						};
-					src_info.Children = new List<Web_src_info>();
-					list.Add(src_info);
+						comic.Children.Add(src_info);
+						list.Add(src_info);
+					}
 				}
 				Show_volume_list(list);
 			}
@@ -161,6 +164,9 @@ namespace ComicSpider
 					{
 						if (row.Parent_url == vol.Url)
 						{
+							if (vol.Children == null)
+								vol.Children = new List<Web_src_info>();
+
 							vol.Children.Add(new Web_src_info(
 								row.Url,
 								row.Index,
@@ -168,9 +174,9 @@ namespace ComicSpider
 								vol)
 								{
 									State = row.State,
-									Cookie = row.Cookie,
 								}
 							);
+							vol.Cookie = row.Parent_cookie;
 						}
 					}
 				}
@@ -186,7 +192,7 @@ namespace ComicSpider
 				btn_start.Content = "Stop";
 				btn_get_list.IsEnabled = false;
 
-				comic_spider.Async_start(volume_list.Items.Cast<Web_src_info>());
+				comic_spider.Async_start(volume_list.Items);
 			}
 			else
 			{
@@ -215,7 +221,14 @@ namespace ComicSpider
 		}
 		private void tray_TrayLeftMouseDown(object sender, RoutedEventArgs e)
 		{
-			tray.ContextMenu.IsOpen = true;
+			if (this.Visibility == System.Windows.Visibility.Visible)
+			{
+				this.Visibility = System.Windows.Visibility.Collapsed;
+			}
+			else
+			{
+				this.Visibility = System.Windows.Visibility.Visible;
+			}
 		}
 
 		private void Show_balloon()
@@ -251,10 +264,6 @@ namespace ComicSpider
 				this.ShowInTaskbar = true;
 				this.Activate();
 			}
-		}
-		private void Close(object sender, RoutedEventArgs e)
-		{
-			this.Close();
 		}
 
 		private void Copy_name_Click(object sender, RoutedEventArgs e)
@@ -419,13 +428,11 @@ namespace ComicSpider
 
 		private void Window_Closed(object sender, EventArgs e)
 		{
-			tray.Visibility = System.Windows.Visibility.Collapsed;
+			tray.Dispose();
 
 			comic_spider.Stop();
 
 			Save_all();
-
-			Environment.Exit(0);
 		}
 
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -433,11 +440,6 @@ namespace ComicSpider
 			Exception ex = e.ExceptionObject as Exception;
 			MessageBox.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
 			Window_Closed(null, null);
-		}
-
-		private void Monitor_Tick(object sender, EventArgs e)
-		{
-			Save_all();
 		}
 		private int Try_download_missed_files()
 		{
@@ -513,11 +515,11 @@ namespace ComicSpider
 				vol_adapter.Insert(
 					item.Url,
 					item.Name,
+					item.Index,
 					item.State,
 					item.Parent.Url,
 					item.Parent.Name,
-					item.Index,
-					item.Cookie,
+					item.Parent.Cookie + "",
 					DateTime.Now
 				);
 			}
@@ -546,11 +548,11 @@ namespace ComicSpider
 					page_adapter.Insert(
 											item.Url,
 											item.Name,
+											item.Index,
 											item.State,
 											vol.Url,
 											vol.Name,
-											item.Index,
-											item.Cookie,
+											item.Parent.Cookie + "",
 											DateTime.Now
 										);
 				}

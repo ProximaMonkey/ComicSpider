@@ -21,7 +21,7 @@ namespace UnitTest
 
 		/// <summary>
 		///Gets or sets the test context which provides
-		///information about and functionality for the current test run.
+		///information about and functionality for the current test exists_method.
 		///</summary>
 		public TestContext TestContext
 		{
@@ -39,25 +39,25 @@ namespace UnitTest
 		// 
 		//You can use the following additional attributes as you write your tests:
 		//
-		//Use ClassInitialize to run code before running the first test in the class
+		//Use ClassInitialize to exists_method code before running the first test in the class
 		//[ClassInitialize()]
 		//public static void MyClassInitialize(TestContext testContext)
 		//{
 		//}
 		//
-		//Use ClassCleanup to run code after all tests in adpter class have run
+		//Use ClassCleanup to exists_method code after all tests in adpter class have exists_method
 		//[ClassCleanup()]
 		//public static void MyClassCleanup()
 		//{
 		//}
 		//
-		//Use TestInitialize to run code before running each test
+		//Use TestInitialize to exists_method code before running each test
 		//[TestInitialize()]
 		//public void MyTestInitialize()
 		//{
 		//}
 		//
-		//Use TestCleanup to run code after each test has run
+		//Use TestCleanup to exists_method code after each test has exists_method
 		//[TestCleanup()]
 		//public void MyTestCleanup()
 		//{

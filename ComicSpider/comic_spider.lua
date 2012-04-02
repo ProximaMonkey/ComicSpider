@@ -7,55 +7,106 @@ For more information please see the source code of the CSharp project:
 https://github.com/ysmood/ComicSpider
 
 External functions:
-	int cs.levenshtein_distance(string s, string t):
+	int levenshtein_distance(string s, string t):
 		Get the levenshtein distance between two strings.
 
-	void cs.find(string regex_pattern):
-		CSharp Regex.Matches method. Param pattern will be automatically convert to string.
+	object json_decode(string s):
+		Decode json string.
 
-	void cs.filtrate(string regex_pattern):
-		Reassign cs.html with matched string.
+	string lc:find(string regex_pattern):
+		CSharp Regex.fill_list method. Param pattern will be automatically convert to string.
+		Return the match group which is named 'find'.
 
-	string cs.match(string regex_pattern):
-		Return first matched string.
+	void lc:filtrate(string regex_pattern):
+		Reassign html with matched string.
 
-	void cs.matches(string regex_pattern, function step(index, match_group, match_collection)):
-		Matches all, and loop with a callback function.
+	void lc:fill_list(string regex_pattern, function step(int index, GroupCollection gs, MatchCollection mc)):
+		Matches all, fill info_list with matched url and name, and loop with a callback function.
+		Url match group should named with 'url'.
+		Name match group should named with 'name'.
+		Varialble url and name are visible in step function.
+
+	void lc:fill_list(JsonArray arr, function step(int index, string str, JsonArray arr)):
+		Fill info_list with an array, and loop with a callback function.
+		Varialble url and name are visible in step function.
 
 External objects:
-	Main_settings cs.settings:
+	Main_settings settings:
 		Main settings of Comic Spider.
 
-	string cs.html:
+	string html:
 		Html context of current page.
 
-	Web_src_info cs.src_info:
+	Web_src_info src_info:
 		Information about current page.
 
-	List<Web_src_info> cs.info_list:
+	List<Web_src_info> info_list:
 		link information list of current page.
 --]]
 
-cs =
+comic_spider =
 {
-	['www.mangahere.com'] =
+	file_types = { ".jpg", ".png", ".bmp", ".gif" },
+
+	['default'] =
 	{
+		charset = 'utf-8',
+
 		get_comic_name = function()
-			cs.src_info.Name = cs.find([[<title>(?<find>.+) Manga - .+?</title>]])
 		end,
 
 		get_volume_list = function()
-			cs.filtrate([[class="detail_list"[\s\S]+?/ul]])
-			cs.matches([[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]], function() end)
 		end,
 
 		get_page_list = function()
-			cs.filtrate([[change_page[\s\S]+?/select>]])
-			cs.matches([[value="(?<url>.+?)"]], function() end)
 		end,
 
 		get_file_list = function()
-			cs.matches([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]], function() end)
 		end,
 	},
+
+	['mangahere.com'] =
+	{
+		get_comic_name = function()
+			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
+		end,
+
+		get_volume_list = function()
+			lc:filtrate([[class="detail_list"[\s\S]+?/ul]])
+			lc:fill_list([[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]])
+		end,
+
+		get_page_list = function()
+			lc:filtrate([[change_page[\s\S]+?/select>]])
+			lc:fill_list([[value="(?<url>.+?)"]])
+		end,
+
+		get_file_list = function()
+			lc:fill_list([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]])
+		end,
+	},
+
+	['178.com'] =
+	{
+		get_comic_name = function()
+			src_info.Name = lc:find([[<title>(?<find>.+?)-]])
+		end,
+
+		get_volume_list = function()
+			lc:filtrate([[<div class="cartoon_online_border"[\s\S]+?<div]])
+			lc:fill_list([[href="(?<url>.+?)".*?>(?<name>.+?)</a>]])
+		end,
+
+		get_page_list = function()
+			img_hosts = { 'imgd', 'img' }
+			list = lc:find([[var pages = '(?<find>.+?)';]])
+			lc:fill_list(json_decode(list),
+				function(i, str, arr)
+					n = math.random(#img_hosts)
+					url = 'http://' .. img_hosts[n] .. '.manhua.178.com/' .. str
+				end
+			)
+		end,
+	},
+
 }

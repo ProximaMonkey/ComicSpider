@@ -32,15 +32,5 @@ namespace ComicSpider.Properties {
                 return ((string)(this["AppConnectionString"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("data source=E:\\CSharp\\ComicSpider\\ComicSpider\\bin\\Debug\\App.db")]
-        public string AppConnectionString1 {
-            get {
-                return ((string)(this["AppConnectionString1"]));
-            }
-        }
     }
 }

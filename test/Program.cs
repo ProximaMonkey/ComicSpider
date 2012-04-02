@@ -12,38 +12,33 @@ namespace test
 		static void Main(string[] args)
 		{
 			Program program = new Program();
-
 			Lua lua = new Lua();
-			lua.DoString(@"cs = {}");
 
-			lua["this"] = program;
-			lua["cs.html"] = "asl12dfsdfasdf";
+			lua["lua"] = lua;
 
-			Func<string, string> match = new Func<string, string>((pattern) =>
-			{
-				return Regex.Match(lua.GetString("cs.html"), pattern).Groups[0].Value;
-			});
-			lua.RegisterFunction("cs.match", match.Target, match.Method);
+			Persion jack = new Persion();
+			jack.lua = lua;
+			lua["cs"] = jack;
 
-
+			lua["v"] = 10;
 			lua.DoString(@"
-cs.html = 'ssdf55sf'
-print(cs.match([[\d\d]]))
+cs:m()
 ");
 
 			Console.WriteLine();
 			Console.ReadLine();
 		}
 
-		public void run(string name)
-		{
-		}
 
-		public void run(string name, LuaFunction step = null)
+		private class Persion
 		{
-			for (int i = 0; i < 10; i++)
+			public string name = "Jack";
+			public Lua lua;
+
+			public void m(string m = "")
 			{
-				step.Call(name, i);
+				m += "OK ";
+				Console.WriteLine(lua["v"]);
 			}
 		}
 	}

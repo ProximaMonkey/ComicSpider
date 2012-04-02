@@ -57,6 +57,7 @@
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="LuaInterface, Version=2.0.0.16708, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -75,6 +76,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="App_data.cs">
+      <DependentUpon>App_data.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="App_data.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>App_data.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Contorl\Browser.xaml.cs">
       <DependentUpon>Browser.xaml</DependentUpon>
     </Compile>
@@ -94,21 +104,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Class\Spider.cs" />
-    <Compile Include="Contorl\Tray_balloon.xaml.cs">
-      <DependentUpon>Tray_balloon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\App_data.cs">
-      <DependentUpon>App_data.xsd</DependentUpon>
+    <Compile Include="Class\Spider.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Data\App_data.designer.cs">
-      <DependentUpon>App_data.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\App_data1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>App_data.xsd</DependentUpon>
+    <Compile Include="Contorl\Tray_balloon.xaml.cs">
+      <DependentUpon>Tray_balloon.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -135,19 +135,19 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="App_data.xsc">
+      <DependentUpon>App_data.xsd</DependentUpon>
+    </None>
+    <None Include="App_data.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>App_data.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="App_data.xss">
+      <DependentUpon>App_data.xsd</DependentUpon>
+    </None>
     <None Include="comic_spider.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\App_data.xsc">
-      <DependentUpon>App_data.xsd</DependentUpon>
-    </None>
-    <None Include="Data\App_data.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>App_data1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Data\App_data.xss">
-      <DependentUpon>App_data.xsd</DependentUpon>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -168,6 +168,7 @@
     <None Include="Asset\layout.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Lib\Newtonsoft.Json.dll" />
     <Content Include="lua51.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

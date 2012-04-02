@@ -62,12 +62,6 @@
 					</StackPanel>
 				</Border>
 			</tb:TaskbarIcon.TrayToolTip>
-			<tb:TaskbarIcon.ContextMenu>
-				<ContextMenu>
-					<MenuItem Header="Hide" Click="ShowHide_window" IsCheckable="True"></MenuItem>
-					<MenuItem Header="Close" Click="Close"></MenuItem>
-				</ContextMenu>
-			</tb:TaskbarIcon.ContextMenu>
 		</tb:TaskbarIcon>
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
