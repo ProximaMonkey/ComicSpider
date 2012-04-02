@@ -6,9 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using ComicSpider;
 using ComicSpider.App_dataTableAdapters;
-using System.Linq;
 using LuaInterface;
-using System.Text;
 
 namespace ys.Web
 {
@@ -35,7 +33,7 @@ namespace ys.Web
 			
 			Report("Show volume list...");
 		}
-		public void Async_start(System.Windows.Controls.ItemCollection vol_info_list)
+		public void Async_start(IEnumerable<Web_src_info> vol_info_list)
 		{
 			stopped = false;
 
@@ -101,8 +99,6 @@ namespace ys.Web
 		}
 		private void Log_error(Exception ex, string url = "")
 		{
-			if (ex is ArgumentOutOfRangeException)
-				throw ex;
 			Report(ex.Message);
 
 			try
@@ -149,7 +145,7 @@ namespace ys.Web
 
 			vol_info_list = Get_info_list_from_html(comic_info, "get_comic_name", "get_volume_list");
 
-			Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children == null ? 0 : comic_info.Children.Count);
+			Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children.Count);
 
 			return vol_info_list;
 		}
@@ -335,13 +331,48 @@ namespace ys.Web
 					@"<div class=""img_frame"" index=""{0:D3}"">
 						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
 						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
-					</div>", index++, files.Length, files[i]
+					</div>", index++, files.Length, Path.GetFileName(files[i])
 				);
 			}
 			StreamReader sr = new StreamReader(@"Asset\layout.html");
 			string layout_html = sr.ReadToEnd();
 			sr.Close();
 
+			string previous = ".";
+			string next = ".";
+			int vol_index = file_info.Parent.Parent.Index;
+			List<Web_src_info> vol_list = file_info.Parent.Parent.Parent.Children;
+			Web_src_info vol = file_info.Parent.Parent;
+			if (vol_list != null && vol_list.Count > 1)
+			{
+				if (vol_index == vol_list.Count - 1)
+				{
+					if (vol.Name.CompareTo(vol_list[vol_index - 1].Name) > 0)
+						previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+					else
+						next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+				}
+				else if (vol_index == 0)
+				{
+					if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
+						previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+					else
+						next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+				}
+				else if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
+				{
+					previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+					next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+				}
+				else
+				{
+					previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
+					next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
+				}
+			}
+
+			layout_html = layout_html.Replace("<?= previous ?>", previous + @"\index.html");
+			layout_html = layout_html.Replace("<?= next ?>", next + @"\index.html");
 			layout_html = layout_html.Replace("<?= img_dom_list ?>", img_dom_list);
 
 			StreamWriter sw = new StreamWriter(Path.Combine(folder_path, "index.html"));
@@ -406,7 +437,14 @@ namespace ys.Web
 
 						step.Call(i, mc[i].Groups, mc);
 
-						info_list.Add(new Web_src_info(lua.GetString("cs.url"), i, lua.GetString("cs.name"), src_info));
+						info_list.Add(
+							new Web_src_info(
+								lua.GetString("cs.url"),
+								i,
+								ys.Common.Format_for_number_sort(lua.GetString("cs.name")),
+								src_info
+							)
+						);
 					}
 				});
 				lua.RegisterFunction("cs.matches", matches.Target, matches.Method);
@@ -418,9 +456,7 @@ namespace ys.Web
 					lua.DoString(string.Format("cs['{0}'].{1}();", host, func));
 				}
 
-				var distinct_list = info_list.Distinct(new Web_src_info.Comparer()).Cast<List<Web_src_info>>();
-
-				src_info.Children = distinct_list as List<Web_src_info>;
+				src_info.Children = info_list;
 				src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
 			}
 			catch (Exception ex)

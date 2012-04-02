@@ -162,15 +162,6 @@ function InitUIControl()
 			}
 		}
 	);
-	
-	var m = location.href.match(/((\d+)[^\d]+?)$/);
-	var pre_num = parseInt(m[2], 10) - 1;
-	$('.previous').attr('href',
-		location.href.slice(0, m.index) + pad(pre_num, m[2].length) + location.href.slice(m.index + m[2].length)
-	);
-	$('.next').attr('href',
-		location.href.slice(0, m.index) + pad(pre_num + 2, m[2].length) + location.href.slice(m.index + m[2].length)
-	);
 }
 
 function pad(num, n)

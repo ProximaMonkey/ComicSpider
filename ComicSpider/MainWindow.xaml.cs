@@ -30,7 +30,7 @@ namespace ComicSpider
 		public delegate void Show_vol_list_delegate(List<Web_src_info> list);
 		public void Show_volume_list(List<Web_src_info> list)
 		{
-			foreach (Web_src_info item in list)
+			foreach (Web_src_info item in list.Distinct(new Web_src_info.Comparer()))
 			{
 				foreach (Web_src_info vol in volume_list.Items)
 				{
@@ -186,7 +186,7 @@ namespace ComicSpider
 				btn_start.Content = "Stop";
 				btn_get_list.IsEnabled = false;
 
-				comic_spider.Async_start(volume_list.Items);
+				comic_spider.Async_start(volume_list.Items.Cast<Web_src_info>());
 			}
 			else
 			{
@@ -467,7 +467,7 @@ namespace ComicSpider
 				Show_balloon();
 
 				comic_spider.Stop();
-				comic_spider.Async_start(volume_list.Items);
+				comic_spider.Async_start(volume_list.Items.Cast<Web_src_info>());
 			}
 
 			return all_left;
