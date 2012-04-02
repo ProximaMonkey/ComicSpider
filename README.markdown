@@ -1,5 +1,7 @@
 Just a personal tool.
 
+[Download ComicSpider_1.0.0.0 Bin](https://github.com/downloads/ysmood/ComicSpider/ComicSpider_1.0.0.0.zip)
+
 Maybe use mono will make the project more open, but now windows only.
 I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).
 VC++ runtime is required for Lua, I put it in the ComicSpider/Asset/vcredist_x86.exe
