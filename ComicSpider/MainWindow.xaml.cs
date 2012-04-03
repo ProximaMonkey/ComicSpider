@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using ComicSpider.App_dataTableAdapters;
+using ComicSpider.UserTableAdapters;
 using ys.Web;
 using System.Windows.Media.Animation;
 
@@ -21,7 +21,7 @@ namespace ComicSpider
 		public MainWindow()
 		{
 			InitializeComponent();
-			App_data.CheckAndFix();
+			User.CheckAndFix();
 			Main = this;
 		}
 
@@ -82,7 +82,9 @@ namespace ComicSpider
 			set
 			{
 				base.Title = value;
-				txt_console.Text = value + '\n' + txt_console.Text;
+
+				if (bd_logs.Visibility == Visibility.Visible)
+					txt_console.Text = value + '\n' + txt_console.Text;
 			}
 		}
 		private Tray_balloon tray_balloon;
@@ -129,7 +131,7 @@ namespace ComicSpider
 		private void Init_vol_info_list()
 		{
 			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
-			App_data.Volume_listDataTable vol_info_table = vol_adpter.GetData();
+			User.Volume_listDataTable vol_info_table = vol_adpter.GetData();
 			List<Web_src_info> list = new List<Web_src_info>();
 
 			if (vol_info_table.Count > 0)
@@ -138,7 +140,7 @@ namespace ComicSpider
 				foreach (var group in groups)
 				{
 					Web_src_info comic = null;
-					foreach (App_data.Volume_listRow row in group)
+					foreach (User.Volume_listRow row in group)
 					{
 						if (comic == null)
 						{
@@ -163,7 +165,7 @@ namespace ComicSpider
 		private void Init_page_info_list()
 		{
 			Page_listTableAdapter page_adpter = new Page_listTableAdapter();
-			App_data.Page_listDataTable page_info_table = page_adpter.GetData();
+			User.Page_listDataTable page_info_table = page_adpter.GetData();
 			if (page_info_table.Count > 0)
 			{
 				foreach (Web_src_info vol in volume_list.Items)
@@ -230,16 +232,80 @@ namespace ComicSpider
 				}
 			}
 		}
+		private void btn_hide_window_Click(object sender, RoutedEventArgs e)
+		{
+			this.Visibility = System.Windows.Visibility.Collapsed;
+			tray.Visibility = System.Windows.Visibility.Visible;
+		}
 		private void tray_TrayLeftMouseDown(object sender, RoutedEventArgs e)
 		{
-			if (this.Visibility == System.Windows.Visibility.Visible)
+			this.Visibility = System.Windows.Visibility.Visible;
+			tray.Visibility = System.Windows.Visibility.Collapsed;
+		}
+		private void btn_logs_Click(object sender, RoutedEventArgs e)
+		{
+			if (bd_logs.Visibility == Visibility.Collapsed)
 			{
-				this.Visibility = System.Windows.Visibility.Collapsed;
+				bd_logs.Visibility = Visibility.Visible;
+				(Resources["sb_show_logs"] as Storyboard).Begin();
 			}
 			else
 			{
-				this.Visibility = System.Windows.Visibility.Visible;
+				(Resources["sb_hide_logs"] as Storyboard).Begin();
 			}
+		}
+		private void sb_hide_logs_Completed(object sender, EventArgs e)
+		{
+			bd_logs.Visibility = Visibility.Collapsed;
+			txt_console.Text = "";
+		}
+		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			btn_fix_display_pages.IsEnabled = false;
+
+			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
+			bg_worker.DoWork += (oo,ee) =>
+			{
+				try
+				{
+					comic_spider.Fix_display_pages();
+				}
+				catch (Exception ex)
+				{
+					ee.Result = ex.Message;
+				}
+				ee.Result = "Fix display pages completed.";
+			};
+			bg_worker.RunWorkerCompleted += (oo, ee) =>
+			{
+				MessageBox.Show(this, ee.Result as string);
+				btn_fix_display_pages.IsEnabled = true;
+			};
+			bg_worker.RunWorkerAsync();
+		}
+		private void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			btn_del_display_pages.IsEnabled = false;
+
+			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
+			bg_worker.DoWork += (oo, ee) =>
+			{
+				try
+				{
+					comic_spider.Delete_display_pages();
+				}
+				catch (Exception ex)
+				{
+					ee.Result = ex.Message;
+				}
+				ee.Result = "Delete display pages completed.";
+			};
+			bg_worker.RunWorkerCompleted += (oo, ee) =>
+			{
+				MessageBox.Show(this, ee.Result as string);
+				btn_del_display_pages.IsEnabled = true;
+			};
+			bg_worker.RunWorkerAsync();
 		}
 
 		private void Show_balloon()
@@ -260,7 +326,8 @@ namespace ComicSpider
 				if (item.State == Web_src_info.State_downloaded)
 					downloaded++;
 			}
-			txt_main_progress.Text = string.Format("{0}/{1}", downloaded, volume_list.Items.Count);
+			txt_main_progress.Text = string.Format("{0} / {1}", downloaded, volume_list.Items.Count);
+			tray.ToolTipText = this.Title;
 		}
 		private void ShowHide_window(object sender, RoutedEventArgs e)
 		{
@@ -413,7 +480,7 @@ namespace ComicSpider
 			{
 				list.Add(item);
 			}
-
+			
 			string col_name = header.Column.Header as string;
 			IOrderedEnumerable<Web_src_info> temp_list;
 
@@ -428,12 +495,23 @@ namespace ComicSpider
 			if (header.Column.HeaderTemplate == arrow_up)
 			{
 				header.Column.HeaderTemplate = arrow_down;
-				temp_list = list.OrderByDescending(info => info.GetType().GetProperty(col_name).GetValue(info, null));			
+				temp_list = list.OrderByDescending(info => {
+					if (col_name == "Comic")
+						return info.Parent.Name;
+					else
+						return info.GetType().GetProperty(col_name).GetValue(info, null);
+				});
 			}
 			else
 			{
 				header.Column.HeaderTemplate = arrow_up;
-				temp_list = list.OrderBy(info => info.GetType().GetProperty(col_name).GetValue(info, null));
+				temp_list = list.OrderBy(info =>
+				{
+					if (col_name == "Comic")
+						return info.Parent.Name;
+					else
+						return info.GetType().GetProperty(col_name).GetValue(info, null);
+				});
 			}
 
 
@@ -472,8 +550,7 @@ namespace ComicSpider
 			int missed = 0;
 			foreach (Web_src_info vol in volume_list.Items)
 			{
-				if (vol.State == Web_src_info.State_downloaded ||
-					vol.Children == null)
+				if (vol.Children == null)
 					continue;
 
 				foreach (Web_src_info file in vol.Children)

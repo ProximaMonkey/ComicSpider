@@ -5,7 +5,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using ComicSpider;
-using ComicSpider.App_dataTableAdapters;
 using LuaInterface;
 using System.Linq;
 
@@ -22,6 +21,8 @@ namespace ys.Web
 			file_queue_lock = new object();
 			volume_queue_lock = new object();
 			thread_list = new List<Thread>();
+
+			Load_script();
 		}
 
 		public void Async_show_volume_list()
@@ -81,6 +82,34 @@ namespace ys.Web
 		}
 		public bool Stopped { get { return stopped; } }
 
+		public void Fix_display_pages()
+		{
+			string root_dir = MainWindow.Main.Settings.Root_dir;
+			
+			Delete_display_pages();
+
+			foreach (var comic_dir in Directory.GetDirectories(root_dir))
+			{
+				foreach (var volume_dir in Directory.GetDirectories(comic_dir))
+				{
+					Create_display_page(volume_dir, Path.GetFileName(comic_dir));
+				}
+			}
+		}
+		public void Delete_display_pages()
+		{
+			string root_dir = MainWindow.Main.Settings.Root_dir;
+			List<string> old_files = new List<string>();
+			old_files.AddRange(Directory.GetFiles(root_dir, "layout.js", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "jquery.js", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "layout.css", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "index.html", SearchOption.AllDirectories));
+			foreach (var item in old_files)
+			{
+				File.Delete(item);
+			}
+		}
+
 		private bool stopped;
 		private Queue<Web_src_info> file_queue;
 		private Queue<Web_src_info> volume_queue;
@@ -101,11 +130,11 @@ namespace ys.Web
 		}
 		private void Log_error(Exception ex, string url = "")
 		{
-			Report(ex.Message);
+			Report(ex.Message, url);
 
 			try
 			{
-				Error_logTableAdapter a = new Error_logTableAdapter();
+				ComicSpider.UserTableAdapters.Error_logTableAdapter a = new ComicSpider.UserTableAdapters.Error_logTableAdapter();
 				a.Connection.Open();
 				a.Insert(
 					DateTime.Now,
@@ -118,11 +147,6 @@ namespace ys.Web
 			{
 			}
 		}
-		private void Report(object info)
-		{
-			Console.WriteLine(info);
-			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
-		}
 		private void Report(string format, params object[] arg)
 		{
 			string info = string.Format(format, arg);
@@ -130,9 +154,9 @@ namespace ys.Web
 			MainWindow.Main.Dispatcher.Invoke(new MainWindow.Report_progress_delegate(MainWindow.Main.Report_progress), info);
 		}
 
-		private void Create_display_doc(string folder_path, Web_src_info file_info)
+		private void Create_display_page(string voluem_dir, string comic_name)
 		{
-			string parent_dir = Path.Combine(MainWindow.Main.Settings.Root_dir, file_info.Parent.Parent.Parent.Name);
+			string parent_dir = Path.Combine(MainWindow.Main.Settings.Root_dir, comic_name);
 
 			if (!File.Exists(Path.Combine(parent_dir, "layout.js")))
 			{
@@ -145,81 +169,28 @@ namespace ys.Web
 			List<string> files = new List<string>();
 			foreach (var pattern in file_types.Values)
 			{
-				files.AddRange(Directory.GetFiles(folder_path, "*" + pattern.ToString()));
+				files.AddRange(Directory.GetFiles(voluem_dir, "*" + pattern.ToString()));
 			}
 
 			for (int i = 0; i < files.Count; i++)
 			{
-				img_dom_list += string.Format(
-					@"<div class=""img_frame"" index=""{0:D3}"">
+				img_dom_list += string.Format(@"
+					<div class=""img_frame"" index=""{0:D3}"">
 						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
 						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
-					</div>", i, files.Count, Path.GetFileName(files[i])
+					</div>
+					<hr />", i, files.Count, Path.GetFileName(files[i])
 				);
 			}
 			StreamReader sr = new StreamReader(@"Asset\layout.html");
 			string layout_html = sr.ReadToEnd();
 			sr.Close();
 
-			string previous = ".";
-			string next = ".";
-			int vol_index = file_info.Parent.Parent.Index;
-			List<Web_src_info> vol_list = file_info.Parent.Parent.Parent.Children;
-			Web_src_info vol = file_info.Parent.Parent;
-			if (vol_list != null && vol_list.Count > 1)
-			{
-				if (vol_index == vol_list.Count - 1)
-				{
-					if (vol.Name.CompareTo(vol_list[vol_index - 1].Name) > 0)
-						previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-					else
-						next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-				}
-				else if (vol_index == 0)
-				{
-					if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
-						previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-					else
-						next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-				}
-				else if (vol.Name.CompareTo(vol_list[vol_index + 1].Name) > 0)
-				{
-					previous = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-					next = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-				}
-				else
-				{
-					previous = Path.Combine(parent_dir, vol_list[vol_index - 1].Name);
-					next = Path.Combine(parent_dir, vol_list[vol_index + 1].Name);
-				}
-			}
-
-			layout_html = layout_html.Replace("<?= previous ?>", previous + @"\index.html");
-			layout_html = layout_html.Replace("<?= next ?>", next + @"\index.html");
 			layout_html = layout_html.Replace("<?= img_dom_list ?>", img_dom_list);
 
-			StreamWriter sw = new StreamWriter(Path.Combine(folder_path, "index.html"));
+			StreamWriter sw = new StreamWriter(Path.Combine(voluem_dir, "index.html"));
 			sw.Write(layout_html);
 			sw.Close();
-		}
-		private void Fix_display_doc(string root_dir)
-		{
-			foreach (var comic_dir in Directory.GetDirectories(root_dir).OrderBy(d => d))
-			{
-				File.Copy(@"Asset\layout.js", Path.Combine(comic_dir, "layout.js"), true);
-				File.Copy(@"Asset\jquery.js", Path.Combine(comic_dir, "jquery.js"), true);
-				File.Copy(@"Asset\layout.css", Path.Combine(comic_dir, "layout.css"), true);
-
-				var volume_dirs = Directory.GetDirectories(comic_dir).OrderBy(d => d);
-				for (int i = 0; i < volume_dirs.Count(); i++)
-				{
-					var files = Directory.GetFiles(volume_dirs.ElementAt(i)).OrderBy(d => d);
-					for (int j = 0; j < files.Count(); j++)
-					{
-
-					}
-				}
-			}
 		}
 
 		private string get_host(string url)
@@ -437,14 +408,21 @@ namespace ys.Web
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
 						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
-						Create_display_doc(dir, file_info);
+						try
+						{
+							Create_display_page(dir, file_info.Parent.Parent.Parent.Name);
+						}
+						catch (Exception ex)
+						{
+							Log_error(ex, file_info.Url);
+						}
 					}
 					else
 					{
-						file_info.Parent.Parent.State = string.Format("{0}/{1}", downloaded, file_info.Parent.Parent.Count);
+						file_info.Parent.Parent.State = string.Format("{0} / {1}", downloaded, file_info.Parent.Parent.Count);
 					}
 
-					Report("{0}: {1}/{2} , Downloaded: {3}",
+					Report("{0}: {1} / {2} , Downloaded: {3}",
 						file_info.Parent.Parent.Name,
 						downloaded,
 						file_info.Parent.Parent.Count,
@@ -487,8 +465,10 @@ namespace ys.Web
 				}
 				this["html"] = html;
 			}
+
 			public void fill_list(string pattern, LuaFunction step = null)
 			{
+				Web_src_info src_info = this["src_info"] as Web_src_info;
 				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
 				MatchCollection mc = Regex.Matches(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
 				for (var i = 0; i < mc.Count; i++)
@@ -499,6 +479,9 @@ namespace ys.Web
 					if (string.IsNullOrEmpty(this.GetString("name")))
 						this["name"] = Path.GetFileName(this.GetString("url"));
 
+					if (!string.IsNullOrEmpty(src_info.Name))
+						this["name"] = this.GetString("name").Replace(src_info.Name, "");
+
 					if (step != null)
 						(step as LuaFunction).Call(i, mc[i].Groups, mc);
 
@@ -507,18 +490,22 @@ namespace ys.Web
 							this.GetString("url"),
 							i,
 							ys.Common.Format_for_number_sort(this.GetString("name")),
-							this["src_info"] as Web_src_info
+							src_info
 						)
 					);
 				}
 			}
 			public void fill_list(Newtonsoft.Json.Linq.JArray arr, LuaFunction step = null)
 			{
+				Web_src_info src_info = this["src_info"] as Web_src_info;
 				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
 				for (int i = 0; i < arr.Count; i++)
 				{
 					this["url"] = arr[i].ToString();
 					this["name"] = Path.GetFileName(this.GetString("url"));
+
+					if (!string.IsNullOrEmpty(src_info.Name))
+						this["name"] = this.GetString("name").Replace(src_info.Name, "");
 
 					if (step != null)
 						(step as LuaFunction).Call(i, arr[i].ToString(), arr);
@@ -528,7 +515,7 @@ namespace ys.Web
 							this.GetString("url"),
 							i,
 							ys.Common.Format_for_number_sort(this.GetString("name")),
-							this["src_info"] as Web_src_info
+							src_info
 						)
 					);
 				}

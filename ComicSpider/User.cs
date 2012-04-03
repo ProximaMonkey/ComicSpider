@@ -1,10 +1,10 @@
 ﻿namespace ComicSpider
 {
-	public partial class App_data
+	public partial class User
 	{
 		public static void CheckAndFix()
 		{
-			App_dataTableAdapters.Key_valueTableAdapter da = new App_dataTableAdapters.Key_valueTableAdapter();
+			UserTableAdapters.Key_valueTableAdapter da = new UserTableAdapters.Key_valueTableAdapter();
 
 			da.Adapter.SelectCommand = da.Connection.CreateCommand();
 			da.Adapter.SelectCommand.CommandText =
