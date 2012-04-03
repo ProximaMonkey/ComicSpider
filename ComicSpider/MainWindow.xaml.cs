@@ -196,7 +196,7 @@ namespace ComicSpider
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
-			Save_settings();
+			Save_all();
 
 			if (btn_start.Content.ToString() == "Start")
 			{
