@@ -437,8 +437,8 @@ namespace ys.Web
 				}
 
 				MainWindow.Main.Dispatcher.Invoke(
-					new MainWindow.Report_download_progress_delegate(
-						MainWindow.Main.Report_download_progress
+					new MainWindow.Report_volume_progress_delegate(
+						MainWindow.Main.Report_volume_progress
 					)
 				);
 			}

@@ -52,8 +52,8 @@ namespace ComicSpider
 			this.Title = info;
 		}
 
-		public delegate void Report_download_progress_delegate();
-		public void Report_download_progress()
+		public delegate void Report_volume_progress_delegate();
+		public void Report_volume_progress()
 		{
 			if (Try_download_missed_files() == 0)
 			{
@@ -67,6 +67,7 @@ namespace ComicSpider
 				btn_start.Content = "Start";
 				Hide_working();
 			}
+			Save_all();
 		}
 
 		public Main_settings Settings
