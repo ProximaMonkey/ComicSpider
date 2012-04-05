@@ -6,13 +6,14 @@
 <title>Comic Display</title>
 </head>
 <body>
-	<div id="url">
+	<div id="title">
 		Use Ctrl and Shift to navigate.
 	</div>
 	<div id="navibar">
-		Volume: <a class="previous" href="#!">Previous</a> /
-		<a class="next" href="#!">Next</a> ,
-		Page mode : <a class="page-mode" href="#!"></a>
+		Volume: <a class="previous" href="#!" title="previous volume">previous</a> /
+		<a class="next" href="#!" title="next volume">next</a> ,
+		Page mode : <a class="page-mode" href="#!" title="Whether to split page"></a> ,
+		Auto size : <a class="auto-size" href="#!" title="Whether to fit page width">on</a>
 	</div>
 	<div id="container">
 		<?= img_dom_list ?>

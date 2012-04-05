@@ -23,9 +23,13 @@ namespace test
 			lua["v"] = 10;
 			lua.DoString(@"
 cs:m()
+set = 
+{
+	['123'] = true
+}
 ");
 
-			Console.WriteLine();
+			Console.WriteLine(lua.DoString("return set['123']")[0]);
 			Console.ReadLine();
 		}
 

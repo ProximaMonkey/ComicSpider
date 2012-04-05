@@ -2,9 +2,13 @@
 Comic Spider controller.
 April 2012 y.s.
 
-Most of the .NET assemblies are visible. You can control any detail behavior of the spider.
+Most of the .NET assemblies are visible. You can control most behaviors of the spider.
 For more information please see the source code of the CSharp project:
 https://github.com/ysmood/ComicSpider
+Becareful when you use functions out of the list below,
+it will be hard to debug without the Visual Studio :)
+
+******************************************************************************************
 
 External functions:
 	int levenshtein_distance(string s, string t):
@@ -30,7 +34,21 @@ External functions:
 		Fill info_list with an array, and loop with a callback function.
 		Varialble url and name are visible in step function.
 
+	Web_src_info web_src_info(string url, int index, string name, Web_src_info parent = null):
+		create a new instance Web_src_info.
+
+******************************************************************************************
+
 External objects:
+	Lua_controller lc:
+		Current lua controller.
+
+	Comic_spider cs:
+		Current comic_spider.
+
+	Dashboard dashboard:
+		The main dashboard window.
+
 	Main_settings settings:
 		Main settings of Comic Spider.
 
@@ -46,11 +64,14 @@ External objects:
 
 comic_spider =
 {
-	file_types = { ".jpg", ".png", ".bmp", ".gif" },
+	file_types = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" },
 
+	-- Default settings here. Name is long, but meaningful :)
 	['default'] =
 	{
 		charset = 'utf-8',
+
+		is_volume_order_desc = true,
 
 		get_comic_name = function()
 		end,
@@ -65,6 +86,7 @@ comic_spider =
 		end,
 	},
 
+	-- A sample english manga site.
 	['mangahere.com'] =
 	{
 		get_comic_name = function()
@@ -86,8 +108,11 @@ comic_spider =
 		end,
 	},
 
+	-- 这是个具有代表意义的中文漫画站点。
 	['178.com'] =
 	{
+		is_volume_order_desc = false,	-- 这个站点列表排序竟然最新的没有放到最前面。
+
 		get_comic_name = function()
 			src_info.Name = lc:find([[<title>(?<find>.+?)-]])
 		end,
