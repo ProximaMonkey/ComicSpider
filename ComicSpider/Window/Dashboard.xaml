@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:ComicSpider="clr-namespace:ComicSpider"
 		x:Class="ComicSpider.Dashboard"
-		Title="Comic Spider Dashboard" MinHeight="500" MinWidth="650" Height="500" Width="650" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
+		Title="Comic Spider Dashboard" MinHeight="500" MinWidth="700" Height="500" Width="650" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
 	<Window.Resources>
 		<DataTemplate x:Key="HeaderTemplateArrowUp">
 			<DockPanel>
@@ -25,10 +25,10 @@
 		</DataTemplate>
 		<ContextMenu x:Key="view_list_menu">
 			<MenuItem Header="View volume" Click="View_volume_Click" />
+			<MenuItem Header="Open folder" Click="Open_folder_Click" />
 			<MenuItem Header="Copy Name" Click="Copy_name_Click" />
 			<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 			<MenuItem Header="Open Url" Click="Open_url_Click" />
-			<MenuItem Header="Open folder" Click="Open_folder_Click" />
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
 		<Storyboard x:Name="sb_working" x:Key="sb_working" RepeatBehavior="Forever">
@@ -125,13 +125,14 @@
 			<TextBox x:Name="txt_thread" Grid.Row="1" Grid.Column="3" Margin="5" MaxLength="3" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5"/>
 		</Grid>
 		<StackPanel Orientation="Horizontal" Grid.Row="1">
-			<Button Content="Start" x:Name="btn_start" Click="btn_start_Click" IsEnabled="False" Margin="5" Padding="5,0" Background="White" BorderBrush="#FF7C7C7C" />
-			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" Background="White" BorderBrush="#FF7C7C7C" />
-			<Button Content="Select downloaded" x:Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" Background="White" BorderBrush="#FF7C7C7C" />
-			<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Background="White" BorderBrush="#FF7C7C7C" Click="btn_logs_Click" />
-			<Button Content="Fix display pages" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Background="White" BorderBrush="#FF7C7C7C" Click="btn_fix_display_pages_Click" />
-			<Button Content="Del display pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Background="White" BorderBrush="#FF7C7C7C" Click="btn_del_display_pages_Click" />
-			<Button Content="Controller" x:Name="btn_controller" Margin="5" Padding="5,0" Background="White" BorderBrush="#FF7C7C7C" Click="btn_controller_Click" />
+			<Button Content="Start" x:Name="btn_start" Click="btn_start_Click" IsEnabled="False" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" />
+			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" />
+			<Button Content="Select downloaded" x:Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" />
+			<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" Click="btn_logs_Click" />
+			<Button Content="Fix display pages" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" Click="btn_fix_display_pages_Click" />
+			<Button Content="Del display pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" Click="btn_del_display_pages_Click" />
+			<Button Content="Controller" x:Name="btn_controller" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" Click="btn_controller_Click" />
+			<Button Content="Help" x:Name="btn_help" Margin="5" Padding="5,0" Background="#8CFFFFFF" BorderBrush="#6B7C7C7C" Click="btn_help_Click" />
 		</StackPanel>
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
@@ -143,7 +144,7 @@
 					<GridView>
 						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State}"></GridViewColumn>
 						<GridViewColumn Header="Comic" Width="150" DisplayMemberBinding="{Binding Parent.Name}"/>
-						<GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
+						<GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}"/>
 					</GridView>
 				</ListView.View>
 			</ListView>
@@ -162,7 +163,7 @@
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"/>
-						<GridViewColumn Header="Url" Width="130">
+						<GridViewColumn Header="Url" Width="150">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"/>

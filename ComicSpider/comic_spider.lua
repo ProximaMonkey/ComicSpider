@@ -137,4 +137,19 @@ comic_spider =
 		end,
 	},
 
+	['narutom.com'] =
+	{
+		get_comic_name = function()
+		end,
+
+		get_volume_list = function()
+		end,
+
+		get_page_list = function()
+		end,
+
+		get_file_list = function()
+		end,
+	},
+
 }

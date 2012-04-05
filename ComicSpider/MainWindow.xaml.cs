@@ -31,23 +31,41 @@ namespace ComicSpider
 		{
 			InitializeComponent();
 
+			User.CheckAndFix();
+
 			Main = this;
 
-			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
-			kv_adpter.Adapter.SelectCommand = kv_adpter.Connection.CreateCommand();
-			kv_adpter.Adapter.SelectCommand.CommandText = "select * from Key_value where Key = 'Settings' limit 0,1";
-
-			kv_adpter.Connection.Open();
-
-			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
-			if (data_reader.Read())
+			try
 			{
-				Main_settings settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
-				if (settings != null)
-					cb_latest_volume_only.IsChecked = settings.Latest_volume_only;
-			}
+				#region Load settings
+				Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
+				kv_adpter.Adapter.SelectCommand = kv_adpter.Connection.CreateCommand();
+				kv_adpter.Adapter.SelectCommand.CommandText = "select * from Key_value where Key = 'Settings' limit 0,1";
 
-			kv_adpter.Connection.Close();
+				kv_adpter.Connection.Open();
+
+				SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
+				if (data_reader.Read())
+				{
+					Main_settings settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
+					if (settings != null)
+						cb_latest_volume_only.IsChecked = settings.Latest_volume_only;
+				}
+
+				kv_adpter.Connection.Close();
+				#endregion
+
+				// Binding global hot key.
+				global_hotkey = new ManagedWinapi.Hotkey();
+				global_hotkey.WindowsKey = true;
+				global_hotkey.KeyCode = System.Windows.Forms.Keys.C;
+				global_hotkey.HotkeyPressed += new EventHandler(global_hotkey_HotkeyPressed);
+				global_hotkey.Enabled = true;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
 		}
 
 		public static MainWindow Main;
@@ -81,6 +99,14 @@ namespace ComicSpider
 			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
 			{
 				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
+				try
+				{
+					System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
 			});
 			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 8000);
 			tray_balloon.Text = info;
@@ -93,6 +119,7 @@ namespace ComicSpider
 		/***************************** Private ********************************/
 
 		private Tray_balloon tray_balloon;
+		private ManagedWinapi.Hotkey global_hotkey;
 
 		private void Window_DragEnter(object sender, DragEventArgs e)
 		{
@@ -112,7 +139,6 @@ namespace ComicSpider
 
 		private void btn_hide_Click(object sender, RoutedEventArgs e)
 		{
-			Dashboard.Instance.Visibility = System.Windows.Visibility.Collapsed;
 			this.Visibility = System.Windows.Visibility.Collapsed;
 			tray.Visibility = System.Windows.Visibility.Visible;
 		}
@@ -123,12 +149,17 @@ namespace ComicSpider
 			Dashboard.Instance.Activate();
 		}
 
-		private void btn_hide_window_Click(object sender, RoutedEventArgs e)
+		private void cb_topmost_Click(object sender, RoutedEventArgs e)
 		{
-			this.Visibility = System.Windows.Visibility.Collapsed;
-			tray.Visibility = System.Windows.Visibility.Visible;
+			this.Topmost = !this.Topmost;
 		}
-
+		private void global_hotkey_HotkeyPressed(object sender, EventArgs e)
+		{
+			if (this.Visibility == System.Windows.Visibility.Visible)
+				btn_hide_Click(null, null);
+			else
+				tray_TrayLeftMouseDown(null, null);
+		}
 		private void tray_TrayLeftMouseDown(object sender, RoutedEventArgs e)
 		{
 			this.Visibility = System.Windows.Visibility.Visible;
@@ -145,9 +176,23 @@ namespace ComicSpider
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			tray.Dispose();
-			if (Dashboard.Initialized)
+			if (Dashboard.Is_initialized)
 			{
 				Dashboard.Instance.Close();
+			}
+		}
+
+		private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			switch(e.Key)
+			{
+				case System.Windows.Input.Key.Escape:
+					btn_hide_Click(null, null);
+					break;
+
+				case System.Windows.Input.Key.T:
+					cb_topmost_Click(null, null);
+					break;
 			}
 		}
 	}

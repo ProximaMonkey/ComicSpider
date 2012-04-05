@@ -22,12 +22,12 @@ namespace ComicSpider
 				if (instance == null)
 				{
 					instance = new Dashboard();
-					Initialized = true;
+					Is_initialized = true;
 				}
 				return instance;
 			}
 		}
-		public static bool Initialized = false;
+		public static bool Is_initialized = false;
 
 		public void Get_volume_list(string url)
 		{
@@ -69,8 +69,15 @@ namespace ComicSpider
 			{
 				base.Title = value;
 
-				if (bd_logs.Visibility == Visibility.Visible)
-					txt_console.Text = value + '\n' + txt_console.Text;
+				if (txt_console.LineCount >= Main_settings.Main.Max_console_line)
+				{
+					txt_console.Text = txt_console.Text.Remove(
+												txt_console.GetCharacterIndexFromLineIndex(
+													Main_settings.Main.Max_console_line / 2
+												)
+											);
+				}
+				txt_console.Text = value + '\n' + txt_console.Text;
 			}
 		}
 		public bool All_downloaded { get; set; }
@@ -95,7 +102,7 @@ namespace ComicSpider
 			Hide_working();
 
 			if (instance != null &&
-				!this.IsActive)
+				this.Visibility != System.Windows.Visibility.Visible)
 			{
 				if (comic_spider.Stopped)
 				{
@@ -156,7 +163,6 @@ namespace ComicSpider
 		private Dashboard()
 		{
 			InitializeComponent();
-			User.CheckAndFix();
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
@@ -194,6 +200,8 @@ namespace ComicSpider
 			txt_main_url.Text = Main_settings.Main.Main_url;
 			txt_dir.Text = Main_settings.Main.Root_dir;
 			txt_thread.Text = Main_settings.Main.Thread_count;
+
+			Main_settings.Main.Max_console_line = 300;
 		}
 		private void Init_vol_info_list()
 		{
@@ -325,7 +333,6 @@ namespace ComicSpider
 		private void sb_hide_logs_Completed(object sender, EventArgs e)
 		{
 			bd_logs.Visibility = Visibility.Collapsed;
-			txt_console.Text = "";
 		}
 
 		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
@@ -532,6 +539,17 @@ namespace ComicSpider
 				}
 			}
 		}
+		private void btn_help_Click(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start("Comic Spider.chm");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+		}
 
 		private Storyboard sb_show_working;
 		private Storyboard sb_working;
@@ -700,6 +718,8 @@ namespace ComicSpider
 
 			foreach (Web_src_info item in volume_list.Items)
 			{
+				if (item.Parent == null) continue;
+
 				vol_adapter.Insert(
 					item.Url,
 					item.Name,

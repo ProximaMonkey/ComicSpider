@@ -1,0 +1,21 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=Comic Spider.chm
+Contents file=Comic Spider.hhc
+Default Window=Comic Spider
+Default topic=contents\0-comic-spider.html
+Display compile progress=No
+Full-text search=Yes
+Index file=Index.hhk
+Language=0x804 Chinese (Simplified, PRC)
+Title=Comic Spider Documentation
+
+[WINDOWS]
+Comic Spider="Comic Spider","Comic Spider.hhc","Index.hhk","contents\0-comic-spider.html","contents\0-comic-spider.html",,,,,0x22520,,0x386e,,0x80000,,,,,,0
+
+
+[FILES]
+contents\0-comic-spider.html
+
+[INFOTYPES]
+

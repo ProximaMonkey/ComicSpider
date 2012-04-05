@@ -87,6 +87,9 @@
     <Compile Include="Class\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Class\Hotkey.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Class\Main_settings.cs" />
     <Compile Include="Class\ys.Web.cs">
       <SubType>Component</SubType>
@@ -147,9 +150,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="app.config" />
     <None Include="comic_spider.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

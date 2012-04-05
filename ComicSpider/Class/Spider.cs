@@ -495,7 +495,7 @@ namespace ys.Web
 				{
 					wc.DownloadFile(file_info.Url, file_name);
 					byte[] data = wc.DownloadData(file_info.Url);
-
+					
 					FileStream sw = new FileStream(file_name, FileMode.Create);
 					sw.Write(data, 0, data.Length);
 					sw.Close();
