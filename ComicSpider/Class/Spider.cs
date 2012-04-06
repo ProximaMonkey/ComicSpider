@@ -7,6 +7,7 @@ using System.Threading;
 using ComicSpider;
 using LuaInterface;
 using System.Linq;
+using System.Windows;
 
 namespace ys.Web
 {
@@ -250,15 +251,21 @@ namespace ys.Web
 					ex.StackTrace);
 				a.Connection.Close();
 			}
-			catch (Exception)
+			catch
 			{
 			}
 		}
 		private void Report(string format, params object[] arg)
 		{
-			string info = string.Format(format, arg);
-			Console.WriteLine(info);
-			Dashboard.Instance.Dispatcher.Invoke(new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress), info);
+			try
+			{
+				string info = string.Format(format, arg);
+				Console.WriteLine(info);
+				Dashboard.Instance.Dispatcher.Invoke(new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress), info);
+			}
+			catch
+			{
+			}
 		}
 
 		private string get_host(string url)
@@ -415,6 +422,8 @@ namespace ys.Web
 
 			WebClientEx wc = new WebClientEx();
 			wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
+			if (src_info.Parent != null) wc.Headers.Add("Referer", Uri.EscapeDataString(src_info.Parent.Url));
+
 			try
 			{
 				#region Lua script controller
@@ -491,6 +500,8 @@ namespace ys.Web
 				WebClient wc = new WebClient();
 				wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
 				wc.Headers.Add("Cookie", file_info.Parent.Cookie);
+				if (file_info.Parent != null) wc.Headers.Add("Referer", Uri.EscapeDataString(file_info.Parent.Url));
+
 				try
 				{
 					wc.DownloadFile(file_info.Url, file_name);
