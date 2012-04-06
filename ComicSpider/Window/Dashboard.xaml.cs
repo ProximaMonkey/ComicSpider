@@ -111,6 +111,8 @@ namespace ComicSpider
 
 				comic_spider.Add_volume_list(added_list);
 			}
+
+			MainWindow.Main.Show_balloon(this.Title);
 		}
 
 		public delegate void Report_progress_delegate(string info);
@@ -142,7 +144,7 @@ namespace ComicSpider
 			{
 				All_downloaded = true;
 				this.Title = "All completed.";
-				MainWindow.Main.Show_balloon(this.Title);
+				MainWindow.Main.Show_balloon(this.Title, true);
 				comic_spider.Stop(true);
 				btn_start.Content = "Start";
 				Hide_working();
@@ -233,6 +235,11 @@ namespace ComicSpider
 					}
 				}
 				Show_volume_list(list);
+			}
+
+			if (list.Count > 0)
+			{
+				this.Title = "History records loaded";
 			}
 		}
 		private void Init_page_info_list()
@@ -357,7 +364,7 @@ namespace ComicSpider
 			bg_worker.RunWorkerCompleted += (oo, ee) =>
 			{
 				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title);
+				MainWindow.Main.Show_balloon(this.Title, true);
 				btn_fix_display_pages.IsEnabled = true;
 			};
 			bg_worker.RunWorkerAsync();
@@ -382,7 +389,7 @@ namespace ComicSpider
 			bg_worker.RunWorkerCompleted += (oo, ee) =>
 			{
 				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title);
+				MainWindow.Main.Show_balloon(this.Title, true);
 				btn_del_display_pages.IsEnabled = true;
 			};
 			bg_worker.RunWorkerAsync();

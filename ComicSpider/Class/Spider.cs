@@ -590,6 +590,10 @@ namespace ys.Web
 					if (step != null)
 						(step as LuaFunction).Call(i, mc[i].Groups, mc);
 
+					if (string.IsNullOrEmpty(this.GetString("url")) ||
+						string.IsNullOrEmpty(this.GetString("name")))
+						continue;
+
 					list.Add(
 						new Web_src_info(
 							this.GetString("url"),
@@ -614,6 +618,10 @@ namespace ys.Web
 
 					if (step != null)
 						(step as LuaFunction).Call(i, arr[i].ToString(), arr);
+
+					if (string.IsNullOrEmpty(this.GetString("url")) ||
+						string.IsNullOrEmpty(this.GetString("name")))
+						continue;
 
 					list.Add(
 						new Web_src_info(

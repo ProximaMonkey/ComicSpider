@@ -35,6 +35,8 @@ namespace ComicSpider
 
 			Main = this;
 
+			Title += " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
 			try
 			{
 				#region Load settings
@@ -93,22 +95,28 @@ namespace ComicSpider
 			set { cb_latest_volume_only.IsChecked = value; }
 		}
 
-		public void Show_balloon(string info)
+		public void Show_balloon(string info, bool click_to_open = false, string dir = "")
 		{
 			tray_balloon = new Tray_balloon();
 			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
 			{
 				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
-				try
+				if (click_to_open)
 				{
-					System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.Message);
+					try
+					{
+						if (string.IsNullOrEmpty(dir))
+							dir = Main_settings.Main.Root_dir;
+
+						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
 				}
 			});
-			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 8000);
+			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 5000);
 			tray_balloon.Text = info;
 
 			MediaPlayer mplayer = new MediaPlayer();
