@@ -95,6 +95,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\ys.Common.cs" />
+    <Compile Include="Contorl\WorkingIcon.xaml.cs">
+      <DependentUpon>WorkingIcon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>User.xsd</DependentUpon>
       <SubType>Component</SubType>
@@ -110,6 +113,10 @@
     <Page Include="Contorl\Tray_balloon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Contorl\WorkingIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

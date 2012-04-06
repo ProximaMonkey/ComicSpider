@@ -8,34 +8,47 @@ var resize = true;
 
 /**************** Main *******************/
 
-$(window).load(function()
-	{
-		init_css();
-		init_animation();
-		init_ui_control();
-		$(window).scroll();
-		init_navigator();
-	}
+$(window).load(function ()
+{
+	init_css();
+	init_animation();
+	init_ui_control();
+	$(window).scroll();
+	init_navigator();
+}
 );
 
 /**************** Subfunction *******************/
-		
+
 function init_css()
 {
+	$('#navibar').css('right', -310).hover(
+		function ()
+		{
+			$(this).stop().animate({ right: 5 });
+		},
+		function ()
+		{
+			$(this).stop().animate({ right: -310 });
+		}
+	);
+
 	var btn_page_mode = $('.page-mode');
 	var btn_auto_size = $('.auto-size');
 	var window_width = $(window).width();
 
-	btn_page_mode.click(function(){
+	btn_page_mode.click(function ()
+	{
 		location.hash = btn_page_mode.attr('href');
 		location.reload();
 	});
 
-	btn_auto_size.click(function(){
-		if(btn_auto_size.text() == 'on')
+	btn_auto_size.click(function ()
+	{
+		if (btn_auto_size.text() == 'on')
 		{
 			btn_auto_size.text('off');
-			$('.page[original_width]').each(function()
+			$('.page[original_width]').each(function ()
 			{
 				var page = $(this);
 				page.parent().find('a').click();
@@ -44,25 +57,25 @@ function init_css()
 		else
 		{
 			btn_auto_size.text('on');
-			$('.page').each(function()
+			$('.page').each(function ()
 			{
 				var page = $(this);
-				if(page.width() > window_width)
+				if (page.width() > window_width)
 					auto_resize(page);
 			});
 		}
 	});
 
 	// Split page into two parts.
-	if(location.hash == '#!full-page')
+	if (location.hash == '#!full-page')
 	{
 		btn_page_mode.text('full');
 		btn_page_mode.attr('href', '#!');
 
-		$('.page').each(function()
+		$('.page').each(function ()
 		{
 			var page = $(this);
-			if(page.width() > window_width)
+			if (page.width() > window_width)
 				auto_resize(page);
 		});
 	}
@@ -72,18 +85,27 @@ function init_css()
 		btn_page_mode.attr('href', '#!full-page');
 
 		// Split page.
-		$('.page').each(function(){
+		$('.page').each(function ()
+		{
 			split_page($(this));
 		});
 	}
 
 	function split_page(page)
 	{
-		var width = page.width();
+		var width;
 
-		if(width > window_width)
+		if (page.attr('original_width'))
 		{
-			if(width > page.height())
+			width = parseInt(page.attr('original_width'), 10);
+			page.width(width);
+		}
+		else
+			width = page.width();
+
+		if (width > window_width)
+		{
+			if (width > page.height())
 			{
 				var frame = page.parent();
 				frame.css(
@@ -105,18 +127,23 @@ function init_css()
 
 				var btn_full_page = $('<a href="#!" title="view full page">full</a>');
 				var btn_split_page = $('<a href="#!" title="auto split page">split</a>');
-				btn_split_page.click(function(){
+				btn_split_page.click(function ()
+				{
 					span_original.remove();
 					btn_split_page.remove();
+					new_frame.find('.resize').remove();
 					split_page(new_frame.find('.page'));
+					init_ui_control();
 				});
-				btn_full_page.click(function(e) {
+				btn_full_page.click(function (e)
+				{
 					frame.remove();
 					new_frame.removeAttr('style');
 					span_left.remove();
 
 					page_num.append(span_original);
 					page_num.append(btn_split_page);
+					auto_resize(new_frame.find('.page'));
 				});
 
 
@@ -129,7 +156,7 @@ function init_css()
 				page.css(
 					{
 						position: 'relative',
-						left: - width / 2
+						left: -width / 2
 					}
 				);
 			}
@@ -144,21 +171,22 @@ function init_css()
 	{
 		var frame = page.parent();
 		var page_num = frame.find('.page_num');
-		var span_fit = $('<span> - fit width - </span>');
-		var span_original = $('<span> - original - </span>');
+		var span_fit = $('<span class="resize"> - fit width - </span>');
+		var span_original = $('<span class="resize"> - original - </span>');
 
 		page_num.append(span_fit);
 
-		var btn_origin = $('<a href="#!" title="view original page">original</a>');
-		var btn_resize = $('<a href="#!" title="resize page to fit window">resize</a>');
-		btn_resize.click(function()
+		var btn_origin = $('<a class="resize" href="#!" title="view original page">original</a>');
+		var btn_resize = $('<a class="resize" href="#!" title="resize page to fit window">resize</a>');
+		btn_resize.click(function ()
 		{
 			span_original.remove();
 			btn_resize.remove();
 			auto_resize(page);
 		});
 
-		btn_origin.click(function(e) {
+		btn_origin.click(function (e)
+		{
 			page.width(page.attr('original_width'));
 			btn_origin.remove();
 			span_fit.remove();
@@ -175,16 +203,16 @@ function init_css()
 
 function init_animation()
 {
-	if(!effect_on) return;
+	if (!effect_on) return;
 
 	$('.page:gt(0)').css('opacity', 0);
 	$('.page').attr('_hidden', '1');
 	$(window).scroll(
-		function()
+		function ()
 		{
 			var page = $('.page[_hidden]:eq(0)');
-			
-			if(page.length > 0 &&
+
+			if (page.length > 0 &&
 				page[0].offsetTop - $(window).scrollTop() < 200)
 			{
 				// Show page animation.
@@ -197,17 +225,17 @@ function init_animation()
 
 function init_ui_control()
 {
-	document.onmousedown = function(){ return true; };
-	document.oncontextmenu = function(){ return true; };
-			
+	document.onmousedown = function () { return true; };
+	document.oncontextmenu = function () { return true; };
+
 	var pos;
 	var scroll = { x: 0, y: 0 };
 	var distance = 0;
 	var isDraging = false;
 	var doc;
 	var page;
-	
-	if($.browser.webkit)
+
+	if ($.browser.webkit)
 		doc = $('body');
 	else
 		doc = $('html');
@@ -215,11 +243,11 @@ function init_ui_control()
 	page = $('.page');
 
 	page.css('cursor', 'move');
-			
+
 	page.mousedown(
-		function(e)
+		function (e)
 		{
-			if(e.button == 2)
+			if (e.button == 2)
 			{
 				return;
 			}
@@ -231,42 +259,42 @@ function init_ui_control()
 
 			isDraging = true;
 
-			if(!$.browser.msie)
+			if (!$.browser.msie)
 				e.preventDefault();
 		}
 	);
-			
+
 	doc.mousemove(
-		function(e)
+		function (e)
 		{
-			if(!isDraging)
+			if (!isDraging)
 				return;
-					
+
 			doc.scrollTop(doc.scrollTop() + pos.pageY - e.pageY);
 			doc.scrollLeft(doc.scrollLeft() + pos.pageX - e.pageX);
 
 			e.preventDefault();
 		}
 	);
-			
+
 	var n = 0;
 	page.mouseup(
-		function(e)
+		function (e)
 		{
 			isDraging = false;
-					
+
 			distance = 0;
 			try
 			{
 				distance = Math.pow(scroll.x - doc.scrollLeft(), 2) + Math.pow(scroll.y - doc.scrollTop(), 2);
 			}
-			catch(ex){}
-					
-			if(isNaN(distance) || distance < 9)
+			catch (ex) { }
+
+			if (isNaN(distance) || distance < 9)
 			{
 				$this = $(this);
 				var bottom = $this.height() + $this.offset().top - $(window).height() - doc.scrollTop();
-				if(bottom > 0)
+				if (bottom > 0)
 				{
 					doc.stop().animate({ scrollTop: doc.scrollTop() + bottom + 20 });
 				}
@@ -279,16 +307,35 @@ function init_ui_control()
 		}
 	);
 	doc.keyup(
-		function(e)
+		function (e)
 		{
-			switch(e.keyCode)
+			switch (e.keyCode)
 			{
 				case 16:
 					doc.stop().animate({ scrollTop: doc.scrollTop() - $(window).height() });
 					break;
-						
+
 				case 17:
-					doc.stop().animate({ scrollTop: doc.scrollTop() + $(window).height() * 0.9 });
+					page.each(function ()
+					{
+						$this = $(this);
+						var window_height = $(window).height();
+						var bottom = $this.height() + $this.offset().top - window_height - doc.scrollTop();
+						var top = bottom + window_height;
+
+						if (Math.abs(bottom) < window_height ||
+							Math.abs(top) < window_height)
+						{
+							if (bottom > 0)
+							{
+								doc.stop().animate({ scrollTop: doc.scrollTop() + bottom + 20 });
+							}
+							else
+							{
+								doc.stop().animate({ scrollTop: doc.scrollTop() + top + 50 });
+							}
+						}
+					});
 					break;
 			}
 		}
@@ -300,18 +347,18 @@ function init_navigator()
 	var path = decodeURIComponent(location);
 	var m = path.match(/(?:(\d+)[^\d]+?)$/);
 
-	if(m === null) return;
+	if (m === null) return;
 
 	var num_len = m[1].length;
 	var pre_num = pad(parseInt(m[1], 10) - 1, num_len);
 	var next_num = pad(parseInt(m[1], 10) + 1, num_len);
 
 	// If path is like "vol 10.5"
-	if(path.indexOf('.' + m[1]) > 0)
+	if (path.indexOf('.' + m[1]) > 0)
 	{
 		m = path.match(/(?:(\d+)\.(\d+)[^\d]+?)$/);
 		num_len = m[1].length + m[2].length + 1;
-		if(m[2] == '5')
+		if (m[2] == '5')
 		{
 			pre_num = m[1];
 			next_num = pad(parseInt(m[1], 10) + 1, m[1].length);
@@ -333,7 +380,7 @@ function init_navigator()
 	function pad(num, n)
 	{
 		var len = num.toString().length;
-		while(len < n)
+		while (len < n)
 		{
 			num = '0' + num;
 			len++;
@@ -341,4 +388,3 @@ function init_navigator()
 		return num;
 	}
 }
-

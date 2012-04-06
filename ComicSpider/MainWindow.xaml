@@ -3,7 +3,8 @@
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:tb="http://www.hardcodet.net/taskbar"
-		Title="Comic Spider" Height="140" Width="280" MinHeight="140" MinWidth="240"
+		xmlns:ComicSpider="clr-namespace:ComicSpider"
+		Title="Comic Spider" Height="140" Width="350" MinHeight="150" MinWidth="240"
 		Closed="Window_Closed"
 		Topmost="True"
 		KeyUp="Window_KeyUp"
@@ -13,14 +14,14 @@
 	</Window.Background>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="5*" />
-			<ColumnDefinition Width="3*" />
+			<ColumnDefinition Width="2*" />
+			<ColumnDefinition Width="1*" />
 		</Grid.ColumnDefinitions>
 		<Grid Margin="5">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
-				<RowDefinition Height="26" />
-				<RowDefinition Height="26" />
+				<RowDefinition Height="22" />
+				<RowDefinition Height="22" />
 			</Grid.RowDefinitions>
 			<TextBlock TextWrapping="Wrap" FontFamily="Verdana" VerticalAlignment="Center" Foreground="#BA000000" HorizontalAlignment="Center">Drag and drop link here.</TextBlock>
 			<CheckBox x:Name="cb_latest_volume_only" ToolTip="only get latest volume into the list box"  IsChecked="True" Grid.Row="1" VerticalAlignment="Center" Opacity="0.8">latest volume only</CheckBox>
@@ -54,5 +55,6 @@
 				</Border>
 			</tb:TaskbarIcon.TrayToolTip>
 		</tb:TaskbarIcon>
+		<ComicSpider:WorkingIcon x:Name="working_icon" />
 	</Grid>
 </Window>

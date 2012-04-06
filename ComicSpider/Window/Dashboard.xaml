@@ -31,30 +31,6 @@
 			<MenuItem Header="Open Url" Click="Open_url_Click" />
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
-		<Storyboard x:Name="sb_working" x:Key="sb_working" RepeatBehavior="Forever">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="img_working">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="180"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:1.4" Value="360" KeySpline="0.32,0.69,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="img_working">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="1.2"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:1.4" Value="1" KeySpline="0.32,0.69,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="img_working">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="1.2"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:1.4" Value="1" KeySpline="0.32,0.69,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-		<Storyboard x:Key="sb_show_working">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="img_working">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-		<Storyboard x:Key="sb_hide_working">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="img_working">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
 		<Storyboard x:Key="sb_show_logs">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="bd_logs">
 				<SplineDoubleKeyFrame KeyTime="0" Value="-120"/>
@@ -148,16 +124,7 @@
 					</GridView>
 				</ListView.View>
 			</ListView>
-			<Image x:Name="img_working" Margin="0,0,25,25" Stretch="Fill" RenderTransformOrigin="0.5,0.5" Opacity="0.3" Height="100" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" Source="/Comic%20Spider;component/Images/running.png">
-				<Image.RenderTransform>
-					<TransformGroup>
-						<ScaleTransform/>
-						<SkewTransform/>
-						<RotateTransform/>
-						<TranslateTransform/>
-					</TransformGroup>
-				</Image.RenderTransform>
-			</Image>
+			<ComicSpider:WorkingIcon x:Name="working_icon" Margin="0,0,25,25" Height="100" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
 			<GridSplitter HorizontalAlignment="Left" x:Name="gridSplitter1" Width="5" Grid.Column="1" Margin="0,5" Background="White" />
 			<ListView x:Name="Page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp">
 				<ListView.View>

@@ -94,8 +94,12 @@ namespace ComicSpider
 			}
 			set { cb_latest_volume_only.IsChecked = value; }
 		}
+		public void Task_done()
+		{
+			working_icon.Hide_working();
+		}
 
-		public void Show_balloon(string info, bool click_to_open = false, string dir = "")
+		public void Show_balloon(string info, bool click_to_open = false, string dir = "", bool play_sound = false)
 		{
 			tray_balloon = new Tray_balloon();
 			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
@@ -119,9 +123,12 @@ namespace ComicSpider
 			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 5000);
 			tray_balloon.Text = info;
 
-			MediaPlayer mplayer = new MediaPlayer();
-			mplayer.Open(new Uri(@"Asset\msg.wav", UriKind.Relative));
-			mplayer.Play();
+			if (play_sound)
+			{
+				MediaPlayer mplayer = new MediaPlayer();
+				mplayer.Open(new Uri(@"Asset\msg.wav", UriKind.Relative));
+				mplayer.Play(); 
+			}
 		}
 
 		/***************************** Private ********************************/
@@ -135,6 +142,8 @@ namespace ComicSpider
 		}
 		private void Window_Drop(object sender, DragEventArgs e)
 		{
+			working_icon.Show_working();
+
 			this.Topmost = false;
 			string url = e.Data.GetData(typeof(string)) as string;
 

@@ -68,6 +68,7 @@ namespace ComicSpider
 			set
 			{
 				base.Title = value;
+				MainWindow.Main.Title = value;
 
 				if (txt_console.LineCount >= Main_settings.Main.Max_console_line)
 				{
@@ -99,7 +100,8 @@ namespace ComicSpider
 			}
 
 			btn_start.IsEnabled = true;
-			Hide_working();
+			working_icon.Hide_working();
+			MainWindow.Main.Task_done();
 
 			if (instance != null &&
 				this.Visibility != System.Windows.Visibility.Visible)
@@ -144,10 +146,10 @@ namespace ComicSpider
 			{
 				All_downloaded = true;
 				this.Title = "All completed.";
-				MainWindow.Main.Show_balloon(this.Title, true);
+				MainWindow.Main.Show_balloon(this.Title, true, "", true);
 				comic_spider.Stop(true);
 				btn_start.Content = "Start";
-				Hide_working();
+				working_icon.Hide_working();
 			}
 
 			Save_all();
@@ -167,12 +169,6 @@ namespace ComicSpider
 			InitializeComponent();
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
-			sb_show_working = Resources["sb_show_working"] as Storyboard;
-			sb_working = Resources["sb_working"] as Storyboard;
-			sb_hide_working = Resources["sb_hide_working"] as Storyboard;
-			sb_working.Begin();
-			sb_working.Pause();
 
 			comic_spider = new Comic_spider();
 
@@ -296,18 +292,18 @@ namespace ComicSpider
 				All_downloaded = false;
 				btn_start.Content = "Stop";
 				comic_spider.Async_start(volume_list.Items);
-				Show_working();
+				working_icon.Show_working();
 			}
 			else
 			{
 				btn_start.Content = "Start";
 				comic_spider.Stop();
-				Hide_working();
+				working_icon.Hide_working();
 			}
 		}
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
-			Show_working();
+			working_icon.Show_working();
 			Save_settings();
 			comic_spider.Async_get_volume_list();
 		}
@@ -556,20 +552,6 @@ namespace ComicSpider
 			{
 				MessageBox.Show(ex.Message);
 			}
-		}
-
-		private Storyboard sb_show_working;
-		private Storyboard sb_working;
-		private Storyboard sb_hide_working;
-		private void Show_working()
-		{
-			sb_show_working.Begin();
-			sb_working.Resume();
-		}
-		private void Hide_working()
-		{
-			sb_hide_working.Begin();
-			sb_working.Pause();
 		}
 
 		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
