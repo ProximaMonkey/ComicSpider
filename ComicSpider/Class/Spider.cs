@@ -8,6 +8,7 @@ using ComicSpider;
 using LuaInterface;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ys.Web
 {
@@ -16,6 +17,7 @@ namespace ys.Web
 		public Comic_spider()
 		{
 			stopped = true;
+			script_loaded = false;
 
 			file_queue = new Queue<Web_src_info>();
 			volume_queue = new Queue<Web_src_info>();
@@ -23,13 +25,13 @@ namespace ys.Web
 			volume_queue_lock = new object();
 			thread_list = new List<Thread>();
 
-			Load_script();
+			Thread thread = new Thread(Load_script);
+			thread.Start();
+			thread_list.Add(thread);
 		}
 
 		public void Async_get_volume_list()
 		{
-			Load_script();
-
 			Thread thread = new Thread(new ParameterizedThreadStart(Show_volume_list));
 			thread.Name = "Show_volume_list";
 			thread.Start(Main_settings.Main.Main_url);
@@ -39,8 +41,6 @@ namespace ys.Web
 		public void Async_start(System.Collections.IEnumerable vol_info_list)
 		{
 			stopped = false;
-
-			Load_script();
 
 			volume_queue.Clear();
 			file_queue.Clear();
@@ -104,6 +104,7 @@ namespace ys.Web
 		private List<Thread> thread_list;
 		private LuaTable file_types;
 		private string script;
+		private bool script_loaded;
 
 		public void Delete_display_pages()
 		{
@@ -220,7 +221,6 @@ namespace ys.Web
 				{
 					Log_error(ex, url);
 				}
-				lua.Dispose();
 
 				if (is_volume_order_desc != null &&
 					(bool)is_volume_order_desc == false)
@@ -234,7 +234,8 @@ namespace ys.Web
 
 			Dashboard.Instance.Dispatcher.Invoke(
 				new Dashboard.Show_vol_list_delegate(Dashboard.Instance.Show_volume_list),
-				vol_info_list);
+				vol_info_list,
+				true);
 		}
 		private void Log_error(Exception ex, string url = "")
 		{
@@ -283,19 +284,36 @@ namespace ys.Web
 		{
 			try
 			{
-				var sr = new StreamReader(@"comic_spider.lua");
-				script = sr.ReadToEnd();
-				sr.Close();
+				script = File.ReadAllText(@"comic_spider.lua");
 
 				Lua lua = new Lua();
 				lua.DoString(script);
 				file_types = lua.GetTable("comic_spider.file_types");
+
+				foreach (string url in (lua.GetTable("comic_spider.requires") as LuaTable).Values)
+				{
+					if (string.IsNullOrEmpty(url))
+						continue;
+
+					if (File.Exists(url))
+					{
+						script += '\n' + File.ReadAllText(url);
+					}
+					else
+					{
+						WebClientEx wc = new WebClientEx();
+						script += '\n' + wc.DownloadString(url);
+					}
+				}
+				script_loaded = true;
 			}
 			catch (Exception ex)
 			{
 				Report(ex.Message);
+				script_loaded = true;
 			}
 		}
+
 		private List<Web_src_info> Get_volume_list(Web_src_info comic_info)
 		{
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
@@ -307,7 +325,10 @@ namespace ys.Web
 				vol_info_list.Add(new Web_src_info(comic_info.Url, 0, comic_info.Name));
 			}
 
-			Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children.Count);
+			if (Main_settings.Main.Latest_volume_only)
+				Report("Get latest volume: {0}", comic_info.Name);
+			else
+				Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children.Count);
 
 			return vol_info_list;
 		}
@@ -329,7 +350,8 @@ namespace ys.Web
 				{
 					if (volume_queue.Count == 0)
 					{
-						return;
+						Thread.Sleep(100);
+						continue;
 					}
 					vol_info = volume_queue.Dequeue();
 				}
@@ -350,8 +372,6 @@ namespace ys.Web
 					}
 				}
 
-				//Report("Page list: {0}", vol_info.Name);
-
 				Get_file_list(vol_info.Children);
 			}
 		}
@@ -361,8 +381,11 @@ namespace ys.Web
 
 			if (page_info_list.Count == 0)
 			{
-				Report("No page found.");
-				return;
+				Dashboard.Instance.Dispatcher.Invoke(
+					new Dashboard.Stop_downloading_delegate(
+						Dashboard.Instance.Stop_downloading),
+						"No page found."
+				);
 			}
 
 			#region Create folder
@@ -374,8 +397,19 @@ namespace ys.Web
 			dir_path = Path.Combine(Main_settings.Main.Root_dir, dir_path);
 			if (!Directory.Exists(dir_path))
 			{
-				Directory.CreateDirectory(dir_path);
-				Report("Create dir: {0}", dir_path);
+				try
+				{
+					Directory.CreateDirectory(dir_path);
+					Report("Create dir: {0}", dir_path);
+				}
+				catch (Exception ex)
+				{
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Stop_downloading_delegate(
+							Dashboard.Instance.Stop_downloading),
+							ex.Message
+					);
+				}
 			}
 			#endregion
 
@@ -406,6 +440,11 @@ namespace ys.Web
 		}
 		private List<Web_src_info> Get_info_list_from_html(Web_src_info src_info, params string[] func_list)
 		{
+			while (!script_loaded)
+			{
+				Thread.Sleep(100);
+			}
+
 			List<Web_src_info> info_list = new List<Web_src_info>();
 			src_info.Children = info_list;
 
@@ -464,8 +503,6 @@ namespace ys.Web
 					Log_error(ex, src_info.Url);
 			}
 
-			lua_c.Dispose();
-
 			return info_list;
 		}
 		private void Downloader()
@@ -498,6 +535,7 @@ namespace ys.Web
 				#endregion
 
 				WebClient wc = new WebClient();
+				FileStream stream = null;
 				wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2");
 				wc.Headers.Add("Cookie", file_info.Parent.Cookie);
 				if (file_info.Parent != null) wc.Headers.Add("Referer", Uri.EscapeDataString(file_info.Parent.Url));
@@ -506,10 +544,10 @@ namespace ys.Web
 				{
 					wc.DownloadFile(file_info.Url, file_name);
 					byte[] data = wc.DownloadData(file_info.Url);
-					
-					FileStream sw = new FileStream(file_name, FileMode.Create);
-					sw.Write(data, 0, data.Length);
-					sw.Close();
+
+					stream = new FileStream(file_name, FileMode.Create);
+					stream.Write(data, 0, data.Length);
+					stream.Close();
 
 					file_info.Parent.State = Web_src_info.State_downloaded;
 
@@ -546,13 +584,23 @@ namespace ys.Web
 				}
 				catch (Exception ex)
 				{
+					if (stream != null)
+					{
+						try
+						{
+							stream.Close();
+						}
+						catch { }
+					}
+
 					if (ex is ThreadAbortException) return;
 
 					file_info.Parent.State = Web_src_info.State_missed;
 
 					lock (file_queue_lock)
 					{
-						file_queue.Enqueue(file_info);
+						if (!file_queue.Contains(file_info))
+							file_queue.Enqueue(file_info);
 					}
 
 					Log_error(ex, file_info.Url);

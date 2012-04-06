@@ -35,6 +35,7 @@ namespace ComicSpider
 		public string Root_dir { get; set; }
 		public string Thread_count { get; set; }
 		public bool Latest_volume_only { get; set; }
+		public bool Auto_begin { get; set; }
 		public int Max_console_line { get; set; }
 	}
 }

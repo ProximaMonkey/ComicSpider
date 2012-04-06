@@ -64,7 +64,12 @@ External objects:
 
 comic_spider =
 {
-	file_types = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" },
+	-- File type to be downloaded.
+	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
+
+	-- Url list for including remote or local external lua scripts.
+	-- Be careful, it's dangerous to use remote script.
+	requires = { '' },
 
 	-- Default settings here. Name is long, but meaningful :)
 	['default'] =
@@ -86,7 +91,7 @@ comic_spider =
 		end,
 	},
 
-	-- A sample english manga site.
+	-- A sample english manga site. You can follow code below to parse another site.
 	['mangahere.com'] =
 	{
 		get_comic_name = function()
@@ -108,13 +113,13 @@ comic_spider =
 		end,
 	},
 
-	-- 这是个具有代表意义的中文漫画站点。
+	-- 这是个具有代表意义的中文漫画站点。以下为示例：
 	['178.com'] =
 	{
 		is_volume_order_desc = false,	-- 这个站点列表排序竟然最新的没有放到最前面。
 
 		get_comic_name = function()
-			src_info.Name = lc:find([[<title>(?<find>.+?)-]])
+			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
 		end,
 
 		get_volume_list = function()
@@ -126,7 +131,7 @@ comic_spider =
 			-- 站点显式使用了负载均衡，利用这点。
 			img_hosts = { 'imgd', 'img' }
 			-- 此站点使用了ajax，利用这点可以直接在第一页获取所有文件地址。
-			list = lc:find([[var pages = '(?<find>.+?)';]])
+			list = lc:find([[var pages = '(?<find>.+?)']])
 			lc:fill_list(
 				lc:json_decode(list),
 				function(i, str, arr)
@@ -134,21 +139,6 @@ comic_spider =
 					url = 'http://' .. img_hosts[n] .. '.manhua.178.com/' .. str
 				end
 			)
-		end,
-	},
-
-	['narutom.com'] =
-	{
-		get_comic_name = function()
-		end,
-
-		get_volume_list = function()
-		end,
-
-		get_page_list = function()
-		end,
-
-		get_file_list = function()
 		end,
 	},
 

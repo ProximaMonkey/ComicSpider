@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Media;
 using ComicSpider.UserTableAdapters;
 using System.Data.SQLite;
+using System.Windows.Media.Animation;
 
 namespace ComicSpider
 {
@@ -51,7 +52,10 @@ namespace ComicSpider
 				{
 					Main_settings settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
 					if (settings != null)
+					{
 						cb_latest_volume_only.IsChecked = settings.Latest_volume_only;
+						cb_auto_begin.IsChecked = settings.Auto_begin;
+					}
 				}
 
 				kv_adpter.Connection.Close();
@@ -68,6 +72,11 @@ namespace ComicSpider
 			{
 				MessageBox.Show(ex.Message);
 			}
+
+			this.MouseDown += delegate { DragMove(); };
+
+			sb_show_window = Resources["sb_show_window"] as Storyboard;
+			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
 		}
 
 		public static MainWindow Main;
@@ -93,6 +102,10 @@ namespace ComicSpider
 				return cb_latest_volume_only.IsChecked == true;
 			}
 			set { cb_latest_volume_only.IsChecked = value; }
+		}
+		public bool Auto_begin
+		{
+			get { return cb_auto_begin.IsChecked == true; }
 		}
 		public void Task_done()
 		{
@@ -135,6 +148,8 @@ namespace ComicSpider
 
 		private Tray_balloon tray_balloon;
 		private ManagedWinapi.Hotkey global_hotkey;
+		private Storyboard sb_show_window;
+		private Storyboard sb_hide_window;
 
 		private void Window_DragEnter(object sender, DragEventArgs e)
 		{
@@ -156,14 +171,22 @@ namespace ComicSpider
 
 		private void btn_hide_Click(object sender, RoutedEventArgs e)
 		{
-			this.Visibility = System.Windows.Visibility.Collapsed;
-			tray.Visibility = System.Windows.Visibility.Visible;
+			sb_hide_window.Completed += (oo, ee) =>
+			{
+				this.Visibility = System.Windows.Visibility.Collapsed;
+				tray.Visibility = System.Windows.Visibility.Visible;
+			};
+			sb_hide_window.Begin();
 		}
 		private void btn_dashboard_Click(object sender, RoutedEventArgs e)
 		{
 			Dashboard.Instance.Show();
 			Dashboard.Instance.WindowState = System.Windows.WindowState.Normal;
 			Dashboard.Instance.Activate();
+		}
+		private void btn_close_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
 		}
 
 		private void cb_topmost_Click(object sender, RoutedEventArgs e)
@@ -180,8 +203,12 @@ namespace ComicSpider
 		private void tray_TrayLeftMouseDown(object sender, RoutedEventArgs e)
 		{
 			this.Visibility = System.Windows.Visibility.Visible;
-			this.Activate();
-			tray.Visibility = System.Windows.Visibility.Collapsed;
+			sb_show_window.Completed += (oo, ee) =>
+			{
+				this.Activate();
+				tray.Visibility = System.Windows.Visibility.Collapsed;
+			};
+			sb_show_window.Begin();
 		}
 
 		private void tray_TrayToolTipOpen(object sender, RoutedEventArgs e)
@@ -190,6 +217,18 @@ namespace ComicSpider
 			tray.ToolTipText = Dashboard.Instance.Title;
 		}
 
+		private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			sb_hide_window.Completed += (oo, ee) =>
+			{
+				this.Visibility = System.Windows.Visibility.Collapsed;
+				this.Close();
+			};
+			sb_hide_window.Begin();
+
+			if(this.Visibility == System.Windows.Visibility.Visible)
+				e.Cancel = true;
+		}
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			tray.Dispose();
@@ -209,6 +248,10 @@ namespace ComicSpider
 
 				case System.Windows.Input.Key.T:
 					cb_topmost_Click(null, null);
+					break;
+
+				case System.Windows.Input.Key.D:
+					btn_dashboard_Click(null, null);
 					break;
 			}
 		}

@@ -31,6 +31,8 @@ namespace ComicSpider
 
 		public void Get_volume_list(string url)
 		{
+			Save_settings();
+
 			txt_main_url.Text = url;
 			if (string.IsNullOrEmpty(txt_dir.Text))
 			{
@@ -83,8 +85,8 @@ namespace ComicSpider
 		}
 		public bool All_downloaded { get; set; }
 
-		public delegate void Show_vol_list_delegate(List<Web_src_info> list);
-		public void Show_volume_list(List<Web_src_info> list)
+		public delegate void Show_vol_list_delegate(List<Web_src_info> list, bool show_balloon = false);
+		public void Show_volume_list(List<Web_src_info> list, bool show_balloon = false)
 		{
 			List<Web_src_info> added_list = new List<Web_src_info>();
 			foreach (Web_src_info item in list.Distinct(new Web_src_info.Comparer()))
@@ -104,7 +106,7 @@ namespace ComicSpider
 			MainWindow.Main.Task_done();
 
 			if (instance != null &&
-				this.Visibility != System.Windows.Visibility.Visible)
+				Main_settings.Main.Auto_begin)
 			{
 				if (comic_spider.Stopped)
 				{
@@ -114,7 +116,8 @@ namespace ComicSpider
 				comic_spider.Add_volume_list(added_list);
 			}
 
-			MainWindow.Main.Show_balloon(this.Title);
+			if(show_balloon)
+				MainWindow.Main.Show_balloon(this.Title);
 		}
 
 		public delegate void Report_progress_delegate(string info);
@@ -155,6 +158,16 @@ namespace ComicSpider
 			Save_all();
 		}
 
+		public delegate void Stop_downloading_delegate(string info);
+		public void Stop_downloading(string info)
+		{
+			this.Title = info;
+			MainWindow.Main.Show_balloon(this.Title);
+			comic_spider.Stop(true);
+			btn_start.Content = "Start";
+			working_icon.Hide_working();
+		}
+
 		public new void Close()
 		{
 			this.Closing -= Window_Closing;
@@ -171,7 +184,7 @@ namespace ComicSpider
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			comic_spider = new Comic_spider();
-
+			
 			Init_settings();
 			Init_vol_info_list();
 			Init_page_info_list();
@@ -231,11 +244,6 @@ namespace ComicSpider
 					}
 				}
 				Show_volume_list(list);
-			}
-
-			if (list.Count > 0)
-			{
-				this.Title = "History records loaded";
 			}
 		}
 		private void Init_page_info_list()
@@ -677,6 +685,7 @@ namespace ComicSpider
 			Main_settings.Main.Root_dir = txt_dir.Text;
 			Main_settings.Main.Thread_count = txt_thread.Text;
 			Main_settings.Main.Latest_volume_only = MainWindow.Main.Latest_volume_only;
+			Main_settings.Main.Auto_begin = MainWindow.Main.Auto_begin;
 		}
 		private void Save_settings()
 		{

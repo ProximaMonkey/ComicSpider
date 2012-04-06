@@ -5,7 +5,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	x:Class="ComicSpider.WorkingIcon"
-	x:Name="UserControl" Height="100" Width="100">
+	x:Name="UserControl" Height="100" Width="100" IsHitTestVisible="False" IsEnabled="False">
 	<UserControl.Resources>
 		<Storyboard x:Name="sb_working" x:Key="sb_working" RepeatBehavior="Forever">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="img_working">

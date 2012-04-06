@@ -17,7 +17,7 @@
 				<TextBlock Text="Comic Spider" FontSize="18"><TextBlock.Foreground><LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0"><GradientStop Color="Black" Offset="0" /><GradientStop Color="#FF2B2B2B" Offset="1" /></LinearGradientBrush></TextBlock.Foreground></TextBlock>
 				<TextBlock Text="April 2012 y.s." FontFamily="Verdana"  FontSize="11" VerticalAlignment="Bottom" Margin="10,0,0,0"><TextBlock.Foreground><LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0"><GradientStop Color="Black" Offset="0" /><GradientStop Color="#FF383838" Offset="1" /></LinearGradientBrush></TextBlock.Foreground></TextBlock>
 			</StackPanel>
-			<TextBlock d:DataContext="test" Text="{Binding Text, ElementName=this}" FontSize="18" Margin="5" Foreground="IndianRed" FontFamily="Courier New" />
+			<TextBlock d:DataContext="test" Text="{Binding Text, ElementName=this}" FontSize="14" Margin="5" Foreground="IndianRed" FontFamily="Courier New" />
 		</StackPanel>
 	</Border>
 </UserControl>
