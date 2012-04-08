@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
+using System.Linq;
 
 namespace ys.Web
 {
@@ -47,11 +48,20 @@ namespace ys.Web
 		}
 		public string State
 		{
-			get { return state; }
+			get
+			{
+				lock (state_lock)
+				{
+					return state;
+				}
+			}
 			set
 			{
-				state = value;
-				NotifyPropertyChanged("State");
+				lock (state_lock)
+				{
+					state = value;
+					NotifyPropertyChanged("State");
+				}
 			}
 		}
 		public List<Web_src_info> Children
@@ -81,16 +91,7 @@ namespace ys.Web
 		{
 			get
 			{
-				int downloaded = 0;
-				if (children != null)
-				{
-					foreach (Web_src_info item in children)
-					{
-						if (item.state == Web_src_info.State_downloaded)
-							downloaded++;
-					}
-				}
-				return downloaded;
+				return children.Count(c => c.State == Web_src_info.State_downloaded);
 			}
 		}
 
@@ -124,6 +125,7 @@ namespace ys.Web
 
 		private string url;
 		private string name;
+		private readonly object state_lock = new object();
 		private string state;
 		private List<Web_src_info> children;
 	}

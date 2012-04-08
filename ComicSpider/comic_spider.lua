@@ -1,5 +1,5 @@
 --[[
-Comic Spider controller.
+Comic Spider controller.(this doc utf-8 encoding only)
 April 2012 y.s.
 
 Most of the .NET assemblies are visible. You can control most behaviors of the spider.
@@ -21,11 +21,10 @@ External functions:
 		CSharp Regex.fill_list method. Param pattern will be automatically convert to string.
 		Return the match group which is named 'find'.
 
-	void lc:filtrate(string regex_pattern):
-		Reassign html with matched string.
-
 	void lc:fill_list(string regex_pattern, function step(int index, GroupCollection gs, MatchCollection mc)):
+	void lc:fill_list(LuaTable regex_patterns, function step(int index, GroupCollection gs, MatchCollection mc)):
 		Matches all, fill info_list with matched url and name, and loop with a callback function.
+		Except the last pattern in the table, others are all use to select contents.
 		Url match group should named with 'url'.
 		Name match group should named with 'name'.
 		Varialble url and name are visible in step function.
@@ -34,7 +33,7 @@ External functions:
 		Fill info_list with an array, and loop with a callback function.
 		Varialble url and name are visible in step function.
 
-	Web_src_info web_src_info(string url, int index, string name, Web_src_info parent = null):
+	Web_src_info lc:web_src_info(string url, int index, string name, Web_src_info parent = null):
 		create a new instance Web_src_info.
 
 ******************************************************************************************
@@ -60,23 +59,23 @@ External objects:
 
 	List<Web_src_info> info_list:
 		link information list of current page.
---]]
+]]
 
 comic_spider =
 {
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
 
-	-- Url list for including remote or local external lua scripts.
-	-- Be careful, it's dangerous to use remote script.
+	-- Http requst User-Agent header list. Fake your info here. It will randomly choose one of them.
+	user_agents = { 'Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2' },
+
+	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
 	requires = { '' },
 
 	-- Default settings here. Name is long, but meaningful :)
 	['default'] =
 	{
 		charset = 'utf-8',
-
-		is_volume_order_desc = true,
 
 		get_comic_name = function()
 		end,
@@ -91,6 +90,8 @@ comic_spider =
 		end,
 	},
 
+-- THE REST ARE EXAMPLES:
+
 	-- A sample english manga site. You can follow code below to parse another site.
 	['mangahere.com'] =
 	{
@@ -99,12 +100,19 @@ comic_spider =
 		end,
 
 		get_volume_list = function()
-			lc:filtrate([[class="detail_list"[\s\S]+?/ul]])
-			lc:fill_list([[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]])
+			lc:fill_list({
+				[[class="detail_list"[\s\S]+?/ul]],
+				[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
+			})
+			if info_list.Count == 0 then
+				src_info.Name = lc:find([[class="readpage_top"[\s\S]+?>(?<find>[^>]+) Manga</a>]])
+				vol_name = lc:find([[<title>(?<find>.+?) - Read]])
+				info_list:Add(lc:web_src_info(src_info.Url, 0, vol_name, src_info))
+			end
 		end,
 
 		get_page_list = function()
-			lc:filtrate([[change_page[\s\S]+?/select>]])
+			html = lc:find([[change_page(?<find>[\s\S]+?)/select>]])
 			lc:fill_list([[value="(?<url>.+?)"]])
 		end,
 
@@ -116,15 +124,20 @@ comic_spider =
 	-- 这是个具有代表意义的中文漫画站点。以下为示例：
 	['178.com'] =
 	{
-		is_volume_order_desc = false,	-- 这个站点列表排序竟然最新的没有放到最前面。
-
 		get_comic_name = function()
 			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
 		end,
 
 		get_volume_list = function()
-			lc:filtrate([[<div class="cartoon_online_border"[\s\S]+?<div]])
-			lc:fill_list([[href="(?<url>.+?)".*?>(?<name>.+?)</a>]])
+			lc:fill_list({
+				[[<div class="cartoon_online_border"[\s\S]+?<div]],
+				[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
+			})
+			-- 如果没有发现列表，则这个url指向的是单卷页面
+			if info_list.Count == 0 then
+				vol_name = lc:find([[var g_chapter_name = "(?<find>.+?)"]])
+				info_list:Add(lc:web_src_info(src_info.Url, 0, vol_name, src_info))
+			end
 		end,
 
 		get_page_list = function()

@@ -23,6 +23,7 @@ using System.Windows.Media;
 using ComicSpider.UserTableAdapters;
 using System.Data.SQLite;
 using System.Windows.Media.Animation;
+using System.Windows.Input;
 
 namespace ComicSpider
 {
@@ -53,7 +54,6 @@ namespace ComicSpider
 					Main_settings settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
 					if (settings != null)
 					{
-						cb_latest_volume_only.IsChecked = settings.Latest_volume_only;
 						cb_auto_begin.IsChecked = settings.Auto_begin;
 					}
 				}
@@ -73,8 +73,6 @@ namespace ComicSpider
 				MessageBox.Show(ex.Message);
 			}
 
-			this.MouseDown += delegate { DragMove(); };
-
 			sb_show_window = Resources["sb_show_window"] as Storyboard;
 			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
 		}
@@ -88,20 +86,14 @@ namespace ComicSpider
 				txt_main_progress.Text = value;
 			}
 		}
-		public string Tray_tooltip
+		public new string Title
 		{
+			get { return base.Title; }
 			set
 			{
+				txt_title.Text = value;
 				tray.ToolTipText = value;
 			}
-		}
-		public bool Latest_volume_only
-		{
-			get
-			{
-				return cb_latest_volume_only.IsChecked == true;
-			}
-			set { cb_latest_volume_only.IsChecked = value; }
 		}
 		public bool Auto_begin
 		{
@@ -112,27 +104,15 @@ namespace ComicSpider
 			working_icon.Hide_working();
 		}
 
-		public void Show_balloon(string info, bool click_to_open = false, string dir = "", bool play_sound = false)
+		public void Show_balloon(string info, MouseButtonEventHandler click_event = null, bool play_sound = false)
 		{
 			tray_balloon = new Tray_balloon();
-			tray_balloon.PreviewMouseDown += new System.Windows.Input.MouseButtonEventHandler((oo, ee) =>
+
+			tray_balloon.PreviewMouseDown += (o, e) =>
 			{
 				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
-				if (click_to_open)
-				{
-					try
-					{
-						if (string.IsNullOrEmpty(dir))
-							dir = Main_settings.Main.Root_dir;
-
-						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show(ex.Message);
-					}
-				}
-			});
+			};
+			tray_balloon.PreviewMouseDown += click_event;
 			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 5000);
 			tray_balloon.Text = info;
 
@@ -181,8 +161,6 @@ namespace ComicSpider
 		private void btn_dashboard_Click(object sender, RoutedEventArgs e)
 		{
 			Dashboard.Instance.Show();
-			Dashboard.Instance.WindowState = System.Windows.WindowState.Normal;
-			Dashboard.Instance.Activate();
 		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
@@ -211,12 +189,10 @@ namespace ComicSpider
 			sb_show_window.Begin();
 		}
 
-		private void tray_TrayToolTipOpen(object sender, RoutedEventArgs e)
+		private void window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			txt_main_progress.Text = Dashboard.Instance.Main_progress;
-			tray.ToolTipText = Dashboard.Instance.Title;
+			this.DragMove();
 		}
-
 		private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			sb_hide_window.Completed += (oo, ee) =>
@@ -255,5 +231,6 @@ namespace ComicSpider
 					break;
 			}
 		}
+
 	}
 }

@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicSpider", "ComicSpider\ComicSpider.csproj", "{6558692D-5BEE-494E-AD45-A2036EB80000}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{7EF8046C-11E6-4DD1-92A6-9F0C031871C3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{EA9B8DF6-4DBC-4B2E-AB93-55001ECBC401}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B383280-FCC8-42EC-9FC0-E382393B25A8}"
 	ProjectSection(SolutionItems) = preProject
 		ComicSpider.vsmdi = ComicSpider.vsmdi
 		Local.testsettings = Local.testsettings
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicSpider", "ComicSpider\ComicSpider.csproj", "{6558692D-5BEE-494E-AD45-A2036EB80000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{7EF8046C-11E6-4DD1-92A6-9F0C031871C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{EA9B8DF6-4DBC-4B2E-AB93-55001ECBC401}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{71EE2601-0267-4E8C-AC73-0766EAFA0D9C}"
 EndProject

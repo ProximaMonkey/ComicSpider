@@ -14,25 +14,26 @@ namespace test
 			Program program = new Program();
 			Lua lua = new Lua();
 
-			lua["lua"] = lua;
-
-			Persion jack = new Persion();
-			jack.lua = lua;
-			lua["cs"] = jack;
-
-			lua["v"] = 10;
+			List<string> list = new List<string>();
+			list.Add("a");
+			lua["list"] = new List<string>();
+			lua.RegisterFunction("foo", program, program.GetType().GetMethod("foo"));
 			lua.DoString(@"
-cs:m()
-set = 
-{
-	['123'] = true
-}
+foo({'1','2',3})
 ");
 
-			Console.WriteLine(lua.DoString("return set['123']")[0]);
+
+			Console.WriteLine();
 			Console.ReadLine();
 		}
 
+		public void foo(LuaTable t)
+		{
+			foreach (var item in t.Values)
+			{
+				Console.WriteLine(item);
+			}
+		}
 
 		private class Persion
 		{

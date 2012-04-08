@@ -6,21 +6,24 @@
 		xmlns:ic="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
 		xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" x:Name="window"
 		x:Class="ComicSpider.MainWindow"
-		Title="Comic Spider" Height="150" Width="350" MinHeight="150" MinWidth="240"
+		Title="Comic Spider" Height="140" Width="320"
 		Closing="window_Closing"
 		Closed="Window_Closed"
 		Topmost="True"
-		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico">
+		FontSize="12"
+		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" Opacity="0.9">
 	<Window.Resources>
 		<Storyboard x:Key="sb_hide_window">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0" KeySpline="0.47,0,0.52,1"/>
-			</DoubleAnimationUsingKeyFrames>
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="border">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0.9" KeySpline="0.47,0,0.52,1"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="0,0,1,0.22"/>
 			</DoubleAnimationUsingKeyFrames>
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="border">
-				<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0.9" KeySpline="0.47,0,0.52,1"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0.04" KeySpline="0.73,0,1,1"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="0,0,1,0.45"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="window">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
 		<Storyboard x:Key="sb_show_window">
@@ -43,7 +46,42 @@
 			<BeginStoryboard x:Name="sb_show_window_BeginStoryboard" Storyboard="{StaticResource sb_show_window}"/>
 		</EventTrigger>
 	</Window.Triggers>
-	<Border x:Name="border" CornerRadius="5" Margin="5" RenderTransformOrigin="0.5,0.5" BorderBrush="#FF7890AB" BorderThickness="1">
+	<Border x:Name="border" CornerRadius="5" Margin="5" RenderTransformOrigin="0.5,0.5" BorderBrush="#FF3E4E60" BorderThickness="1">
+		<i:Interaction.Triggers>
+			<i:EventTrigger EventName="MouseEnter">
+				<ic:GoToStateAction StateName="mouse_enter"/>
+			</i:EventTrigger>
+			<i:EventTrigger EventName="MouseLeave">
+				<ic:GoToStateAction StateName="mouse_leave"/>
+			</i:EventTrigger>
+			<i:EventTrigger EventName="DragEnter">
+				<ic:GoToStateAction StateName="mouse_enter"/>
+			</i:EventTrigger>
+			<i:EventTrigger EventName="DragLeave">
+				<ic:GoToStateAction StateName="mouse_leave"/>
+			</i:EventTrigger>
+		</i:Interaction.Triggers>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="window_visual_state_group">
+				<VisualState x:Name="mouse_enter">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="window">
+							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="mouse_leave">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="window">
+							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0.9"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<VisualStateManager.CustomVisualStateManager>
+			<ic:ExtendedVisualStateManager/>
+		</VisualStateManager.CustomVisualStateManager>
 		<Border.RenderTransform>
 			<TransformGroup>
 				<ScaleTransform/>
@@ -63,12 +101,14 @@
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="36"/>
-					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="80*"/>
+					<ColumnDefinition Width="136" />
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
 				<Image Source="Images/ys_16.ico" Width="16" Height="16" Margin="10,7" />
-				<TextBlock VerticalAlignment="Center" Grid.Column="1" Text="Comic Spider" Foreground="#FF2D62A1" FontSize="12" />
-				<Button x:Name="btn_close" ToolTip="Close" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
+				<TextBlock VerticalAlignment="Center" Grid.Column="1" Text="Comic Spider" Foreground="#FF2D62A1" />
+				<TextBlock x:Name="txt_title" VerticalAlignment="Center" Grid.Column="2" FontSize="11" HorizontalAlignment="Right" Foreground="#FF5F4646"></TextBlock>
+				<Button x:Name="btn_close" ToolTip="Close" Grid.Column="3" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
 							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_leave"/>
@@ -76,32 +116,33 @@
 						<i:EventTrigger EventName="MouseEnter">
 							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_enter"/>
 						</i:EventTrigger>
+						<i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_down"/>
+						</i:EventTrigger>
 					</i:Interaction.Triggers></Button>
 			</Grid>
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="2*" />
-					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="100" />
 				</Grid.ColumnDefinitions>
 				<Grid Margin="5">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
-						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
 					<TextBlock TextWrapping="Wrap" FontFamily="Verdana" VerticalAlignment="Center" Foreground="#FF88949F" HorizontalAlignment="Center" FontSize="14"><Run Text="Drag and drop link here."/></TextBlock>
-					<CheckBox x:Name="cb_latest_volume_only" ToolTip="only get latest volume into the list box"  IsChecked="True" Grid.Row="1" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="latest volume only"/>
 					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading"/>
 				</Grid>
-				<Grid Grid.Column="1">
+				<Grid Grid.Column="1" Margin="10">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<Button x:Name="btn_hide" ToolTip="shortcut: Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="10" />
-					<Button x:Name="btn_dashboard" ToolTip="shortcut: D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="10" />
+					<Button x:Name="btn_hide" ToolTip="shortcut: Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" />
+					<Button x:Name="btn_dashboard" ToolTip="shortcut: D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" />
 				</Grid>
-				<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" TrayToolTipOpen="tray_TrayToolTipOpen" Visibility="Collapsed">
+				<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
 					<tb:TaskbarIcon.TrayToolTip>
 						<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
 							<Border.Background>
@@ -113,8 +154,8 @@
 							<StackPanel>
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="Comic Spider" Margin="5" Foreground="Black" FontSize="16" />
-									<TextBlock Text="Download volume: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
-									<TextBlock x:Name="txt_main_progress" Text="10/90" Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" />
+									<TextBlock Text="Downloaded volume: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
+									<TextBlock x:Name="txt_main_progress" Text="-/-"  Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" />
 								</StackPanel>
 								<TextBlock Text="{Binding ToolTipText}" Foreground="#FF7C3958" Margin="5" />
 							</StackPanel>

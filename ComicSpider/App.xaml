@@ -5,20 +5,39 @@
 			 StartupUri="MainWindow.xaml">
 	<Application.Resources>
 		<ControlTemplate x:Key="Button_close_template" TargetType="{x:Type Button}">
-			<Border Background="#02FFFFFF">
+			<Border x:Name="border" Background="#0CFFFFFF" CornerRadius="3">
 				<VisualStateManager.VisualStateGroups>
 					<VisualStateGroup x:Name="VisualStateGroup">
 						<VisualStateGroup.Transitions>
-							<VisualTransition GeneratedDuration="0:0:0.3"/>
+							<VisualTransition GeneratedDuration="0"/>
 						</VisualStateGroup.Transitions>
 						<VisualState x:Name="mouse_enter">
 							<Storyboard>
 								<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="image">
-									<SplineDoubleKeyFrame KeyTime="0" Value="180"/>
+									<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="180" KeySpline="0,0,0.35,1"/>
+								</DoubleAnimationUsingKeyFrames>
+								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+									<SplineColorKeyFrame KeyTime="0:0:0.3" Value="#BFFFFFFF"/>
+								</ColorAnimationUsingKeyFrames>
+							</Storyboard>
+						</VisualState>
+						<VisualState x:Name="mouse_leave">
+							<Storyboard>
+								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+									<SplineColorKeyFrame KeyTime="0:0:0.3" Value="#0CFFFFFF"/>
+								</ColorAnimationUsingKeyFrames>
+								<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="image">
+									<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0" KeySpline="0,0,0.43,1"/>
 								</DoubleAnimationUsingKeyFrames>
 							</Storyboard>
 						</VisualState>
-						<VisualState x:Name="mouse_leave"/>
+						<VisualState x:Name="mouse_down">
+							<Storyboard>
+								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+									<SplineColorKeyFrame KeyTime="0" Value="#33FFFFFF"/>
+								</ColorAnimationUsingKeyFrames>
+							</Storyboard>
+						</VisualState>
 					</VisualStateGroup>
 				</VisualStateManager.VisualStateGroups>
 				<Image x:Name="image" Width="16" Height="16" Source="Images/close.png" RenderTransformOrigin="0.5,0.5">

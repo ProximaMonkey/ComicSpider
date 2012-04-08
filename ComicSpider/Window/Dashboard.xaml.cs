@@ -29,6 +29,13 @@ namespace ComicSpider
 		}
 		public static bool Is_initialized = false;
 
+		public new void Show()
+		{
+			base.Show();
+			this.WindowState = System.Windows.WindowState.Normal;
+			this.Activate();
+		}
+
 		public void Get_volume_list(string url)
 		{
 			Save_settings();
@@ -80,7 +87,7 @@ namespace ComicSpider
 												)
 											);
 				}
-				txt_console.Text = value + '\n' + txt_console.Text;
+				txt_console.AppendText('\n' + value);
 			}
 		}
 		public bool All_downloaded { get; set; }
@@ -101,7 +108,7 @@ namespace ComicSpider
 			skip: ;
 			}
 
-			btn_start.IsEnabled = true;
+			if(volume_list.Items.Count > 0)	btn_start.IsEnabled = true;
 			working_icon.Hide_working();
 			MainWindow.Main.Task_done();
 
@@ -112,12 +119,19 @@ namespace ComicSpider
 				{
 					btn_start_Click(null, null);
 				}
-
-				comic_spider.Add_volume_list(added_list);
+				else
+					comic_spider.Add_volume_list(added_list);
 			}
 
-			if(show_balloon)
-				MainWindow.Main.Show_balloon(this.Title);
+			if (show_balloon)
+			{
+				MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+				{
+					this.Show();
+				});
+			}
+
+			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
 		public delegate void Report_progress_delegate(string info);
@@ -130,6 +144,8 @@ namespace ComicSpider
 		public void Report_volume_progress()
 		{
 			if (All_downloaded) return;
+
+			MainWindow.Main.Main_progress = this.Main_progress;
 
 			int all_left = 0;
 			foreach (Web_src_info vol in volume_list.Items)
@@ -149,7 +165,17 @@ namespace ComicSpider
 			{
 				All_downloaded = true;
 				this.Title = "All completed.";
-				MainWindow.Main.Show_balloon(this.Title, true, "", true);
+				MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
+				}, true);
 				comic_spider.Stop(true);
 				btn_start.Content = "Start";
 				working_icon.Hide_working();
@@ -162,7 +188,10 @@ namespace ComicSpider
 		public void Stop_downloading(string info)
 		{
 			this.Title = info;
-			MainWindow.Main.Show_balloon(this.Title);
+			MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+			{
+				this.Show();
+			}, true);
 			comic_spider.Stop(true);
 			btn_start.Content = "Start";
 			working_icon.Hide_working();
@@ -212,7 +241,7 @@ namespace ComicSpider
 			txt_dir.Text = Main_settings.Main.Root_dir;
 			txt_thread.Text = Main_settings.Main.Thread_count;
 
-			Main_settings.Main.Max_console_line = 300;
+			Main_settings.Main.Max_console_line = 500;
 		}
 		private void Init_vol_info_list()
 		{
@@ -293,6 +322,9 @@ namespace ComicSpider
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
+			if (volume_list.Items.Count == 0)
+				return;
+
 			Save_all();
 
 			if (btn_start.Content.ToString() == "Start")
@@ -368,7 +400,17 @@ namespace ComicSpider
 			bg_worker.RunWorkerCompleted += (oo, ee) =>
 			{
 				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title, true);
+				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
+				});
 				btn_fix_display_pages.IsEnabled = true;
 			};
 			bg_worker.RunWorkerAsync();
@@ -393,7 +435,17 @@ namespace ComicSpider
 			bg_worker.RunWorkerCompleted += (oo, ee) =>
 			{
 				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title, true);
+				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
+				});
 				btn_del_display_pages.IsEnabled = true;
 			};
 			bg_worker.RunWorkerAsync();
@@ -528,26 +580,34 @@ namespace ComicSpider
 				MessageBox.Show("Stop downloading before deleting.");
 				return;
 			}
-
-			MenuItem menu_item = sender as MenuItem;
-			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			ListView list_view;
+			if (sender is ListView)
+			{
+				list_view = sender as ListView;
+			}
+			else
+			{
+				MenuItem menu_item = sender as MenuItem;
+				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			}
 
 			while (list_view.SelectedItems.Count > 0)
 			{
 				int index = list_view.SelectedIndex;
 				list_view.Items.RemoveAt(index);
 			}
+
+			if (volume_list.Items == null ||
+				volume_list.Items.Count == 0)
+			{
+				btn_start.IsEnabled = false;
+			}
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Delete)
 			{
-				ListView list_view = sender as ListView;
-				while (list_view.SelectedItems.Count > 0)
-				{
-					int index = list_view.SelectedIndex;
-					list_view.Items.RemoveAt(index);
-				}
+				Delelte_list_item_Click(sender, null);
 			}
 		}
 		private void btn_help_Click(object sender, RoutedEventArgs e)
@@ -684,7 +744,6 @@ namespace ComicSpider
 			Main_settings.Main.Main_url = txt_main_url.Text;
 			Main_settings.Main.Root_dir = txt_dir.Text;
 			Main_settings.Main.Thread_count = txt_thread.Text;
-			Main_settings.Main.Latest_volume_only = MainWindow.Main.Latest_volume_only;
 			Main_settings.Main.Auto_begin = MainWindow.Main.Auto_begin;
 		}
 		private void Save_settings()
