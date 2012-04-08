@@ -4,7 +4,7 @@
 		xmlns:tb="http://www.hardcodet.net/taskbar"
 		xmlns:ComicSpider="clr-namespace:ComicSpider"
 		xmlns:ic="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
-		xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" x:Name="window"
+		xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Name="window"
 		x:Class="ComicSpider.MainWindow"
 		Title="Comic Spider" Height="140" Width="320"
 		Closing="window_Closing"
@@ -101,14 +101,12 @@
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="36"/>
-					<ColumnDefinition Width="80*"/>
-					<ColumnDefinition Width="136" />
+					<ColumnDefinition/>
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
 				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" Margin="10,7" />
-				<TextBlock VerticalAlignment="Center" Grid.Column="1" Text="Comic Spider" Foreground="#FF2D62A1" />
-				<TextBlock x:Name="txt_title" VerticalAlignment="Center" Grid.Column="2" FontSize="11" HorizontalAlignment="Right" Foreground="#FF5F4646"></TextBlock>
-				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="3" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
+				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF2D62A1" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox"/>
+				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
 							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_leave"/>
@@ -126,12 +124,12 @@
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="100" />
 				</Grid.ColumnDefinitions>
-				<Grid Margin="5">
+				<Grid Margin="5,0,0,5">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock TextWrapping="Wrap" FontFamily="Verdana" VerticalAlignment="Center" Foreground="#FF88949F" HorizontalAlignment="Center" FontSize="14"><Run Text="Drag and drop link here."/></TextBlock>
+					<TextBlock Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top"/>
 					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading"/>
 				</Grid>
 				<Grid Grid.Column="1" Margin="10">
@@ -162,8 +160,8 @@
 						</Border>
 					</tb:TaskbarIcon.TrayToolTip>
 				</tb:TaskbarIcon>
-				<ComicSpider:WorkingIcon x:Name="working_icon" />
 			</Grid>
+			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="104,14" />
 		</Grid>
 	</Border>
 </Window>

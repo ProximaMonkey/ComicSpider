@@ -37,8 +37,10 @@ namespace ComicSpider
 
 			Main = this;
 
-			this.Title = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			img_logo.ToolTip = "Comic Spider " + this.Title + " April 2012 y.s.";
+			this.Title = "Comic Spider "
+				+ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()
+				+ " April 2012 y.s.";
+			img_logo.ToolTip = this.Title;
 
 			try
 			{
