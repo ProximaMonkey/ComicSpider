@@ -730,10 +730,14 @@ namespace ys.Web
 
 			public Web_src_info web_src_info(string url, int index, string name, Web_src_info parent = null)
 			{
+				if (parent != null &&
+					!string.IsNullOrEmpty(parent.Name))
+					name = name.Replace(parent.Name, "").Trim();
+
 				return new Web_src_info(
 					url,
 					index,
-					ys.Common.Format_for_number_sort(name.Trim()),
+					ys.Common.Format_for_number_sort(name),
 					parent);
 			}
 
