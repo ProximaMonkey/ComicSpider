@@ -37,7 +37,8 @@ namespace ComicSpider
 
 			Main = this;
 
-			Title += " " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			this.Title = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			img_logo.ToolTip = "Comic Spider " + this.Title + " April 2012 y.s.";
 
 			try
 			{
@@ -88,7 +89,7 @@ namespace ComicSpider
 		}
 		public new string Title
 		{
-			get { return base.Title; }
+			get { return txt_title.Text; }
 			set
 			{
 				txt_title.Text = value;

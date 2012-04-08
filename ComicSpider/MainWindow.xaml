@@ -105,10 +105,10 @@
 					<ColumnDefinition Width="136" />
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
-				<Image Source="Images/ys_16.ico" Width="16" Height="16" Margin="10,7" />
+				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" Margin="10,7" />
 				<TextBlock VerticalAlignment="Center" Grid.Column="1" Text="Comic Spider" Foreground="#FF2D62A1" />
 				<TextBlock x:Name="txt_title" VerticalAlignment="Center" Grid.Column="2" FontSize="11" HorizontalAlignment="Right" Foreground="#FF5F4646"></TextBlock>
-				<Button x:Name="btn_close" ToolTip="Close" Grid.Column="3" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
+				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="3" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
 							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_leave"/>
@@ -139,8 +139,8 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<Button x:Name="btn_hide" ToolTip="shortcut: Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" />
-					<Button x:Name="btn_dashboard" ToolTip="shortcut: D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" />
+					<Button x:Name="btn_hide" ToolTip="hotkey : Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" />
+					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" />
 				</Grid>
 				<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
 					<tb:TaskbarIcon.TrayToolTip>
@@ -154,7 +154,7 @@
 							<StackPanel>
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="Comic Spider" Margin="5" Foreground="Black" FontSize="16" />
-									<TextBlock Text="Downloaded volume: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
+									<TextBlock Text="main progress: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
 									<TextBlock x:Name="txt_main_progress" Text="-/-"  Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" />
 								</StackPanel>
 								<TextBlock Text="{Binding ToolTipText}" Foreground="#FF7C3958" Margin="5" />
