@@ -1,16 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
+﻿using System.Reflection;
+using System;
 using System.Windows;
+using System.IO;
 
 namespace ComicSpider
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
+	public partial class App : System.Windows.Application
 	{
+		public App()
+		{
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+		}
+
+		Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			try
+			{
+				return Assembly.LoadFrom(@"Lib\" + args.Name.Split(',')[0] + ".dll");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+				return null;
+			}
+		}
 	}
+
 }
