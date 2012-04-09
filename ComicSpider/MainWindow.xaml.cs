@@ -141,13 +141,12 @@ namespace ComicSpider
 		}
 		private void Window_Drop(object sender, DragEventArgs e)
 		{
-			working_icon.Show_working();
-
 			this.Topmost = false;
 			string url = e.Data.GetData(typeof(string)) as string;
 
 			if (url != null)
 			{
+				working_icon.Show_working();
 				Dashboard.Instance.Get_volume_list(url);
 			}
 			this.Topmost = true;
