@@ -107,7 +107,7 @@ comic_spider =
 				[[class="detail_list"[\s\S]+?/ul]],
 				[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
 			})
-			-- If can't find volume list, just treat it as a volume page.
+			-- If can't find volume list, then treat it as a volume page, not the index of the comic.
 			if info_list.Count == 0 then
 				src_info.Name = lc:find([[class="readpage_top"[\s\S]+?>(?<find>[^>]+) Manga</a>]])
 				vol_name = lc:find([[<title>(?<find>.+?) - Read]])
@@ -126,7 +126,7 @@ comic_spider =
 		end,
 	},
 
-	-- 这是个具有代表意义的中文漫画站点。以下为示例：
+	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
 	['178.com'] =
 	{
 		home = 'http://manhua.178.com/',
@@ -140,7 +140,7 @@ comic_spider =
 				[[<div class="cartoon_online_border"[\s\S]+?<div]],
 				[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
 			})
-			-- 如果没有发现列表，则这个当前页面直接为卷页面
+			-- 如果没有发现列表，则认为这个url指向的是卷地址，而不是主目录地址。
 			if info_list.Count == 0 then
 				vol_name = lc:find([[var g_chapter_name = "(?<find>.+?)"]])
 				lc:add(src_info.Url, 0, vol_name, src_info)
@@ -154,6 +154,7 @@ comic_spider =
 			list = lc:find([[var pages = '(?<find>.+?)']])
 			lc:fill_list(
 				lc:json_decode(list),
+				-- 这里演示了step的应用，类似jQuery中animate的step函数。注意变量url和name是引用。
 				function(i, str, arr)
 					n = math.random(#img_hosts)
 					url = 'http://' .. img_hosts[n] .. '.manhua.178.com/' .. str

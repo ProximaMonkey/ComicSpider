@@ -611,6 +611,9 @@ namespace ComicSpider
 			{
 				btn_start.IsEnabled = false;
 			}
+
+			this.Title = "Volume(s) deleted.";
+			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{

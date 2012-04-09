@@ -86,6 +86,7 @@ namespace ComicSpider
 			set
 			{
 				txt_main_progress.Text = value;
+				txt_tray_main_progress.Text = value;
 			}
 		}
 		public new string Title

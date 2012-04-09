@@ -129,10 +129,14 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top"/>
-					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading" Click="cb_auto_begin_Click" />
+					<TextBlock Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top" d:IsLocked="True"/>
+					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading" Click="cb_auto_begin_Click" d:IsLocked="True" />
+					<StackPanel Margin="5,0,0,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+						<TextBlock Text="main progress : " FontSize="10" Foreground="#FFBB70BE"/>
+						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>
+					</StackPanel>
 				</Grid>
-				<Grid Grid.Column="1" Margin="10">
+				<Grid Grid.Column="1" Margin="10" d:IsLocked="True">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
@@ -153,7 +157,7 @@
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="Comic Spider" Margin="5" Foreground="Black" FontSize="16" />
 									<TextBlock Text="main progress: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
-									<TextBlock x:Name="txt_main_progress" Text="-/-"  Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" />
+									<TextBlock x:Name="txt_tray_main_progress" Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" Text="- / -" />
 								</StackPanel>
 								<TextBlock Text="{Binding ToolTipText}" Foreground="#FF7C3958" Margin="5" />
 							</StackPanel>
@@ -161,7 +165,7 @@
 					</tb:TaskbarIcon.TrayToolTip>
 				</tb:TaskbarIcon>
 			</Grid>
-			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="104,14" />
+			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="104,14" d:IsLocked="True" />
 		</Grid>
 	</Border>
 </Window>
