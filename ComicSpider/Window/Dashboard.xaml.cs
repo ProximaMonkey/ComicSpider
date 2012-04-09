@@ -86,7 +86,7 @@ namespace ComicSpider
 		}
 		public bool All_downloaded { get; set; }
 
-		public delegate void Show_vol_list_delegate(List<Web_src_info> list, bool show_balloon = false);
+		public delegate void Show_volume_list_delegate(List<Web_src_info> list, bool show_balloon = false);
 		public void Show_volume_list(List<Web_src_info> list, bool show_balloon = false)
 		{
 			List<Web_src_info> added_list = new List<Web_src_info>();
@@ -128,6 +128,15 @@ namespace ComicSpider
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
+		public delegate void Show_supported_sites_delegate(List<string> list);
+		public void Show_supported_sites(List<string> list)
+		{
+			foreach (string item in list.Distinct())
+			{
+				cb_supported_websites.Items.Add(item);
+			}
+		}
+
 		public delegate void Report_progress_delegate(string info);
 		public void Report_progress(string info)
 		{
@@ -153,7 +162,7 @@ namespace ComicSpider
 					}
 					catch (Exception ex)
 					{
-						MessageBox.Show(ex.Message);
+						Message_box.Show(ex.Message);
 					}
 				}, true);
 				comic_spider.Stop(true);
@@ -301,6 +310,22 @@ namespace ComicSpider
 			}
 		}
 
+		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (cb_supported_websites.SelectedValue is string)
+			{
+				try
+				{
+					System.Diagnostics.Process.Start(cb_supported_websites.SelectedValue as string);
+				}
+				catch (Exception ex)
+				{
+					Message_box.Show(ex.Message);
+				}
+				cb_supported_websites.SelectedIndex = 0;
+			}		
+		}
+
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
 			if (volume_list.Items.Count == 0)
@@ -389,7 +414,7 @@ namespace ComicSpider
 					}
 					catch (Exception ex)
 					{
-						MessageBox.Show(ex.Message);
+						Message_box.Show(ex.Message);
 					}
 				});
 				btn_fix_display_pages.IsEnabled = true;
@@ -424,7 +449,7 @@ namespace ComicSpider
 					}
 					catch (Exception ex)
 					{
-						MessageBox.Show(ex.Message);
+						Message_box.Show(ex.Message);
 					}
 				});
 				btn_del_display_pages.IsEnabled = true;
@@ -454,7 +479,7 @@ namespace ComicSpider
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Message_box.Show(ex.Message);
 			}
 		}
 
@@ -486,13 +511,13 @@ namespace ComicSpider
 					if (File.Exists(file_path))
 						System.Diagnostics.Process.Start(file_path);
 					else
-						MessageBox.Show("No view page found.");
+						Message_box.Show("No view page found.");
 					break;
 				}
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Message_box.Show(ex.Message);
 			}
 		}
 		private void Copy_name_Click(object sender, RoutedEventArgs e)
@@ -551,14 +576,14 @@ namespace ComicSpider
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Message_box.Show(ex.Message);
 			}
 		}
 		private void Delelte_list_item_Click(object sender, RoutedEventArgs e)
 		{
 			if (!comic_spider.Stopped)
 			{
-				MessageBox.Show("Stop downloading before deleting.");
+				Message_box.Show("Stop downloading before deleting.");
 				return;
 			}
 			ListView list_view;
@@ -598,7 +623,7 @@ namespace ComicSpider
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Message_box.Show(ex.Message);
 			}
 		}
 
@@ -709,7 +734,7 @@ namespace ComicSpider
 		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			Exception ex = e.ExceptionObject as Exception;
-			MessageBox.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
+			Message_box.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
 			Window_Closed(null, null);
 		}
 

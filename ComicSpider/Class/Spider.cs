@@ -107,6 +107,64 @@ namespace ys.Web
 
 		private Random random;
 
+		private void Load_script()
+		{
+			file_types = new List<string>();
+			user_agents = new List<string>();
+			List<string> supported_websites = new List<string>();
+			script = "";
+
+			try
+			{
+				script = File.ReadAllText(@"comic_spider.lua");
+
+				Lua lua = new Lua();
+				lua.DoString(script);
+
+				foreach (string item in lua.GetTable("settings.file_types").Values)
+				{
+					file_types.Add(item);
+				}
+				foreach (string item in lua.GetTable("settings.user_agents").Values)
+				{
+					user_agents.Add(item);
+				}
+
+				foreach (string url in (lua.GetTable("settings.requires") as LuaTable).Values)
+				{
+					if (string.IsNullOrEmpty(url))
+						continue;
+
+					WebClientEx wc = new WebClientEx();
+					wc.Encoding = System.Text.Encoding.UTF8;
+					script += '\n' + wc.DownloadString(url);
+
+					Report("Remote script '{0}' loaded.", url);
+				}
+
+				foreach (LuaTable website in (lua.GetTable("comic_spider") as LuaTable).Values)
+				{
+					string home_url = website["home"] as string;
+					supported_websites.Add(home_url);
+				}
+
+				Dashboard.Instance.Dispatcher.Invoke(
+					new Dashboard.Show_supported_sites_delegate(Dashboard.Instance.Show_supported_sites),
+					supported_websites
+				);
+			}
+			catch (LuaException ex)
+			{
+				Report("Lua exception, " + ex.Message);
+			}
+			catch (Exception ex)
+			{
+				Report(ex.Message);
+			}
+
+			script_loaded = true;
+		}
+
 		public void Delete_display_pages()
 		{
 			string root_dir = Main_settings.Main.Root_dir;
@@ -203,7 +261,7 @@ namespace ys.Web
 			List<Web_src_info> vol_info_list = Get_volume_list(new Web_src_info(url, 0, ""));
 
 			Dashboard.Instance.Dispatcher.Invoke(
-				new Dashboard.Show_vol_list_delegate(Dashboard.Instance.Show_volume_list),
+				new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
 				vol_info_list,
 				true);
 		}
@@ -249,50 +307,6 @@ namespace ys.Web
 			}
 			else
 				return string.Empty;
-		}
-		private void Load_script()
-		{
-			try
-			{
-				script = File.ReadAllText(@"comic_spider.lua");
-
-				Lua lua = new Lua();
-				lua.DoString(script);
-
-				file_types = new List<string>();
-				foreach (string item in lua.GetTable("comic_spider.file_types").Values)
-				{
-					file_types.Add(item);
-				}
-				user_agents = new List<string>();
-				foreach (string item in lua.GetTable("comic_spider.user_agents").Values)
-				{
-					user_agents.Add(item);
-				}
-
-				foreach (string url in (lua.GetTable("comic_spider.requires") as LuaTable).Values)
-				{
-					if (string.IsNullOrEmpty(url))
-						continue;
-
-					WebClientEx wc = new WebClientEx();
-					wc.Encoding = System.Text.Encoding.UTF8;
-					script += '\n' + wc.DownloadString(url);
-
-					Report("Remote script '{0}' loaded.", url);
-				}
-				script_loaded = true;
-			}
-			catch (LuaException ex)
-			{
-				Report("Lua exception, " + ex.Message);
-				script_loaded = true;
-			}
-			catch (Exception ex)
-			{
-				Report(ex.Message);
-				script_loaded = true;
-			}
 		}
 
 		private List<Web_src_info> Get_volume_list(Web_src_info comic_info)

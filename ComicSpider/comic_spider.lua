@@ -61,7 +61,7 @@ External objects:
 		link information list of current page.
 ]]
 
-comic_spider =
+settings = 
 {
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
@@ -71,11 +71,16 @@ comic_spider =
 
 	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
 	requires = { '' },
+}
 
-	-- Default settings here. Name is long, but meaningful :)
+comic_spider =
+{
+	--[[ Default behaviors here. Name is long, but meaningful :)
 	['default'] =
 	{
 		charset = 'utf-8',
+
+		home = '',
 
 		get_comic_name = function()
 		end,
@@ -89,12 +94,13 @@ comic_spider =
 		get_file_list = function()
 		end,
 	},
-
--- THE REST ARE EXAMPLES:
+	]]
 
 	-- A sample english manga site. You can follow code below to parse another site.
 	['mangahere.com'] =
 	{
+		home = 'http://www.mangahere.com/',
+
 		get_comic_name = function()
 			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
 		end,
@@ -124,6 +130,8 @@ comic_spider =
 	-- 这是个具有代表意义的中文漫画站点。以下为示例：
 	['178.com'] =
 	{
+		home = 'http://manhua.178.com/',
+
 		get_comic_name = function()
 			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
 		end,
@@ -154,5 +162,4 @@ comic_spider =
 			)
 		end,
 	},
-
 }

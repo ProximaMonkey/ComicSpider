@@ -83,9 +83,8 @@
 		<Grid Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="65" />
-				<ColumnDefinition Width="443*" />
-				<ColumnDefinition Width="60" />
-				<ColumnDefinition Width="60" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="180" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="36" />
@@ -93,12 +92,17 @@
 			</Grid.RowDefinitions>
 
 			<Label Margin="0,5" HorizontalContentAlignment="Right" Foreground="#FF26335F" Content="Main url"/>
-			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Grid.ColumnSpan="3" Background="#BFFFFFFF" />
+			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
 			<Label Margin="0,5" Grid.Row="1" HorizontalContentAlignment="Right" Foreground="#FF26335F" Content="Save to"/>
 			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
 
-			<Label Grid.Row="1" Grid.Column="2" Margin="0,5" HorizontalContentAlignment="Right" Content="Threads" Foreground="#FF26335F"/>
-			<TextBox x:Name="txt_thread" Grid.Row="1" Grid.Column="3" Margin="5" MaxLength="3" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5"/>
+			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">
+				<Label HorizontalContentAlignment="Right" Content="Threads" Foreground="#FF26335F"/>
+				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5"/>
+			</StackPanel>
+			<ComboBox Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" SelectedIndex="0" Background="#7DFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
+				<ComboBoxItem Content="open supported websites" IsSelected="True" IsEnabled="False" />
+			</ComboBox>
 		</Grid>
 		<StackPanel Orientation="Horizontal" Grid.Row="1">
 			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />

@@ -73,7 +73,7 @@ namespace ComicSpider
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				Message_box.Show(ex.Message);
 			}
 
 			sb_show_window = Resources["sb_show_window"] as Storyboard;
