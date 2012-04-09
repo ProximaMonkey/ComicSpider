@@ -149,7 +149,7 @@ comic_spider =
 
 		get_page_list = function()
 			-- 站点显式使用了负载均衡，利用这点。
-			img_hosts = { 'imgd', 'img' }
+			img_hosts = { 'imgd', 'img', 'imgfast' }
 			-- 此站点使用了ajax，利用这点可以直接在第一页获取所有文件地址。
 			list = lc:find([[var pages = '(?<find>.+?)']])
 			lc:fill_list(

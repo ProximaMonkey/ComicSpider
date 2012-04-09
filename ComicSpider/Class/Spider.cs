@@ -567,6 +567,12 @@ namespace ys.Web
 					file_info = file_queue.Dequeue();
 				}
 
+				if (file_info == null)
+				{
+					Report("file info is null.");
+					continue;
+				}
+
 				#region Create file name
 				string file_name = string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url));
 				string dir = "";

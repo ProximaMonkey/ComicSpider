@@ -11,7 +11,7 @@
 		Closed="Window_Closed"
 		Topmost="True"
 		FontSize="12"
-		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" Opacity="0.9">
+		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" Opacity="0.9" ResizeMode="NoResize" SnapsToDevicePixels="True">
 	<Window.Resources>
 		<Storyboard x:Key="sb_hide_window">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="border">

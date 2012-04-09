@@ -38,7 +38,7 @@ namespace ComicSpider
 
 		public void Get_volume_list(string url)
 		{
-			Save_settings();
+			Update_settings();
 
 			txt_main_url.Text = url;
 			if (string.IsNullOrEmpty(txt_dir.Text))
@@ -103,8 +103,12 @@ namespace ComicSpider
 			skip: ;
 			}
 
-			if(volume_list.Items.Count > 0)	btn_start.IsEnabled = true;
-			working_icon.Hide_working();
+			if(volume_list.Items.Count > 0)
+				btn_start.IsEnabled = true;
+
+			if(comic_spider.Stopped)
+				working_icon.Hide_working();
+
 			MainWindow.Main.Task_done();
 
 			if (instance != null &&
@@ -204,44 +208,22 @@ namespace ComicSpider
 		{
 			InitializeComponent();
 
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
 			comic_spider = new Comic_spider();
 			
-			Init_settings();
-			Init_vol_info_list();
-			Init_page_info_list();
-		}
-
-		private Comic_spider comic_spider;
-
-		private void Init_settings()
-		{
-			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
-			kv_adpter.Adapter.SelectCommand = kv_adpter.Connection.CreateCommand();
-			kv_adpter.Adapter.SelectCommand.CommandText = "select * from Key_value where Key = 'Settings' limit 0,1";
-
-			kv_adpter.Connection.Open();
-
-			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
-			if (data_reader.Read())
-			{
-				Main_settings.Main = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
-			}
-
-			kv_adpter.Connection.Close();
+			Init_info_list();
 
 			txt_main_url.Text = Main_settings.Main.Main_url;
 			txt_dir.Text = Main_settings.Main.Root_dir;
 			txt_thread.Text = Main_settings.Main.Thread_count;
-
-			Main_settings.Main.Max_console_line = 500;
 		}
-		private void Init_vol_info_list()
+
+		private Comic_spider comic_spider;
+
+		private void Init_info_list()
 		{
 			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
 			User.Volume_listDataTable vol_info_table = vol_adpter.GetData();
-			List<Web_src_info> list = new List<Web_src_info>();
+			List<Web_src_info> vol_list = new List<Web_src_info>();
 
 			if (vol_info_table.Count > 0)
 			{
@@ -263,13 +245,13 @@ namespace ComicSpider
 							comic);
 
 						comic.Children.Add(src_info);
-						list.Add(src_info);
+						vol_list.Add(src_info);
 					}
 				}
-				Show_volume_list(list);
+				Init_page_info_list(vol_list);
 			}
 		}
-		private void Init_page_info_list()
+		private void Init_page_info_list(List<Web_src_info> vol_list)
 		{
 			Page_listTableAdapter page_adpter = new Page_listTableAdapter();
 			User.Page_listDataTable page_info_table = page_adpter.GetData();
@@ -283,7 +265,7 @@ namespace ComicSpider
 					{
 						if (volume == null)
 						{
-							foreach (Web_src_info vol in volume_list.Items)
+							foreach (Web_src_info vol in vol_list)
 							{
 								if (vol.Url == row.Parent_url)
 									volume = vol;
@@ -312,6 +294,8 @@ namespace ComicSpider
 					}
 				}
 			}
+
+			Show_volume_list(vol_list);
 		}
 
 		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -354,7 +338,7 @@ namespace ComicSpider
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
 			working_icon.Show_working();
-			Save_settings();
+			Update_settings();
 			comic_spider.Async_get_volume_list();
 		}
 
@@ -624,14 +608,7 @@ namespace ComicSpider
 		}
 		private void btn_help_Click(object sender, RoutedEventArgs e)
 		{
-			try
-			{
-				System.Diagnostics.Process.Start("Comic Spider.chm");
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message);
-			}
+			MainWindow.Main.Help();
 		}
 
 		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -738,13 +715,6 @@ namespace ComicSpider
 			Save_all();
 		}
 
-		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
-			Exception ex = e.ExceptionObject as Exception;
-			Message_box.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
-			Window_Closed(null, null);
-		}
-
 		private int Volume_downloaded()
 		{
 			int downloaded = 0;
@@ -756,32 +726,19 @@ namespace ComicSpider
 			return downloaded;
 		}
 
-		private void Save_all()
-		{
-			Save_settings();
-			Save_vol_info_list();
-			Save_page_info_list();
-		}
 		private void Update_settings()
 		{
 			Main_settings.Main.Main_url = txt_main_url.Text;
 			Main_settings.Main.Root_dir = txt_dir.Text;
 			Main_settings.Main.Thread_count = txt_thread.Text;
 		}
-		private void Save_settings()
+
+		private void Save_all()
 		{
 			Update_settings();
 
-			Key_valueTableAdapter kv_adapter = new Key_valueTableAdapter();
-			kv_adapter.Adapter.UpdateCommand = kv_adapter.Connection.CreateCommand();
-			kv_adapter.Adapter.UpdateCommand.CommandText = "update Key_value set [Value] = @value where [Key] = 'Settings'";
-			kv_adapter.Adapter.UpdateCommand.Parameters.AddWithValue("@value", ys.Common.ObjectToByteArray(Main_settings.Main));
-
-			kv_adapter.Connection.Open();
-
-			kv_adapter.Adapter.UpdateCommand.ExecuteNonQuery();
-
-			kv_adapter.Connection.Close();
+			Save_vol_info_list();
+			Save_page_info_list();
 		}
 		private void Save_vol_info_list()
 		{

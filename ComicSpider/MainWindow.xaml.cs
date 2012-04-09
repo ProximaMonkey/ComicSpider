@@ -32,6 +32,8 @@ namespace ComicSpider
 		{
 			InitializeComponent();
 
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
 			User.CheckAndFix();
 
 			Main = this;
@@ -41,42 +43,11 @@ namespace ComicSpider
 				+ " April 2012 y.s.";
 			img_logo.ToolTip = this.Title;
 
-			try
-			{
-				#region Load settings
-				Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
-				kv_adpter.Adapter.SelectCommand = kv_adpter.Connection.CreateCommand();
-				kv_adpter.Adapter.SelectCommand.CommandText = "select * from Key_value where Key = 'Settings' limit 0,1";
-
-				kv_adpter.Connection.Open();
-
-				SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
-				if (data_reader.Read())
-				{
-					Main_settings settings = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
-					if (settings != null)
-					{
-						cb_auto_begin.IsChecked = settings.Auto_begin;
-					}
-				}
-
-				kv_adpter.Connection.Close();
-				#endregion
-
-				// Binding global hot key.
-				global_hotkey = new ManagedWinapi.Hotkey();
-				global_hotkey.WindowsKey = true;
-				global_hotkey.KeyCode = System.Windows.Forms.Keys.C;
-				global_hotkey.HotkeyPressed += new EventHandler(global_hotkey_HotkeyPressed);
-				global_hotkey.Enabled = true;
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message);
-			}
-
 			sb_show_window = Resources["sb_show_window"] as Storyboard;
 			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
+
+			Init_global_hotkey();
+			Init_settings();
 		}
 
 		public static MainWindow Main;
@@ -107,6 +78,52 @@ namespace ComicSpider
 			working_icon.Hide_working();
 		}
 
+		public void Init_settings()
+		{
+			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
+			kv_adpter.Adapter.SelectCommand = kv_adpter.Connection.CreateCommand();
+			kv_adpter.Adapter.SelectCommand.CommandText = "select * from Key_value where Key = 'Settings' limit 0,1";
+
+			kv_adpter.Connection.Open();
+
+			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
+			if (data_reader.Read())
+			{
+				Main_settings.Main = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
+			}
+
+			cb_auto_begin.IsChecked = Main_settings.Main.Auto_begin;
+
+			kv_adpter.Connection.Close();
+
+			Main_settings.Main.Max_console_line = 500;
+		}
+		public void Save_settings()
+		{
+			Key_valueTableAdapter kv_adapter = new Key_valueTableAdapter();
+			kv_adapter.Adapter.UpdateCommand = kv_adapter.Connection.CreateCommand();
+			kv_adapter.Adapter.UpdateCommand.CommandText = "update Key_value set [Value] = @value where [Key] = 'Settings'";
+			kv_adapter.Adapter.UpdateCommand.Parameters.AddWithValue("@value", ys.Common.ObjectToByteArray(Main_settings.Main));
+
+			kv_adapter.Connection.Open();
+
+			kv_adapter.Adapter.UpdateCommand.ExecuteNonQuery();
+
+			kv_adapter.Connection.Close();
+		}
+
+		public void Help()
+		{
+			try
+			{
+				System.Diagnostics.Process.Start("Comic Spider.chm");
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
+		}
+
 		public void Show_balloon(string info, MouseButtonEventHandler click_event = null, bool play_sound = false)
 		{
 			tray_balloon = new Tray_balloon();
@@ -135,6 +152,23 @@ namespace ComicSpider
 		private ManagedWinapi.Hotkey global_hotkey;
 		private Storyboard sb_show_window;
 		private Storyboard sb_hide_window;
+
+		private void Init_global_hotkey()
+		{
+			try
+			{
+				// Binding global hot key.
+				global_hotkey = new ManagedWinapi.Hotkey();
+				global_hotkey.WindowsKey = true;
+				global_hotkey.KeyCode = System.Windows.Forms.Keys.C;
+				global_hotkey.HotkeyPressed += new EventHandler(global_hotkey_HotkeyPressed);
+				global_hotkey.Enabled = true;
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
+		}
 
 		private void Window_DragEnter(object sender, DragEventArgs e)
 		{
@@ -215,6 +249,8 @@ namespace ComicSpider
 		}
 		private void Window_Closed(object sender, EventArgs e)
 		{
+			Save_settings();
+
 			tray.Dispose();
 			if (Dashboard.Is_initialized)
 			{
@@ -237,7 +273,18 @@ namespace ComicSpider
 				case System.Windows.Input.Key.D:
 					btn_dashboard_Click(null, null);
 					break;
+
+				case System.Windows.Input.Key.F1:
+					Help();
+					break;
 			}
+		}
+
+		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			Exception ex = e.ExceptionObject as Exception;
+			Message_box.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
+			Window_Closed(null, null);
 		}
 	}
 }
