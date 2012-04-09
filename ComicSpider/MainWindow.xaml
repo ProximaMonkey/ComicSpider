@@ -130,7 +130,7 @@
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
 					<TextBlock Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top"/>
-					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading"/>
+					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading" Click="cb_auto_begin_Click" />
 				</Grid>
 				<Grid Grid.Column="1" Margin="10">
 					<Grid.RowDefinitions>

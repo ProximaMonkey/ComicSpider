@@ -170,6 +170,10 @@ namespace ComicSpider
 			this.Close();
 		}
 
+		private void cb_auto_begin_Click(object sender, RoutedEventArgs e)
+		{
+			Main_settings.Main.Auto_begin = cb_auto_begin.IsChecked == true;
+		}
 		private void cb_topmost_Click(object sender, RoutedEventArgs e)
 		{
 			this.Topmost = !this.Topmost;
@@ -234,6 +238,5 @@ namespace ComicSpider
 					break;
 			}
 		}
-
 	}
 }

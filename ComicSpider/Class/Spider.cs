@@ -35,7 +35,7 @@ namespace ys.Web
 
 		public void Async_get_volume_list()
 		{
-			Thread thread = new Thread(new ParameterizedThreadStart(Show_volume_list));
+			Thread thread = new Thread(new ParameterizedThreadStart(Get_volume_list));
 			thread.Name = "Show_volume_list";
 			thread.Start(Main_settings.Main.Main_url);
 			
@@ -255,16 +255,6 @@ namespace ys.Web
 			sw.Close();
 		}
 
-		private void Show_volume_list(object arg)
-		{
-			string url = arg as string;
-			List<Web_src_info> vol_info_list = Get_volume_list(new Web_src_info(url, 0, ""));
-
-			Dashboard.Instance.Dispatcher.Invoke(
-				new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
-				vol_info_list,
-				true);
-		}
 		private void Log_error(Exception ex, string url = "")
 		{
 			Report(ex.Message, url);
@@ -309,15 +299,29 @@ namespace ys.Web
 				return string.Empty;
 		}
 
-		private List<Web_src_info> Get_volume_list(Web_src_info comic_info)
+		private void Get_volume_list(object url)
 		{
+			Web_src_info comic_info = new Web_src_info(url as string, 0, "");
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
 
 			vol_info_list = Get_info_list_from_html(comic_info, "get_comic_name", "get_volume_list");
 
-			Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children.Count);
+			if (comic_info.Children.Count > 0)
+			{
+				Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children.Count);
+			}
+			else
+			{
+				Dashboard.Instance.Dispatcher.Invoke(
+					new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
+					"No volume found in " + url
+				);
+			}
 
-			return vol_info_list;
+			Dashboard.Instance.Dispatcher.Invoke(
+				new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
+				vol_info_list
+			);
 		}
 		private void Get_page_list()
 		{
@@ -357,22 +361,23 @@ namespace ys.Web
 					}
 				}
 
-				Get_file_list(vol_info.Children);
+				if (vol_info.Children.Count > 0)
+				{
+					Get_file_list(vol_info.Children);
+				}
+				else
+				{
+					vol_info.State = Web_src_info.State_missed;
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Stop_downloading_delegate(Dashboard.Instance.Stop_downloading),
+						"No page found in " + vol_info.Url
+					);
+				}
 			}
 		}
 		private void Get_file_list(List<Web_src_info> page_info_list)
 		{
 			string dir_path = "";
-
-			if (page_info_list.Count == 0)
-			{
-				Dashboard.Instance.Dispatcher.Invoke(
-					new Dashboard.Stop_downloading_delegate(
-						Dashboard.Instance.Stop_downloading),
-						"No page found."
-				);
-				return;
-			}
 
 			#region Create folder
 			Web_src_info parent = page_info_list[0];
@@ -391,9 +396,8 @@ namespace ys.Web
 				catch (Exception ex)
 				{
 					Dashboard.Instance.Dispatcher.Invoke(
-						new Dashboard.Stop_downloading_delegate(
-							Dashboard.Instance.Stop_downloading),
-							ex.Message
+						new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
+						ex.Message
 					);
 				}
 			}
@@ -698,7 +702,7 @@ namespace ys.Web
 					if (string.IsNullOrEmpty(this.GetString("url")) ||
 						string.IsNullOrEmpty(this.GetString("name")))
 						continue;
-
+					
 					list.Add(
 						new Web_src_info(
 							this.GetString("url"),
@@ -730,7 +734,7 @@ namespace ys.Web
 					if (string.IsNullOrEmpty(this.GetString("url")) ||
 						string.IsNullOrEmpty(this.GetString("name")))
 						continue;
-
+					
 					list.Add(
 						new Web_src_info(
 							this.GetString("url"),
@@ -742,17 +746,26 @@ namespace ys.Web
 				}
 			}
 
-			public Web_src_info web_src_info(string url, int index, string name, Web_src_info parent = null)
+			public void add(string url, int index, string name, Web_src_info parent = null)
 			{
+				if (parent == null ||
+					string.IsNullOrEmpty(parent.Name) ||
+					string.IsNullOrEmpty(name) ||
+					string.IsNullOrEmpty(url))
+					return;
+
+				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+
 				if (parent != null &&
 					!string.IsNullOrEmpty(parent.Name))
 					name = name.Replace(parent.Name, "").Trim();
 
-				return new Web_src_info(
+				list.Add(new Web_src_info(
 					url,
 					index,
 					ys.Common.Format_for_number_sort(name),
-					parent);
+					parent)
+				);
 			}
 
 			public int levenshtein_distance(string s, string t)

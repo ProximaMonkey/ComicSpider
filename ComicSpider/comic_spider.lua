@@ -33,8 +33,8 @@ External functions:
 		Fill info_list with an array, and loop with a callback function.
 		Varialble url and name are visible in step function.
 
-	Web_src_info lc:web_src_info(string url, int index, string name, Web_src_info parent = null):
-		create a new instance Web_src_info.
+	void lc:add(string url, int index, string name, Web_src_info parent = null):
+		Add a new Web_src_info instance to info_list.
 
 ******************************************************************************************
 
@@ -110,11 +110,13 @@ comic_spider =
 				[[class="detail_list"[\s\S]+?/ul]],
 				[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
 			})
+			-- If can't find volume list, just treat it as a volume page.
 			if info_list.Count == 0 then
 				src_info.Name = lc:find([[class="readpage_top"[\s\S]+?>(?<find>[^>]+) Manga</a>]])
 				vol_name = lc:find([[<title>(?<find>.+?) - Read]])
-				info_list:Add(lc:web_src_info(src_info.Url, 0, vol_name, src_info))
+				lc:add(src_info.Url, 0, vol_name, src_info)
 			end
+			info_list:Reverse()
 		end,
 
 		get_page_list = function()
@@ -141,10 +143,10 @@ comic_spider =
 				[[<div class="cartoon_online_border"[\s\S]+?<div]],
 				[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
 			})
-			-- 如果没有发现列表，则这个url指向的是单卷页面
+			-- 如果没有发现列表，则这个当前页面直接为卷页面
 			if info_list.Count == 0 then
 				vol_name = lc:find([[var g_chapter_name = "(?<find>.+?)"]])
-				info_list:Add(lc:web_src_info(src_info.Url, 0, vol_name, src_info))
+				lc:add(src_info.Url, 0, vol_name, src_info)
 			end
 		end,
 

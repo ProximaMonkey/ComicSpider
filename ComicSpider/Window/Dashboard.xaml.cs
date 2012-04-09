@@ -86,8 +86,8 @@ namespace ComicSpider
 		}
 		public bool All_downloaded { get; set; }
 
-		public delegate void Show_volume_list_delegate(List<Web_src_info> list, bool show_balloon = false);
-		public void Show_volume_list(List<Web_src_info> list, bool show_balloon = false)
+		public delegate void Show_volume_list_delegate(List<Web_src_info> list);
+		public void Show_volume_list(List<Web_src_info> list)
 		{
 			List<Web_src_info> added_list = new List<Web_src_info>();
 			foreach (Web_src_info item in list.Distinct(new Web_src_info.Comparer()))
@@ -115,14 +115,6 @@ namespace ComicSpider
 				}
 				else
 					comic_spider.Add_volume_list(added_list);
-			}
-
-			if (show_balloon)
-			{
-				MainWindow.Main.Show_balloon(this.Title, (o, e) =>
-				{
-					this.Show();
-				});
 			}
 
 			MainWindow.Main.Main_progress = this.Main_progress;
@@ -174,6 +166,16 @@ namespace ComicSpider
 			Save_all();
 		}
 
+		public delegate void Alert_delegate(string info);
+		public void Alert(string info)
+		{
+			this.Title = info;
+			MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+			{
+				this.Show();
+			}, true);
+		}
+
 		public delegate void Stop_downloading_delegate(string info);
 		public void Stop_downloading(string info)
 		{
@@ -182,6 +184,7 @@ namespace ComicSpider
 			{
 				this.Show();
 			}, true);
+
 			comic_spider.Stop(true);
 			btn_start.Content = "Start";
 			working_icon.Hide_working();
@@ -760,7 +763,6 @@ namespace ComicSpider
 			Main_settings.Main.Main_url = txt_main_url.Text;
 			Main_settings.Main.Root_dir = txt_dir.Text;
 			Main_settings.Main.Thread_count = txt_thread.Text;
-			Main_settings.Main.Auto_begin = MainWindow.Main.Auto_begin;
 		}
 		private void Save_settings()
 		{
