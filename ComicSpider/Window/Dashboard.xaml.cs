@@ -58,13 +58,6 @@ namespace ComicSpider
 			}
 		}
 
-		public string Main_progress
-		{
-			get 
-			{
-				return string.Format("{0} / {1}", Volume_downloaded(), volume_list.Items.Count);
-			}
-		}
 		public new string Title
 		{
 			get { return base.Title; }
@@ -75,13 +68,21 @@ namespace ComicSpider
 
 				if (txt_console.LineCount >= Main_settings.Main.Max_console_line)
 				{
-					txt_console.Text = txt_console.Text.Remove(
+					txt_console.Text = txt_console.Text.Substring(
 												txt_console.GetCharacterIndexFromLineIndex(
 													Main_settings.Main.Max_console_line / 2
 												)
 											);
 				}
 				txt_console.AppendText('\n' + value);
+			}
+		}
+
+		public string Main_progress
+		{
+			get 
+			{
+				return string.Format("{0} / {1}", Volume_downloaded(), volume_list.Items.Count);
 			}
 		}
 		public bool All_downloaded { get; set; }

@@ -42,9 +42,6 @@ External objects:
 	Lua_controller lc:
 		Current lua controller.
 
-	Comic_spider cs:
-		Current comic_spider.
-
 	Dashboard dashboard:
 		The main dashboard window.
 
@@ -63,14 +60,14 @@ External objects:
 
 settings = 
 {
+	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
+	requires = { '' },
+
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
 
 	-- Http requst User-Agent header list. Fake your info here. It will randomly choose one of them.
 	user_agents = { 'Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2' },
-
-	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
-	requires = { '' },
 }
 
 comic_spider =

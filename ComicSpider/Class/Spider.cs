@@ -17,20 +17,21 @@ namespace ys.Web
 		public Comic_spider()
 		{
 			stopped = true;
-			script_loaded = false;
 
 			random = new Random(DateTime.Now.Millisecond);
 
 			file_queue = new Queue<Web_src_info>();
+			page_queue = new Queue<Web_src_info>();
 			volume_queue = new Queue<Web_src_info>();
 			file_queue_lock = new object();
+			page_queue_lock = new object();
 			volume_queue_lock = new object();
 			thread_list = new List<Thread>();
 
-			Thread thread = new Thread(Load_script);
-			thread.Name = "ScriptLoader";
-			thread.Start();
-			thread_list.Add(thread);
+			Async_load_lua_script();
+			FileSystemWatcher lua_script_watcher = new FileSystemWatcher(@".\", "comic_spider.lua");
+			lua_script_watcher.Changed += new FileSystemEventHandler(lua_script_watcher_Changed);
+			lua_script_watcher.EnableRaisingEvents = true;
 		}
 
 		public void Async_get_volume_list()
@@ -53,6 +54,11 @@ namespace ys.Web
 				volume_queue.Enqueue(vol_info);
 			}
 
+			Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
+			page_list_getter.Name = "Get_page_list";
+			page_list_getter.Start();
+			thread_list.Add(page_list_getter);
+
 			for (int i = 0; i < int.Parse(Main_settings.Main.Thread_count); i++)
 			{
 				Thread downloader = new Thread(new ThreadStart(Downloader));
@@ -60,10 +66,10 @@ namespace ys.Web
 				downloader.Start();
 				thread_list.Add(downloader);
 
-				Thread info_getter = new Thread(new ThreadStart(Get_page_list));
-				info_getter.Name = "Get_page_list" + i;
-				info_getter.Start();
-				thread_list.Add(info_getter);
+				Thread file_list_getter = new Thread(new ThreadStart(Get_file_list));
+				file_list_getter.Name = "Get_file_list" + i;
+				file_list_getter.Start();
+				thread_list.Add(file_list_getter);
 			}
 
 			Report("Comic Spider start...");
@@ -95,74 +101,91 @@ namespace ys.Web
 		/***************************** Private ********************************/
 
 		private bool stopped;
+
 		private Queue<Web_src_info> file_queue;
+		private Queue<Web_src_info> page_queue;
 		private Queue<Web_src_info> volume_queue;
 		private object file_queue_lock;
+		private object page_queue_lock;
 		private object volume_queue_lock;
 		private List<Thread> thread_list;
+
+		private bool script_loaded;
 		private List<string> file_types;
 		private List<string> user_agents;
-		private string script;
-		private bool script_loaded;
+		private static string lua_script;
 
 		private Random random;
 
-		private void Load_script()
+		private void Async_load_lua_script()
 		{
-			file_types = new List<string>();
-			user_agents = new List<string>();
-			List<string> supported_websites = new List<string>();
-			script = "";
+			script_loaded = false;
 
-			try
+			Thread thread = new Thread(new ThreadStart(() =>
 			{
-				script = File.ReadAllText(@"comic_spider.lua");
+				file_types = new List<string>();
+				user_agents = new List<string>();
+				List<string> supported_websites = new List<string>();
+				lua_script = "";
 
-				Lua lua = new Lua();
-				lua.DoString(script);
-
-				foreach (string item in lua.GetTable("settings.file_types").Values)
+				try
 				{
-					file_types.Add(item);
+					lua_script = File.ReadAllText(@"comic_spider.lua");
+
+					Lua lua = new Lua();
+					lua.DoString(lua_script);
+
+					foreach (string item in lua.GetTable("settings.file_types").Values)
+					{
+						file_types.Add(item);
+					}
+					foreach (string item in lua.GetTable("settings.user_agents").Values)
+					{
+						user_agents.Add(item);
+					}
+
+					foreach (string url in (lua.GetTable("settings.requires") as LuaTable).Values)
+					{
+						if (string.IsNullOrEmpty(url))
+							continue;
+
+						WebClientEx wc = new WebClientEx();
+						wc.Encoding = System.Text.Encoding.UTF8;
+						lua_script += '\n' + wc.DownloadString(url);
+
+						Report("Remote script '{0}' loaded.", url);
+					}
+
+					foreach (LuaTable website in (lua.GetTable("comic_spider") as LuaTable).Values)
+					{
+						string home_url = website["home"] as string;
+						supported_websites.Add(home_url);
+					}
+
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Show_supported_sites_delegate(Dashboard.Instance.Show_supported_sites),
+						supported_websites
+					);
 				}
-				foreach (string item in lua.GetTable("settings.user_agents").Values)
+				catch (LuaException ex)
 				{
-					user_agents.Add(item);
+					Report("Lua exception, " + ex.Message);
 				}
-
-				foreach (string url in (lua.GetTable("settings.requires") as LuaTable).Values)
+				catch (Exception ex)
 				{
-					if (string.IsNullOrEmpty(url))
-						continue;
-
-					WebClientEx wc = new WebClientEx();
-					wc.Encoding = System.Text.Encoding.UTF8;
-					script += '\n' + wc.DownloadString(url);
-
-					Report("Remote script '{0}' loaded.", url);
+					Report(ex.Message);
 				}
 
-				foreach (LuaTable website in (lua.GetTable("comic_spider") as LuaTable).Values)
-				{
-					string home_url = website["home"] as string;
-					supported_websites.Add(home_url);
-				}
+				script_loaded = true;
+			}));
 
-				Dashboard.Instance.Dispatcher.Invoke(
-					new Dashboard.Show_supported_sites_delegate(Dashboard.Instance.Show_supported_sites),
-					supported_websites
-				);
-			}
-			catch (LuaException ex)
-			{
-				Report("Lua exception, " + ex.Message);
-			}
-			catch (Exception ex)
-			{
-				Report(ex.Message);
-			}
-
-			script_loaded = true;
+			thread.Name = "ScriptLoader";
+			thread.Start();
+			thread_list.Add(thread);
+		}
+		private void lua_script_watcher_Changed(object sender, FileSystemEventArgs e)
+		{
+			Async_load_lua_script();
 		}
 
 		public void Delete_display_pages()
@@ -303,8 +326,9 @@ namespace ys.Web
 		{
 			Web_src_info comic_info = new Web_src_info(url as string, 0, "");
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
+			Lua_controller lua_c = new Lua_controller();
 
-			vol_info_list = Get_info_list_from_html(comic_info, "get_comic_name", "get_volume_list");
+			vol_info_list = Get_info_list_from_html(lua_c, comic_info, "get_comic_name", "get_volume_list");
 
 			if (comic_info.Children.Count > 0)
 			{
@@ -325,15 +349,17 @@ namespace ys.Web
 		}
 		private void Get_page_list()
 		{
+			Web_src_info vol_info;
+			Lua_controller lua_c = new Lua_controller();
+
 			while (!stopped)
 			{
-				if (file_queue.Count > thread_list.Count)
+				if (page_queue.Count > thread_list.Count * 2)
 				{
 					Thread.Sleep(100);
 					continue;
 				}
 
-				Web_src_info vol_info;
 				lock (volume_queue_lock)
 				{
 					if (volume_queue.Count == 0)
@@ -349,7 +375,7 @@ namespace ys.Web
 				{
 					try
 					{
-						vol_info.Children = Get_info_list_from_html(vol_info, "get_page_list");
+						vol_info.Children = Get_info_list_from_html(lua_c, vol_info, "get_page_list");
 					}
 					catch (ThreadAbortException)
 					{
@@ -363,7 +389,31 @@ namespace ys.Web
 
 				if (vol_info.Children.Count > 0)
 				{
-					Get_file_list(vol_info.Children);
+					#region Create folder
+					string dir_path = "";
+					dir_path = Path.Combine(vol_info.Parent.Name, vol_info.Name);
+					dir_path = Path.Combine(Main_settings.Main.Root_dir, dir_path);
+					if (!Directory.Exists(dir_path))
+					{
+						try
+						{
+							Directory.CreateDirectory(dir_path);
+							Report("Create dir: {0}", dir_path);
+						}
+						catch (Exception ex)
+						{
+							Dashboard.Instance.Dispatcher.Invoke(
+								new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
+								ex.Message
+							);
+						}
+					}
+					#endregion
+
+					foreach (var page_list in vol_info.Children)
+					{
+						page_queue.Enqueue(page_list);
+					}
 				}
 				else
 				{
@@ -375,40 +425,27 @@ namespace ys.Web
 				}
 			}
 		}
-		private void Get_file_list(List<Web_src_info> page_info_list)
+		private void Get_file_list()
 		{
-			string dir_path = "";
+			Web_src_info page_info;
+			Lua_controller lua_c = new Lua_controller();
 
-			#region Create folder
-			Web_src_info parent = page_info_list[0];
-			while ((parent = parent.Parent) != null)
+			while (!stopped)
 			{
-				dir_path = Path.Combine(parent.Name, dir_path);
-			}
-			dir_path = Path.Combine(Main_settings.Main.Root_dir, dir_path);
-			if (!Directory.Exists(dir_path))
-			{
-				try
-				{
-					Directory.CreateDirectory(dir_path);
-					Report("Create dir: {0}", dir_path);
-				}
-				catch (Exception ex)
-				{
-					Dashboard.Instance.Dispatcher.Invoke(
-						new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
-						ex.Message
-					);
-				}
-			}
-			#endregion
-
-			foreach (var page_info in page_info_list)
-			{
-				while (file_queue.Count > thread_list.Count)
+				if (file_queue.Count > thread_list.Count * 2)
 				{
 					Thread.Sleep(100);
 					continue;
+				}
+
+				lock (page_queue_lock)
+				{
+					if (page_queue.Count == 0)
+					{
+						Thread.Sleep(100);
+						continue;
+					}
+					page_info = page_queue.Dequeue();
 				}
 
 				if (stopped)
@@ -418,7 +455,10 @@ namespace ys.Web
 
 				try
 				{
-					List<Web_src_info> file_info_list = Get_info_list_from_html(page_info, "get_file_list");
+					List<Web_src_info> file_info_list = Get_info_list_from_html(lua_c, page_info, "get_file_list");
+
+					if (file_info_list.Count == 0)
+						throw new Exception("No file info found in " + page_info.Url);
 
 					file_queue.Enqueue(file_info_list[0]);
 
@@ -430,11 +470,13 @@ namespace ys.Web
 				catch (Exception ex)
 				{
 					page_info.State = Web_src_info.State_missed;
+					page_queue.Enqueue(page_info);
 					Log_error(ex, page_info.Url);
 				}
 			}
 		}
-		private List<Web_src_info> Get_info_list_from_html(Web_src_info src_info, params string[] func_list)
+
+		private List<Web_src_info> Get_info_list_from_html(Lua_controller lua_c, Web_src_info src_info, params string[] func_list)
 		{
 			while (!script_loaded)
 			{
@@ -456,13 +498,8 @@ namespace ys.Web
 
 			try
 			{
-				#region Lua script controller
+				#region Lua lua_script controller
 
-				Lua_controller lua_c = new Lua_controller(script);
-				lua_c["lc"] = lua_c;
-				lua_c["cs"] = this;
-				lua_c["dashboard"] = Dashboard.Instance;
-				lua_c["settings"] = Main_settings.Main;
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
 
@@ -512,6 +549,7 @@ namespace ys.Web
 
 			return info_list;
 		}
+
 		private void Downloader()
 		{
 			Web_src_info file_info;
@@ -623,9 +661,13 @@ namespace ys.Web
 
 		private class Lua_controller : Lua
 		{
-			public Lua_controller(string script)
+			public Lua_controller()
 			{
-				this.DoString(script);
+				this.DoString(Comic_spider.lua_script);
+
+				this["lc"] = this;
+				this["dashboard"] = Dashboard.Instance;
+				this["settings"] = Main_settings.Main;
 			}
 
 			public string find(string pattern)
