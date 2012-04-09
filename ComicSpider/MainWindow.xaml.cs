@@ -19,7 +19,6 @@
 
 using System;
 using System.Windows;
-using System.Windows.Media;
 using ComicSpider.UserTableAdapters;
 using System.Data.SQLite;
 using System.Windows.Media.Animation;
@@ -115,15 +114,17 @@ namespace ComicSpider
 			{
 				tray_balloon.Visibility = System.Windows.Visibility.Collapsed;
 			};
-			tray_balloon.PreviewMouseDown += click_event;
+			if (click_event != null)
+				tray_balloon.PreviewMouseDown += click_event;
 			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 5000);
 			tray_balloon.Text = info;
 
-			if (play_sound)
+			string sound_path = @"Asset\情報バー(message).wav";
+			if (play_sound &&
+				System.IO.File.Exists(sound_path))
 			{
-				MediaPlayer mplayer = new MediaPlayer();
-				mplayer.Open(new Uri(@"Asset\msg.wav", UriKind.Relative));
-				mplayer.Play(); 
+				System.Media.SoundPlayer sp = new System.Media.SoundPlayer(sound_path);
+				sp.Play();
 			}
 		}
 

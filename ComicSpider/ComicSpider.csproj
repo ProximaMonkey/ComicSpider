@@ -199,6 +199,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Asset\メッセージ%28alert%29.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Asset\情報バー%28message%29.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\Microsoft.Expression.Interactions.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -244,9 +250,6 @@
     </BlendEmbeddedFont>
     <Resource Include="Images\close.png" />
     <Resource Include="Images\ys_16.ico" />
-    <None Include="Asset\msg.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Lib\Hardcodet.Wpf.TaskbarNotification.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
