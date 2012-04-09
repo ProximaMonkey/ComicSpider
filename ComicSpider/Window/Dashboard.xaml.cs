@@ -62,13 +62,7 @@ namespace ComicSpider
 		{
 			get 
 			{
-				int downloaded = 0;
-				foreach (Web_src_info item in volume_list.Items)
-				{
-					if (item.State == Web_src_info.State_downloaded)
-						downloaded++;
-				}
-				return string.Format("{0} / {1}", downloaded, volume_list.Items.Count);
+				return string.Format("{0} / {1}", Volume_downloaded(), volume_list.Items.Count);
 			}
 		}
 		public new string Title
@@ -140,28 +134,14 @@ namespace ComicSpider
 			this.Title = info;
 		}
 
-		public delegate void Report_volume_progress_delegate();
-		public void Report_volume_progress()
+		public delegate void Report_main_progress_delegate();
+		public void Report_main_progress()
 		{
 			if (All_downloaded) return;
 
 			MainWindow.Main.Main_progress = this.Main_progress;
 
-			int all_left = 0;
-			foreach (Web_src_info vol in volume_list.Items)
-			{
-				if (vol.Children == null)
-					continue;
-
-				foreach (Web_src_info file in vol.Children)
-				{
-					if (file.State == Web_src_info.State_downloaded)
-						continue;
-
-					all_left++;
-				}
-			}
-			if (all_left == 0)
+			if (Volume_downloaded() == volume_list.Items.Count)
 			{
 				All_downloaded = true;
 				this.Title = "All completed.";
@@ -178,6 +158,7 @@ namespace ComicSpider
 				}, true);
 				comic_spider.Stop(true);
 				btn_start.Content = "Start";
+				btn_start.IsEnabled = false;
 				working_icon.Hide_working();
 			}
 
@@ -597,8 +578,7 @@ namespace ComicSpider
 				list_view.Items.RemoveAt(index);
 			}
 
-			if (volume_list.Items == null ||
-				volume_list.Items.Count == 0)
+			if (Volume_downloaded() == volume_list.Items.Count)
 			{
 				btn_start.IsEnabled = false;
 			}
@@ -731,6 +711,17 @@ namespace ComicSpider
 			Exception ex = e.ExceptionObject as Exception;
 			MessageBox.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
 			Window_Closed(null, null);
+		}
+
+		private int Volume_downloaded()
+		{
+			int downloaded = 0;
+			foreach (Web_src_info item in volume_list.Items)
+			{
+				if (item.State == Web_src_info.State_downloaded)
+					downloaded++;
+			}
+			return downloaded;
 		}
 
 		private void Save_all()

@@ -570,8 +570,8 @@ namespace ys.Web
 
 						Thread.Sleep(500);		// Wait other Dispatcher done.
 						Dashboard.Instance.Dispatcher.Invoke(
-							new Dashboard.Report_volume_progress_delegate(
-								Dashboard.Instance.Report_volume_progress
+							new Dashboard.Report_main_progress_delegate(
+								Dashboard.Instance.Report_main_progress
 							)
 						);
 					}
