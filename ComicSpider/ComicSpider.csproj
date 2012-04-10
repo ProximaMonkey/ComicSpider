@@ -202,9 +202,10 @@
     <Content Include="Asset\メッセージ%28alert%29.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Asset\情報バー%28message%29.wav">
+    <Content Include="Asset\メッセージ%28message%29.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\ys_16.png" />
     <Content Include="Lib\Microsoft.Expression.Interactions.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -50,18 +50,12 @@ namespace ys.Web
 		{
 			get
 			{
-				lock (state_lock)
-				{
-					return state;
-				}
+				return state;
 			}
 			set
 			{
-				lock (state_lock)
-				{
-					state = value;
-					NotifyPropertyChanged("State");
-				}
+				state = value;
+				NotifyPropertyChanged("State");
 			}
 		}
 		public List<Web_src_info> Children
@@ -125,7 +119,6 @@ namespace ys.Web
 
 		private string url;
 		private string name;
-		private readonly object state_lock = new object();
 		private string state;
 		private List<Web_src_info> children;
 	}

@@ -11,7 +11,7 @@
 		Closed="Window_Closed"
 		Topmost="True"
 		FontSize="12"
-		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" Opacity="0.9" ResizeMode="NoResize" SnapsToDevicePixels="True">
+		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True">
 	<Window.Resources>
 		<Storyboard x:Key="sb_hide_window">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="border">
@@ -54,26 +54,33 @@
 			<i:EventTrigger EventName="MouseLeave">
 				<ic:GoToStateAction StateName="mouse_leave"/>
 			</i:EventTrigger>
-			<i:EventTrigger EventName="DragEnter">
-				<ic:GoToStateAction StateName="mouse_enter"/>
+			<i:EventTrigger EventName="PreviewDragEnter">
+				<ic:GoToStateAction StateName="drag_enter"/>
 			</i:EventTrigger>
-			<i:EventTrigger EventName="DragLeave">
+			<i:EventTrigger EventName="PreviewDragLeave">
 				<ic:GoToStateAction StateName="mouse_leave"/>
 			</i:EventTrigger>
 		</i:Interaction.Triggers>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup x:Name="window_visual_state_group">
+				<VisualStateGroup.Transitions>
+					<VisualTransition GeneratedDuration="0:0:0.3"/>
+				</VisualStateGroup.Transitions>
 				<VisualState x:Name="mouse_enter">
 					<Storyboard>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="window">
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.Opacity)" Storyboard.TargetName="border">
 							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
-				<VisualState x:Name="mouse_leave">
+				<VisualState x:Name="mouse_leave"/>
+				<VisualState x:Name="drag_enter">
 					<Storyboard>
-						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="window">
-							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0.9"/>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.Opacity)" Storyboard.TargetName="border">
+							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="textBlock">
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="-1" KeySpline="0.21,0.9,1,1"/>
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
@@ -91,7 +98,7 @@
 			</TransformGroup>
 		</Border.RenderTransform>
 		<Border.Background>
-			<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" />
+			<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" Opacity="0.8" />
 		</Border.Background>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -105,7 +112,7 @@
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
 				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" Margin="10,7" />
-				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF2D62A1" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox"/>
+				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF2D62A1" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox" IsHitTestVisible="False"/>
 				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
@@ -129,9 +136,18 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top" d:IsLocked="True"/>
+					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" IsHitTestVisible="False">
+						<TextBlock.RenderTransform>
+							<TransformGroup>
+								<ScaleTransform/>
+								<SkewTransform/>
+								<RotateTransform/>
+								<TranslateTransform/>
+							</TransformGroup>
+						</TextBlock.RenderTransform>
+					</TextBlock>
 					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading" Click="cb_auto_begin_Click" d:IsLocked="True" />
-					<StackPanel Margin="5,0,0,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+					<StackPanel Margin="5,0,0,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsHitTestVisible="False">
 						<TextBlock Text="main progress : " FontSize="10" Foreground="#FFBB70BE"/>
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>
 					</StackPanel>

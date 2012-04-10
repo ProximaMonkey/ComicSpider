@@ -51,7 +51,10 @@ namespace ys.Web
 
 			foreach (Web_src_info vol_info in vol_info_list)
 			{
-				volume_queue.Enqueue(vol_info);
+				lock (volume_queue_lock)
+				{
+					volume_queue.Enqueue(vol_info); 
+				}
 			}
 
 			Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
@@ -77,9 +80,12 @@ namespace ys.Web
 
 		public void Add_volume_list(List<Web_src_info> list)
 		{
-			foreach (var vol_info in list)
+			lock (volume_queue_lock)
 			{
-				volume_queue.Enqueue(vol_info);
+				foreach (var vol_info in list)
+				{
+					volume_queue.Enqueue(vol_info);
+				}
 			}
 		}
 
@@ -410,9 +416,12 @@ namespace ys.Web
 					}
 					#endregion
 
-					foreach (var page_list in vol_info.Children)
+					lock (page_queue_lock)
 					{
-						page_queue.Enqueue(page_list);
+						foreach (var page_list in vol_info.Children)
+						{
+							page_queue.Enqueue(page_list);
+						} 
 					}
 				}
 				else
@@ -457,10 +466,14 @@ namespace ys.Web
 				{
 					List<Web_src_info> file_info_list = Get_info_list_from_html(lua_c, page_info, "get_file_list");
 
-					if (file_info_list.Count == 0)
+					if (file_info_list.Count == 0 ||
+						file_info_list[0] == null)
 						throw new Exception("No file info found in " + page_info.Url);
 
-					file_queue.Enqueue(file_info_list[0]);
+					lock (file_queue_lock)
+					{
+						file_queue.Enqueue(file_info_list[0]); 
+					}
 
 					Report("Get file info: {0}", file_info_list[0].Url);
 				}
@@ -470,7 +483,10 @@ namespace ys.Web
 				catch (Exception ex)
 				{
 					page_info.State = Web_src_info.State_missed;
-					page_queue.Enqueue(page_info);
+					lock (page_queue_lock)
+					{
+						page_queue.Enqueue(page_info);
+					}
 					Log_error(ex, page_info.Url);
 				}
 			}
@@ -567,12 +583,6 @@ namespace ys.Web
 					file_info = file_queue.Dequeue();
 				}
 
-				if (file_info == null)
-				{
-					Report("file info is null.");
-					continue;
-				}
-
 				#region Create file name
 				string file_name = string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url));
 				string dir = "";
@@ -658,7 +668,10 @@ namespace ys.Web
 
 					file_info.Parent.State = Web_src_info.State_missed;
 
-					file_queue.Enqueue(file_info);
+					lock (file_queue_lock)
+					{
+						file_queue.Enqueue(file_info);
+					}
 
 					Log_error(ex, file_info.Url);
 				}
@@ -678,7 +691,13 @@ namespace ys.Web
 
 			public string find(string pattern)
 			{
-				return Regex.Match(this.GetString("html"), pattern, RegexOptions.IgnoreCase).Groups["find"].Value;
+				Match m = Regex.Match(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
+				if (!string.IsNullOrEmpty(m.Groups["find"].Value))
+					return m.Groups["find"].Value;
+				else if (!string.IsNullOrEmpty(m.Groups[1].Value))
+					return m.Groups[1].Value;
+				else
+					return m.Groups[0].Value;
 			}
 
 			public void fill_list(string pattern, LuaFunction step = null)
