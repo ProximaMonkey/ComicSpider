@@ -29,6 +29,7 @@ namespace ComicSpider
 		private Main_settings()
 		{
 			Thread_count = "5";
+			Auto_begin = true;
 		}
 
 		public string Main_url { get; set; }
