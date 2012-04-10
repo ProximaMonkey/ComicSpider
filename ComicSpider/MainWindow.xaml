@@ -136,7 +136,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF747474" FontSize="22" RenderTransformOrigin="0.5,0.55" IsHitTestVisible="False" Height="22.947" VerticalAlignment="Top" Margin="14.034,21,14.034,0">
+					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF747474" FontSize="22" RenderTransformOrigin="0.5,0.55" IsHitTestVisible="False" Height="22.947" VerticalAlignment="Top" Margin="21,15,0,0" HorizontalAlignment="Left">
 						<TextBlock.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform/>
