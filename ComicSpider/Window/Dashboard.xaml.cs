@@ -74,7 +74,7 @@ namespace ComicSpider
 												)
 											);
 				}
-				txt_console.AppendText('\n' + value);
+				txt_console.AppendText(">> " + value + '\n');
 			}
 		}
 

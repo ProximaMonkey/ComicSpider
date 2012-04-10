@@ -29,9 +29,7 @@ namespace ys.Web
 			thread_list = new List<Thread>();
 
 			Async_load_lua_script();
-			FileSystemWatcher lua_script_watcher = new FileSystemWatcher(@".\", "comic_spider.lua");
-			lua_script_watcher.Changed += new FileSystemEventHandler(lua_script_watcher_Changed);
-			lua_script_watcher.EnableRaisingEvents = true;
+			Init_lua_script_watcher();
 		}
 
 		public void Async_get_volume_list()
@@ -57,20 +55,20 @@ namespace ys.Web
 				}
 			}
 
-			Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
-			page_list_getter.Name = "Get_page_list";
-			page_list_getter.Start();
-			thread_list.Add(page_list_getter);
-
 			for (int i = 0; i < int.Parse(Main_settings.Main.Thread_count); i++)
 			{
+				Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
+				page_list_getter.Name = "Get_page_list " + i;
+				page_list_getter.Start();
+				thread_list.Add(page_list_getter);
+
 				Thread downloader = new Thread(new ThreadStart(Downloader));
-				downloader.Name = "Downloader" + i;
+				downloader.Name = "Downloader " + i;
 				downloader.Start();
 				thread_list.Add(downloader);
 
 				Thread file_list_getter = new Thread(new ThreadStart(Get_file_list));
-				file_list_getter.Name = "Get_file_list" + i;
+				file_list_getter.Name = "Get_file_list " + i;
 				file_list_getter.Start();
 				thread_list.Add(file_list_getter);
 			}
@@ -101,6 +99,8 @@ namespace ys.Web
 				}
 			}
 			thread_list.Clear();
+
+			Report("Downloading stopped.");
 		}
 		public bool Stopped { get { return stopped; } }
 
@@ -189,9 +189,25 @@ namespace ys.Web
 			thread.Start();
 			thread_list.Add(thread);
 		}
-		private void lua_script_watcher_Changed(object sender, FileSystemEventArgs e)
+		private void Init_lua_script_watcher()
 		{
-			Async_load_lua_script();
+			try
+			{
+				FileSystemWatcher lua_script_watcher = new FileSystemWatcher(@".\", "comic_spider.lua");
+				lua_script_watcher.NotifyFilter = NotifyFilters.LastWrite;
+				lua_script_watcher.Changed += (o, e) =>
+				{
+					lua_script_watcher.EnableRaisingEvents = false;		// Well known bug. This just a hack.
+					Report("Reload lua script.");
+					Async_load_lua_script();
+					lua_script_watcher.EnableRaisingEvents = true;
+				};
+				lua_script_watcher.EnableRaisingEvents = true;
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
 		}
 
 		public void Delete_display_pages()

@@ -1,6 +1,8 @@
 --[[
-Comic Spider controller.(this doc utf-8 encoding only)
+Comic Spider controller
 April 2012 y.s.
+
+This doc should be utf-8 encoding only.
 
 Most of the .NET assemblies are visible. You can control most behaviors of the spider.
 For more information please see the source code of the CSharp project:
