@@ -7,7 +7,7 @@
 			 x:Name="this">
 	<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9" Margin="10">
 		<Border.Background>
-			<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" />
+			<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
 		</Border.Background>
 		<Border.Effect>
 			<DropShadowEffect Color="#FF4B4B4B" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.7"></DropShadowEffect>

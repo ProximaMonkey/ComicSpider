@@ -98,7 +98,7 @@
 			</TransformGroup>
 		</Border.RenderTransform>
 		<Border.Background>
-			<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" Opacity="0.8" />
+			<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" Opacity="0.8" />
 		</Border.Background>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -111,8 +111,8 @@
 					<ColumnDefinition/>
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
-				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" Margin="10,7" />
-				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF2D62A1" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox" IsHitTestVisible="False"/>
+				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" />
+				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox" IsHitTestVisible="False"/>
 				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
@@ -136,7 +136,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF88949F" FontSize="22" HorizontalAlignment="Center" Margin="0,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" IsHitTestVisible="False">
+					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF747474" FontSize="22" RenderTransformOrigin="0.5,0.55" IsHitTestVisible="False" Height="22.947" VerticalAlignment="Top" Margin="14.034,21,14.034,0">
 						<TextBlock.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform/>
@@ -146,8 +146,8 @@
 							</TransformGroup>
 						</TextBlock.RenderTransform>
 					</TextBlock>
-					<CheckBox x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Grid.Row="3" VerticalAlignment="Center" Opacity="0.8" Margin="5,0,0,0" Content="auto begin downloading" Click="cb_auto_begin_Click" d:IsLocked="True" />
-					<StackPanel Margin="5,0,0,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsHitTestVisible="False">
+					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" />
+					<StackPanel HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Orientation="Horizontal" IsHitTestVisible="False">
 						<TextBlock Text="main progress : " FontSize="10" Foreground="#FFBB70BE"/>
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>
 					</StackPanel>
@@ -164,7 +164,7 @@
 					<tb:TaskbarIcon.TrayToolTip>
 						<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
 							<Border.Background>
-								<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" />
+								<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
 							</Border.Background>
 							<Border.Effect>
 								<DropShadowEffect Color="#FF4B4B4B" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.7"/>

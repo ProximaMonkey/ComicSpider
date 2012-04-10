@@ -257,7 +257,9 @@
     <None Include="Lib\System.Data.SQLite.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Resource Include="Images\main_bg.jpg" />
+    <Content Include="Asset\main_bg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Images\Metro-Loading-Blue-100.png" />
     <Resource Include="Images\running.png" />
     <Resource Include="Images\y.s.ico" />

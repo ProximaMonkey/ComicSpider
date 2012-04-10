@@ -64,10 +64,10 @@
 			</Setter>
 		</Style>
 		<LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
-			<GradientStop Color="#4CF3F3F3" Offset="0"/>
-			<GradientStop Color="#FFEBEBEB" Offset="0.5"/>
-			<GradientStop Color="#4CDDDDDD" Offset="0.5"/>
-			<GradientStop Color="#4CCDCDCD" Offset="1"/>
+			<GradientStop Color="#BFFFFFFF" Offset="0"/>
+			<GradientStop Color="#BFF1F1F1" Offset="0.5"/>
+			<GradientStop Color="#BFFFFFFF" Offset="0.5"/>
+			<GradientStop Color="#BFFFFFFF" Offset="1"/>
 		</LinearGradientBrush>
 		<SolidColorBrush x:Key="ButtonNormalBorder" Color="#7F707070"/>
 		<Style TargetType="{x:Type Button}">
@@ -75,7 +75,7 @@
 			<Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
 			<Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
 			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+			<Setter Property="Foreground" Value="#FF313545"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="Padding" Value="1"/>

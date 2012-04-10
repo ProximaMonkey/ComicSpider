@@ -138,11 +138,15 @@ namespace ComicSpider
 			tray_balloon.Text = info;
 
 			string sound_path = @"Asset\メッセージ(message).wav";
-			if (play_sound &&
-				System.IO.File.Exists(sound_path))
+			if (play_sound)
 			{
-				System.Media.SoundPlayer sp = new System.Media.SoundPlayer(sound_path);
-				sp.Play();
+				if (System.IO.File.Exists(sound_path))
+				{
+					System.Media.SoundPlayer sp = new System.Media.SoundPlayer(sound_path);
+					sp.Play();
+				}
+				else
+					System.Media.SystemSounds.Asterisk.Play();
 			}
 		}
 

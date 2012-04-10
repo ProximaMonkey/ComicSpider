@@ -23,6 +23,8 @@ namespace ComicSpider
 				System.Media.SoundPlayer sp = new System.Media.SoundPlayer(sound_path);
 				sp.Play();
 			}
+			else
+				System.Media.SystemSounds.Hand.Play();
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)

@@ -69,7 +69,7 @@
 		</Storyboard>
 	</Window.Resources>
 	<Window.Background>
-		<ImageBrush ImageSource="pack://application:,,,/Comic Spider;component/Images/main_bg.jpg" Stretch="UniformToFill" TileMode="None" />
+		<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
 	</Window.Background>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -90,17 +90,16 @@
 				<RowDefinition Height="36" />
 				<RowDefinition Height="36" />
 			</Grid.RowDefinitions>
-
-			<Label Margin="0,5" HorizontalContentAlignment="Right" Foreground="#FF26335F" Content="Main url"/>
+			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF26335F" Text="Main url"/>
 			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
-			<Label Margin="0,5" Grid.Row="1" HorizontalContentAlignment="Right" Foreground="#FF26335F" Content="Save to"/>
+			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Foreground="#FF26335F" Text="Save to"/>
 			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
 
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">
-				<Label HorizontalContentAlignment="Right" Content="Threads" Foreground="#FF26335F"/>
-				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5"/>
+				<TextBlock Margin="3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F"/>
+				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5" Background="#BFFFFFFF"/>
 			</StackPanel>
-			<ComboBox Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" SelectedIndex="0" Background="#7DFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
+			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" SelectedIndex="0" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
 				<ComboBoxItem Content="open supported website" IsSelected="True" IsEnabled="False" />
 			</ComboBox>
 		</Grid>
