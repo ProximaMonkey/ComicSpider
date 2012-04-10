@@ -519,6 +519,9 @@ namespace ys.Web
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
 
+				if (lua_c.DoString(string.Format("return comic_spider['{0}']", host))[0] == null)
+					throw new Exception("No controller found for " + host);
+
 				bool exists_method = false;
 				foreach (var func in func_list)
 				{
@@ -526,8 +529,6 @@ namespace ys.Web
 				}
 				if (exists_method)
 				{
-					if (lua_c.DoString(string.Format("return comic_spider['{0}']", host))[0] == null)
-						throw new Exception("No controller found for this site.");
 
 					string encoding = lua_c.DoString(string.Format("return comic_spider['{0}']['charset']", host))[0] as string;
 
@@ -556,7 +557,6 @@ namespace ys.Web
 			catch (LuaException ex)
 			{
 				Report("Lua exception, " + ex.Message);
-				script_loaded = true;
 			}
 			catch (Exception ex)
 			{

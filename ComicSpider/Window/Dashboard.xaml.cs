@@ -111,7 +111,8 @@ namespace ComicSpider
 
 			MainWindow.Main.Task_done();
 
-			if (instance != null &&
+			if (list.Count > 0 &&
+				instance != null &&
 				Main_settings.Main.Auto_begin)
 			{
 				if (comic_spider.Stopped)
