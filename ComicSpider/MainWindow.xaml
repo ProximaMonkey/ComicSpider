@@ -146,7 +146,7 @@
 							</TransformGroup>
 						</TextBlock.RenderTransform>
 					</TextBlock>
-					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="Auto begin downloading after volume list loaded" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" />
+					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="hotkey: A" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" />
 					<StackPanel HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Orientation="Horizontal" IsHitTestVisible="False">
 						<TextBlock Text="main progress : " FontSize="10" Foreground="#FFBB70BE"/>
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>

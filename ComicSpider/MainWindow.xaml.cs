@@ -170,7 +170,7 @@ namespace ComicSpider
 			}
 			catch (Exception ex)
 			{
-				Message_box.Show(ex.Message);
+				Message_box.Show("Register global hotkey 'Win + C' failed.");
 			}
 		}
 
@@ -266,20 +266,25 @@ namespace ComicSpider
 		{
 			switch(e.Key)
 			{
-				case System.Windows.Input.Key.Escape:
-					btn_hide_Click(null, null);
-					break;
-
-				case System.Windows.Input.Key.T:
-					cb_topmost_Click(null, null);
+				case System.Windows.Input.Key.A:
+					cb_auto_begin.IsChecked = !cb_auto_begin.IsChecked;
+					Main_settings.Main.Auto_begin = cb_auto_begin.IsChecked == true;
 					break;
 
 				case System.Windows.Input.Key.D:
 					btn_dashboard_Click(null, null);
 					break;
 
+				case System.Windows.Input.Key.T:
+					cb_topmost_Click(null, null);
+					break;
+
 				case System.Windows.Input.Key.F1:
 					Help();
+					break;
+
+				case System.Windows.Input.Key.Escape:
+					btn_hide_Click(null, null);
 					break;
 			}
 		}
