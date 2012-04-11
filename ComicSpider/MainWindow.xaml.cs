@@ -168,7 +168,7 @@ namespace ComicSpider
 				global_hotkey.HotkeyPressed += new EventHandler(global_hotkey_HotkeyPressed);
 				global_hotkey.Enabled = true;
 			}
-			catch (Exception ex)
+			catch
 			{
 				Message_box.Show("Register global hotkey 'Win + C' failed.");
 			}
