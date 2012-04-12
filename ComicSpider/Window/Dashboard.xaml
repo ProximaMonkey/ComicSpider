@@ -118,7 +118,7 @@
 				<ColumnDefinition Width="1.7*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
-			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown">
+			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State}"></GridViewColumn>
@@ -129,7 +129,7 @@
 			</ListView>
 			<ComicSpider:WorkingIcon x:Name="working_icon" Margin="0,0,25,25" Height="100" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
 			<GridSplitter HorizontalAlignment="Left" x:Name="gridSplitter1" Width="5" Grid.Column="1" Margin="0,5" Background="White" />
-			<ListView x:Name="Page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp">
+			<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State}"/>
@@ -165,7 +165,7 @@
 						<ColumnDefinition Width="50" />
 					</Grid.ColumnDefinitions>
 					<TextBlock FontSize="16" Text="Logs" VerticalAlignment="Center"/>
-					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, please use a SQLite DBMS to browse the user.db file." VerticalAlignment="Bottom" Grid.Column="1" />
+					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite development tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
 					<Button Content="Close" Grid.Column="2" Click="btn_logs_Click" />
 				</Grid>
 				<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" />

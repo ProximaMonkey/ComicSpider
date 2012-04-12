@@ -225,18 +225,9 @@ namespace ys.Web
 		}
 		public void Fix_display_pages(string root_dir)
 		{
-			var comic_dirs = Directory.GetDirectories(root_dir);
-
-			// Save modified date.
-			List<DateTime> modify_date_list = new List<DateTime>();
-			foreach (var comic_dir in comic_dirs)
-			{
-				modify_date_list.Add(new DirectoryInfo(comic_dir).LastWriteTime);
-			}
-
 			Delete_display_pages();
 
-			foreach (var comic_dir in comic_dirs)
+			foreach (var comic_dir in Directory.GetDirectories(root_dir))
 			{
 				string[] volume_dirs = Directory.GetDirectories(comic_dir);
 				if (volume_dirs.Length == 0)
@@ -249,12 +240,6 @@ namespace ys.Web
 				{
 					Create_display_page(volume_dir, Path.GetFileName(comic_dir));
 				}
-			}
-
-			// Recover modified date.
-			for (int i = 0; i < comic_dirs.Length; i++)
-			{
-				new DirectoryInfo(comic_dirs[i]).LastWriteTime = modify_date_list[i];
 			}
 		}
 		public void Create_display_page(string voluem_dir, string comic_name)

@@ -626,19 +626,46 @@ namespace ComicSpider
 
 		private void volume_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			Page_list.Items.Clear();
+			page_list.Items.Clear();
 			foreach (Web_src_info vol in volume_list.SelectedItems)
 			{
 				if (vol.Children == null) continue;
 				foreach (var page in vol.Children)
 				{
-					Page_list.Items.Add(page);
+					page_list.Items.Add(page);
 				}
 			}
 		}
 		private void volume_list_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			volume_list_SelectionChanged(null, null);
+		}
+		private void volume_list_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Update_settings();
+
+			try
+			{
+				Web_src_info parent = volume_list.SelectedItem as Web_src_info;
+				string path = parent.Name;
+				while ((parent = parent.Parent) != null)
+				{
+					path = Path.Combine(parent.Name, path);
+				}
+				path = Path.Combine(Main_settings.Main.Root_dir, path);
+
+				string file_path = Path.Combine(path, "index.html");
+				if (File.Exists(file_path))
+				{
+					System.Diagnostics.Process.Start(file_path);
+					return;
+				}
+				else
+					Message_box.Show("No view page found.");
+			}
+			catch
+			{
+			}
 		}
 
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)

@@ -112,7 +112,7 @@
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
 				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" />
-				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox" IsHitTestVisible="False"/>
+				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox" IsHitTestVisible="False" FontFamily="/Comic Spider;component/Fonts/#Segoe UI"/>
 				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
@@ -136,7 +136,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#BankGothic Lt BT" Foreground="#FF747474" FontSize="22" RenderTransformOrigin="0.5,0.55" IsHitTestVisible="False" Height="22.947" VerticalAlignment="Top" Margin="21,15,0,0" HorizontalAlignment="Left">
+					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#Segoe UI Light" Foreground="#FF747474" FontSize="26" RenderTransformOrigin="0.5,0.55" IsHitTestVisible="False" VerticalAlignment="Top" Margin="34,8,0,0" HorizontalAlignment="Left">
 						<TextBlock.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform/>
@@ -146,7 +146,7 @@
 							</TransformGroup>
 						</TextBlock.RenderTransform>
 					</TextBlock>
-					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="hotkey: A" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" />
+					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="hotkey: A" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" FontFamily="/Comic Spider;component/Fonts/#Segoe UI" />
 					<StackPanel HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Orientation="Horizontal" IsHitTestVisible="False">
 						<TextBlock Text="main progress : " FontSize="10" Foreground="#FFBB70BE"/>
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>
@@ -160,28 +160,30 @@
 					<Button x:Name="btn_hide" ToolTip="hotkey : Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" />
 					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" />
 				</Grid>
-				<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
-					<tb:TaskbarIcon.TrayToolTip>
-						<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
-							<Border.Background>
-								<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
-							</Border.Background>
-							<Border.Effect>
-								<DropShadowEffect Color="#FF4B4B4B" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.7"/>
-							</Border.Effect>
-							<StackPanel>
-								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="Comic Spider" Margin="5" Foreground="Black" FontSize="16" />
-									<TextBlock Text="main progress: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
-									<TextBlock x:Name="txt_tray_main_progress" Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" Text="- / -" />
-								</StackPanel>
-								<TextBlock Text="{Binding ToolTipText}" Foreground="#FF7C3958" Margin="5" />
-							</StackPanel>
-						</Border>
-					</tb:TaskbarIcon.TrayToolTip>
-				</tb:TaskbarIcon>
 			</Grid>
-			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="104,14" d:IsLocked="True" />
+
+			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="61,9,147,19" />
+
+			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
+				<tb:TaskbarIcon.TrayToolTip>
+					<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
+						<Border.Background>
+							<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
+						</Border.Background>
+						<Border.Effect>
+							<DropShadowEffect Color="#FF4B4B4B" Direction="270" ShadowDepth="2" BlurRadius="5" Opacity="0.7"/>
+						</Border.Effect>
+						<StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="Comic Spider" Margin="5" Foreground="Black" FontSize="16" />
+								<TextBlock Text="main progress: " Foreground="Black" Margin="5" VerticalAlignment="Bottom" />
+								<TextBlock x:Name="txt_tray_main_progress" Margin="0,5,5,5" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" Text="- / -" />
+							</StackPanel>
+							<TextBlock Text="{Binding ToolTipText}" Foreground="#FF7C3958" Margin="5" TextWrapping="Wrap" MaxWidth="400" />
+						</StackPanel>
+					</Border>
+				</tb:TaskbarIcon.TrayToolTip>
+			</tb:TaskbarIcon>
 		</Grid>
 	</Border>
 </Window>

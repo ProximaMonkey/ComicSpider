@@ -7,8 +7,7 @@ function frame()
 		'<a href="0-comic-spider.html">Comic Spider Documentation</a> &gt;&gt; '
 	);
 	$('#footer').append(
-		'April 2012 y.s.<br>' +
-		'E-mail: y.s.outside@gmail.com'
+		'April 2012 y.s.<br>'
 	);
 
 	var index = location.href.substr(location.href.lastIndexOf('/') + 1,1);

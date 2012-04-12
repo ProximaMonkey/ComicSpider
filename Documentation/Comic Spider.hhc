@@ -20,5 +20,9 @@
 		<param name="Name" value="Lua API">
 		<param name="Local" value="contents\2-lua-api.html">
 		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Update Log">
+		<param name="Local" value="contents\3-update_log.html">
+		</OBJECT>
 </UL>
 </BODY></HTML>
