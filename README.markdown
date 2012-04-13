@@ -1,5 +1,7 @@
 Comic Spider - a tool to download and view online manga.
+
 For further information, visit Project Home https://github.com/ysmood/ComicSpider
+
 April 2012 y.s.
 
 This program is free software: you can redistribute it and/or modify 
@@ -18,6 +20,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 **************************************************************************************************************
 
 [Video Demo](http://player.youku.com/player.php/sid/XMzgwNzk1NjIw/v.swf)
+
 [Download ComicSpider_1.0.0.0 Bin](https://github.com/downloads/ysmood/ComicSpider/ComicSpider_1.0.0.0.zip)
 
 Maybe use mono will make the project more open, but now windows only.
