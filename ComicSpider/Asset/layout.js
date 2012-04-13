@@ -5,7 +5,7 @@
 
 // Default settings
 var is_auto_split_page = true;
-var img_load_step = 3;
+var img_load_step = 1;
 
 /**************** Main *******************/
 
@@ -33,7 +33,7 @@ function init_page_waterfall()
 	win.scroll(function()
 	{
 		var top = last_page.offset().top - win.height() - doc.scrollTop();
-		if(top < 0)
+		if(top < last_page.height() * 0.5)
 			append_img(img_load_step);
 	});
 }

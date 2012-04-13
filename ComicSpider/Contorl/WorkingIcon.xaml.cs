@@ -17,9 +17,17 @@ namespace ComicSpider
 			sb_hide_working = Resources["sb_hide_working"] as Storyboard;
 			sb_working.Begin();
 			sb_working.Pause();
+
+			is_working = false;
 		}
+
+		public bool Is_working { get { return is_working; } }
 		public void Show_working()
 		{
+			if (is_working)
+				return;
+
+			is_working = true;
 			sb_show_working.Begin();
 			sb_working.Resume();
 		}
@@ -27,6 +35,8 @@ namespace ComicSpider
 		{
 			sb_hide_working.Begin();
 			sb_working.Pause();
+
+			is_working = false;
 		}
 
 		/***************************** Private ********************************/
@@ -34,5 +44,6 @@ namespace ComicSpider
 		private Storyboard sb_show_working;
 		private Storyboard sb_working;
 		private Storyboard sb_hide_working;
+		private bool is_working;
 	}
 }

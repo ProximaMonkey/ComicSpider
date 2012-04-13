@@ -51,9 +51,12 @@ namespace ComicSpider
 
 			Init_global_hotkey();
 			Init_settings();
+
+			Taskbar = new ys.Win7.TaskBar();
 		}
 
 		public static MainWindow Main;
+		public ys.Win7.TaskBar Taskbar;
 
 		public string Main_progress
 		{
@@ -249,11 +252,11 @@ namespace ComicSpider
 		}
 		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			Dashboard.Instance.btn_fix_display_pages_Click(null, null);
+			Dashboard.Instance.btn_fix_display_pages_Click(sender, e);
 		}
 		private void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			Dashboard.Instance.btn_del_display_pages_Click(null, null);
+			Dashboard.Instance.btn_del_display_pages_Click(sender, e);
 		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
@@ -298,6 +301,7 @@ namespace ComicSpider
 			{
 				this.Activate();
 				tray.Visibility = System.Windows.Visibility.Collapsed;
+				Main_progress = Dashboard.Instance.Main_progress;
 			};
 			sb_show_window.Begin();
 		}
