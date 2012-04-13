@@ -190,7 +190,6 @@ namespace ComicSpider
 			
 			if (url != null)
 			{
-				working_icon.Show_working();
 				Dashboard.Instance.Get_volume_list(url);
 			}
 		}
@@ -249,14 +248,6 @@ namespace ComicSpider
 		private void btn_dashboard_Click(object sender, RoutedEventArgs e)
 		{
 			Dashboard.Instance.Show();
-		}
-		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
-		{
-			Dashboard.Instance.btn_fix_display_pages_Click(sender, e);
-		}
-		private void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
-		{
-			Dashboard.Instance.btn_del_display_pages_Click(sender, e);
 		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{

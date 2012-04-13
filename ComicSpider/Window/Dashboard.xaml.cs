@@ -117,20 +117,24 @@ namespace ComicSpider
 
 			MainWindow.Main.Task_done();
 
-			if (added_list.Count > 0 &&
-				instance != null &&
-				Main_settings.Main.Auto_begin)
+			if (Is_initialized)
 			{
-				if (comic_spider.Stopped)
+				if (added_list.Count > 0)
 				{
-					btn_start_Click(null, null);
+					MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+					{
+						this.Show();
+					});
+
+					if (comic_spider.Stopped)
+					{
+						if (Main_settings.Main.Auto_begin)
+							btn_start_Click(null, null);
+					}
+					else
+						comic_spider.Add_volume_list(added_list);
 				}
-				else
-					comic_spider.Add_volume_list(added_list);
-			}
-			else if(Is_initialized)
-			{
-				if(list.Count > 0)
+				else if (list.Count > 0)
 					MainWindow.Main.Show_balloon("No newer volume added to task list.", (o, e) =>
 					{
 						this.Show();
@@ -429,8 +433,8 @@ namespace ComicSpider
 			{
 				All_downloaded = false;
 				btn_start.Content = "Stop";
-				comic_spider.Async_start(volume_list.Items);
 				working_icon.Show_working();
+				comic_spider.Async_start(volume_list.Items);
 			}
 			else
 			{
@@ -441,6 +445,7 @@ namespace ComicSpider
 		}
 		private void btn_get_list_Click(object sender, RoutedEventArgs e)
 		{
+			MainWindow.Main.working_icon.Show_working();
 			working_icon.Show_working();
 			Update_settings();
 			comic_spider.Async_get_volume_list();

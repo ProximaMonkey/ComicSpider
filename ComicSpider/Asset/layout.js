@@ -358,26 +358,7 @@ function page_control(page)
 					break;
 
 				case 17:
-					page.each(function ()
-					{
-						$this = $(this);
-						var window_height = win.height();
-						var bottom = $this.height() + $this.offset().top - window_height - doc.scrollTop();
-						var top = bottom + window_height;
-
-						if (Math.abs(bottom) < window_height ||
-							Math.abs(top) < window_height)
-						{
-							if (bottom > 0)
-							{
-								doc.stop().animate({ scrollTop: doc.scrollTop() + bottom + 20 });
-							}
-							else
-							{
-								doc.stop().animate({ scrollTop: doc.scrollTop() + top + 50 });
-							}
-						}
-					});
+					doc.stop().animate({ scrollTop: doc.scrollTop() + win.height() });
 					break;
 			}
 		}

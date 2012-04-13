@@ -45,6 +45,7 @@ namespace ys.Web
 			stopped = false;
 
 			volume_queue.Clear();
+			page_queue.Clear();
 			file_queue.Clear();
 
 			foreach (Web_src_info vol_info in vol_info_list)

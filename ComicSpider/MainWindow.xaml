@@ -44,8 +44,6 @@
 			<MenuItem Header="View volume" Click="View_volume"></MenuItem>
 			<MenuItem Header="Open folder" Click="Open_folder"></MenuItem>
 			<MenuItem Header="Dashboard" Click="btn_dashboard_Click"></MenuItem>
-			<MenuItem x:Name="btn_fix_display_pages" Header="Fix display pages" Click="btn_fix_display_pages_Click"></MenuItem>
-			<MenuItem x:Name="btn_del_display_pages" Header="Del display pages" Click="btn_del_display_pages_Click"></MenuItem>
 			<MenuItem Header="Close" Click="Close"></MenuItem>
 		</ContextMenu>
 	</Window.Resources>
