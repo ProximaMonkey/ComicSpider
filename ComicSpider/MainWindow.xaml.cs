@@ -1,5 +1,5 @@
 ﻿/*
-	Comic Spider - a tool to download online manga.
+	Comic Spider - a tool to download and view online manga.
 	For further information, visit Project Home https://github.com/ysmood/ComicSpider
 	April 2012 y.s.
 
@@ -247,6 +247,14 @@ namespace ComicSpider
 		{
 			Dashboard.Instance.Show();
 		}
+		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			Dashboard.Instance.btn_fix_display_pages_Click(null, null);
+		}
+		private void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			Dashboard.Instance.btn_del_display_pages_Click(null, null);
+		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
@@ -314,6 +322,9 @@ namespace ComicSpider
 		{
 			try
 			{
+				if (Dashboard.Is_initialized)
+					Dashboard.Instance.Update_settings();
+
 				Save_settings();
 			}
 			catch (Exception ex)

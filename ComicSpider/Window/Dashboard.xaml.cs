@@ -83,6 +83,13 @@ namespace ComicSpider
 		}
 		public bool All_downloaded { get; set; }
 
+		public void Update_settings()
+		{
+			Main_settings.Main.Main_url = txt_main_url.Text;
+			Main_settings.Main.Root_dir = txt_dir.Text;
+			Main_settings.Main.Thread_count = txt_thread.Text;
+		}
+
 		public delegate void Show_volume_list_delegate(List<Web_src_info> list);
 		public void Show_volume_list(List<Web_src_info> list)
 		{
@@ -190,6 +197,87 @@ namespace ComicSpider
 			comic_spider.Stop(true);
 			btn_start.Content = "Start";
 			working_icon.Hide_working();
+		}
+
+		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			if (!Set_root_dir("Selet the root folder for opertion"))
+				return;
+
+			btn_fix_display_pages.IsEnabled = false;
+			working_icon.Show_working();
+
+			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
+			bg_worker.DoWork += (oo, ee) =>
+			{
+				try
+				{
+					comic_spider.Fix_display_pages(Main_settings.Main.Root_dir);
+				}
+				catch (Exception ex)
+				{
+					ee.Result = ex.Message;
+				}
+				ee.Result = "Fix display pages completed.";
+			};
+			bg_worker.RunWorkerCompleted += (oo, ee) =>
+			{
+				this.Title = ee.Result as string;
+				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+					}
+					catch (Exception ex)
+					{
+						Message_box.Show(ex.Message);
+					}
+				});
+				btn_fix_display_pages.IsEnabled = true;
+				working_icon.Hide_working();
+			};
+			bg_worker.RunWorkerAsync();
+		}
+		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			if (!Set_root_dir("Selet the root folder for opertion"))
+				return;
+
+			btn_del_display_pages.IsEnabled = false;
+			working_icon.Show_working();
+
+			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
+			bg_worker.DoWork += (oo, ee) =>
+			{
+				try
+				{
+					comic_spider.Delete_display_pages();
+				}
+				catch (Exception ex)
+				{
+					ee.Result = ex.Message;
+				}
+				ee.Result = "Delete display pages completed.";
+			};
+			bg_worker.RunWorkerCompleted += (oo, ee) =>
+			{
+				this.Title = ee.Result as string;
+				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+					}
+					catch (Exception ex)
+					{
+						Message_box.Show(ex.Message);
+					}
+				});
+				btn_del_display_pages.IsEnabled = true;
+				working_icon.Hide_working();
+			};
+			bg_worker.RunWorkerAsync();
 		}
 
 		public new void Close()
@@ -384,7 +472,6 @@ namespace ComicSpider
 
 			var dialog = new Ionic.Utils.FolderBrowserDialogEx();
 			dialog.ShowFullPathInEditBox = true;
-			dialog.RootFolder = Environment.SpecialFolder.Desktop;
 			dialog.SelectedPath = txt_dir.Text;
 			dialog.Description = info;
 			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -404,82 +491,6 @@ namespace ComicSpider
 		private void btn_save_to_Click(object sender, RoutedEventArgs e)
 		{
 			Set_root_dir("Please select a root folder", false);
-		}
-		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
-		{
-			if (!Set_root_dir("Selet the root folder for opertion"))
-				return;
-
-			btn_fix_display_pages.IsEnabled = false;
-
-			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
-			bg_worker.DoWork += (oo, ee) =>
-			{
-				try
-				{
-					comic_spider.Fix_display_pages(Main_settings.Main.Root_dir);
-				}
-				catch (Exception ex)
-				{
-					ee.Result = ex.Message;
-				}
-				ee.Result = "Fix display pages completed.";
-			};
-			bg_worker.RunWorkerCompleted += (oo, ee) =>
-			{
-				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
-				{
-					try
-					{
-						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
-					}
-					catch (Exception ex)
-					{
-						Message_box.Show(ex.Message);
-					}
-				});
-				btn_fix_display_pages.IsEnabled = true;
-			};
-			bg_worker.RunWorkerAsync();
-		}
-		private void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
-		{
-			if (!Set_root_dir("Selet the root folder for opertion"))
-				return;
-
-			btn_del_display_pages.IsEnabled = false;
-
-			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
-			bg_worker.DoWork += (oo, ee) =>
-			{
-				try
-				{
-					comic_spider.Delete_display_pages();
-				}
-				catch (Exception ex)
-				{
-					ee.Result = ex.Message;
-				}
-				ee.Result = "Delete display pages completed.";
-			};
-			bg_worker.RunWorkerCompleted += (oo, ee) =>
-			{
-				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
-				{
-					try
-					{
-						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
-					}
-					catch (Exception ex)
-					{
-						Message_box.Show(ex.Message);
-					}
-				});
-				btn_del_display_pages.IsEnabled = true;
-			};
-			bg_worker.RunWorkerAsync();
 		}
 		private void ShowHide_window(object sender, RoutedEventArgs e)
 		{
@@ -788,13 +799,6 @@ namespace ComicSpider
 					downloaded++;
 			}
 			return downloaded;
-		}
-
-		private void Update_settings()
-		{
-			Main_settings.Main.Main_url = txt_main_url.Text;
-			Main_settings.Main.Root_dir = txt_dir.Text;
-			Main_settings.Main.Thread_count = txt_thread.Text;
 		}
 
 		private void Save_all()

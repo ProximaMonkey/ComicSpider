@@ -1,4 +1,4 @@
-Comic Spider - a tool to download online manga.
+Comic Spider - a tool to download and view online manga.
 For further information, visit Project Home https://github.com/ysmood/ComicSpider
 April 2012 y.s.
 
