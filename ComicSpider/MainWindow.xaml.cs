@@ -183,7 +183,6 @@ namespace ComicSpider
 		}
 		private void Window_Drop(object sender, DragEventArgs e)
 		{
-			this.Topmost = false;
 			string url = e.Data.GetData(typeof(string)) as string;
 			
 			if (url != null)
@@ -191,7 +190,6 @@ namespace ComicSpider
 				working_icon.Show_working();
 				Dashboard.Instance.Get_volume_list(url);
 			}
-			this.Topmost = true;
 		}
 
 		private void btn_hide_Click(object sender, RoutedEventArgs e)

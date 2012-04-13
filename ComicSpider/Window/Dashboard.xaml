@@ -92,7 +92,7 @@
 			</Grid.RowDefinitions>
 			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF26335F" Text="Main url"/>
 			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
-			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Foreground="#FF26335F" Text="Save to"/>
+			<Button HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
 			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
 
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">

@@ -43,12 +43,8 @@ namespace ComicSpider
 			txt_main_url.Text = url;
 			if (string.IsNullOrEmpty(txt_dir.Text))
 			{
-				var dialog = new Ionic.Utils.FolderBrowserDialogEx();
-				dialog.ShowFullPathInEditBox = true;
-				dialog.Description = "Please select a folder to save the comic";
-				if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				if (Set_root_dir("Please select a folder to save the comic", false))
 				{
-					txt_dir.Text = dialog.SelectedPath;
 					btn_get_list_Click(null, null);
 				}
 			}
@@ -373,11 +369,48 @@ namespace ComicSpider
 			bd_logs.Visibility = Visibility.Collapsed;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="is_temp">Is this path will be only used temply?</param>
+		/// <returns></returns>
+		private bool Set_root_dir(string info, bool is_temp = true)
+		{
+			bool ret = false;
+
+			bool topmost_temp = MainWindow.Main.Topmost;
+			MainWindow.Main.Topmost = false;
+
+			var dialog = new Ionic.Utils.FolderBrowserDialogEx();
+			dialog.ShowFullPathInEditBox = true;
+			dialog.RootFolder = Environment.SpecialFolder.Desktop;
+			dialog.SelectedPath = txt_dir.Text;
+			dialog.Description = info;
+			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				if (is_temp)
+					Main_settings.Main.Root_dir = dialog.SelectedPath;
+				else
+					txt_dir.Text = dialog.SelectedPath;
+
+				ret = true;
+			}
+
+			MainWindow.Main.Topmost = topmost_temp;
+
+			return ret;
+		}
+		private void btn_save_to_Click(object sender, RoutedEventArgs e)
+		{
+			Set_root_dir("Please select a root folder", false);
+		}
 		private void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			btn_fix_display_pages.IsEnabled = false;
+			if (!Set_root_dir("Selet the root folder for opertion"))
+				return;
 
-			Update_settings();
+			btn_fix_display_pages.IsEnabled = false;
 
 			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
 			bg_worker.DoWork += (oo, ee) =>
@@ -412,6 +445,9 @@ namespace ComicSpider
 		}
 		private void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
 		{
+			if (!Set_root_dir("Selet the root folder for opertion"))
+				return;
+
 			btn_del_display_pages.IsEnabled = false;
 
 			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
@@ -500,7 +536,7 @@ namespace ComicSpider
 					if (File.Exists(file_path))
 						System.Diagnostics.Process.Start(file_path);
 					else
-						Message_box.Show("No view page found.");
+						Message_box.Show("No view page found. May be you should check you root folder path.");
 					break;
 				}
 			}

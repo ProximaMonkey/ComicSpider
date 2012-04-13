@@ -64,7 +64,10 @@
 			<i:EventTrigger EventName="PreviewDragEnter">
 				<ic:GoToStateAction StateName="drag_enter"/>
 			</i:EventTrigger>
-			<i:EventTrigger EventName="PreviewDragLeave">
+			<i:EventTrigger EventName="DragLeave">
+				<ic:GoToStateAction StateName="mouse_leave"/>
+			</i:EventTrigger>
+			<i:EventTrigger EventName="Drop">
 				<ic:GoToStateAction StateName="mouse_leave"/>
 			</i:EventTrigger>
 		</i:Interaction.Triggers>
