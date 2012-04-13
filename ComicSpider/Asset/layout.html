@@ -8,20 +8,20 @@
 <meta charset="utf-8" />
 <link rel="stylesheet" href="../layout.css" type="text/css"/>
 <title>Comic Display</title>
+<script type="text/javascript">
+	var img_list = [<?= img_list ?>];
+</script>
 </head>
 <body>
 	<div id="title">
 		Use Ctrl and Shift to navigate.
 	</div>
 	<div id="navibar">
-		Volume: <a class="previous" href="#!" title="previous volume">previous</a> /
-		<a class="next" href="#!" title="next volume">next</a> ,
-		Page mode : <a class="page-mode" href="#!" title="Whether to split page"></a> ,
-		Auto size : <a class="auto-size" href="#!" title="Whether to fit page width">on</a>
+		Volume: <a class="btn previous" href="#!" title="previous volume">previous</a> /
+		<a class="btn next" href="#!" title="next volume">next</a> ,
+		Auto split : <a class="btn auto-split" href="#!" title="whether to split page when it's too wide">off</a>
 	</div>
-	<div id="container">
-		<?= img_dom_list ?>
-	</div>
+	<div id="container"></div>
 	<div style="height: 300px"></div>
 </body>
 

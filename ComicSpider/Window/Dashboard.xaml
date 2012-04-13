@@ -165,7 +165,7 @@
 						<ColumnDefinition Width="50" />
 					</Grid.ColumnDefinitions>
 					<TextBlock FontSize="16" Text="Logs" VerticalAlignment="Center"/>
-					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite development tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
+					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite admin tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
 					<Button Content="Close" Grid.Column="2" Click="btn_logs_Click" />
 				</Grid>
 				<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" />

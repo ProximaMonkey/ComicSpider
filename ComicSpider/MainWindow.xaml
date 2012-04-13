@@ -63,24 +63,30 @@
 		</i:Interaction.Triggers>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup x:Name="window_visual_state_group">
-				<VisualStateGroup.Transitions>
-					<VisualTransition GeneratedDuration="0:0:0.3"/>
-				</VisualStateGroup.Transitions>
 				<VisualState x:Name="mouse_enter">
 					<Storyboard>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.Opacity)" Storyboard.TargetName="border">
-							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
-				<VisualState x:Name="mouse_leave"/>
+				<VisualState x:Name="mouse_leave">
+					<Storyboard>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.Opacity)" Storyboard.TargetName="border">
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0.8"/>
+						</DoubleAnimationUsingKeyFrames>
+						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="textBlock">
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+						</DoubleAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
 				<VisualState x:Name="drag_enter">
 					<Storyboard>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.Opacity)" Storyboard.TargetName="border">
-							<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
 						</DoubleAnimationUsingKeyFrames>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="textBlock">
-							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="-1" KeySpline="0.21,0.9,1,1"/>
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="-1" KeySpline="0,0,0,1"/>
 						</DoubleAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
@@ -136,7 +142,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock x:Name="textBlock" Text="drop link here" FontFamily="/Comic Spider;component/Fonts/#Segoe UI Light" Foreground="#FF747474" FontSize="26" RenderTransformOrigin="0.5,0.55" IsHitTestVisible="False" VerticalAlignment="Top" Margin="34,8,0,0" HorizontalAlignment="Left">
+					<TextBlock x:Name="textBlock" Text="Drop Link Here" FontFamily="/Comic Spider;component/Fonts/#Segoe UI Light" Foreground="#FF747474" FontSize="24" RenderTransformOrigin="0.5,0.6" IsHitTestVisible="False" VerticalAlignment="Top" Margin="26,11,0,0" HorizontalAlignment="Left">
 						<TextBlock.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform/>
@@ -162,7 +168,7 @@
 				</Grid>
 			</Grid>
 
-			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="61,9,147,19" />
+			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="58,9,150,19" />
 
 			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
 				<tb:TaskbarIcon.TrayToolTip>

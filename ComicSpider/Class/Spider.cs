@@ -87,6 +87,75 @@ namespace ys.Web
 			}
 		}
 
+		public void Delete_display_pages()
+		{
+			string root_dir = Main_settings.Main.Root_dir;
+			List<string> old_files = new List<string>();
+			old_files.AddRange(Directory.GetFiles(root_dir, "layout.js", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "jquery.js", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "layout.css", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "index.html", SearchOption.AllDirectories));
+			foreach (var item in old_files)
+			{
+				File.Delete(item);
+			}
+		}
+		public void Fix_display_pages(string root_dir)
+		{
+			Delete_display_pages();
+
+			foreach (var comic_dir in Directory.GetDirectories(root_dir))
+			{
+				string[] volume_dirs = Directory.GetDirectories(comic_dir);
+				if (volume_dirs.Length == 0)
+				{
+					Create_display_page(comic_dir, Path.GetFileName(root_dir));
+					continue;
+				}
+
+				foreach (var volume_dir in volume_dirs)
+				{
+					Create_display_page(volume_dir, Path.GetFileName(comic_dir));
+				}
+			}
+		}
+		public void Create_display_page(string voluem_dir, string comic_name)
+		{
+			string img_list = "";
+			List<string> files = new List<string>();
+			foreach (var pattern in file_types)
+			{
+				files.AddRange(Directory.GetFiles(voluem_dir, "*" + pattern.ToString()));
+			}
+
+			if (files.Count == 0)
+			{
+				return;
+			}
+
+			string parent_dir = Directory.GetParent(voluem_dir).FullName;
+			if (!File.Exists(Path.Combine(parent_dir, "layout.js")))
+			{
+				File.Copy(@"Asset\layout.js", Path.Combine(parent_dir, "layout.js"), true);
+				File.Copy(@"Asset\jquery.js", Path.Combine(parent_dir, "jquery.js"), true);
+				File.Copy(@"Asset\layout.css", Path.Combine(parent_dir, "layout.css"), true);
+			}
+
+			for (int i = 0; i < files.Count; i++)
+			{
+				img_list += string.Format("'{0}',", Path.GetFileName(files[i]).Replace("'", @"\'"));
+			}
+			StreamReader sr = new StreamReader(@"Asset\layout.html");
+			string layout_html = sr.ReadToEnd();
+			sr.Close();
+
+			layout_html = layout_html.Replace("<?= img_list ?>", img_list.TrimEnd(','));
+
+			StreamWriter sw = new StreamWriter(Path.Combine(voluem_dir, "index.html"));
+			sw.Write(layout_html);
+			sw.Close();
+		}
+
 		public void Stop(bool completed = false)
 		{
 			stopped = true;
@@ -208,81 +277,6 @@ namespace ys.Web
 			{
 				Message_box.Show(ex.Message);
 			}
-		}
-
-		public void Delete_display_pages()
-		{
-			string root_dir = Main_settings.Main.Root_dir;
-			List<string> old_files = new List<string>();
-			old_files.AddRange(Directory.GetFiles(root_dir, "layout.js", SearchOption.AllDirectories));
-			old_files.AddRange(Directory.GetFiles(root_dir, "jquery.js", SearchOption.AllDirectories));
-			old_files.AddRange(Directory.GetFiles(root_dir, "layout.css", SearchOption.AllDirectories));
-			old_files.AddRange(Directory.GetFiles(root_dir, "index.html", SearchOption.AllDirectories));
-			foreach (var item in old_files)
-			{
-				File.Delete(item);
-			}
-		}
-		public void Fix_display_pages(string root_dir)
-		{
-			Delete_display_pages();
-
-			foreach (var comic_dir in Directory.GetDirectories(root_dir))
-			{
-				string[] volume_dirs = Directory.GetDirectories(comic_dir);
-				if (volume_dirs.Length == 0)
-				{
-					Create_display_page(comic_dir, Path.GetFileName(root_dir));
-					continue;
-				}
-
-				foreach (var volume_dir in volume_dirs)
-				{
-					Create_display_page(volume_dir, Path.GetFileName(comic_dir));
-				}
-			}
-		}
-		public void Create_display_page(string voluem_dir, string comic_name)
-		{
-			string img_dom_list = "";
-			List<string> files = new List<string>();
-			foreach (var pattern in file_types)
-			{
-				files.AddRange(Directory.GetFiles(voluem_dir, "*" + pattern.ToString()));
-			}
-
-			if (files.Count == 0)
-			{
-				return;
-			}
-
-			string parent_dir = Directory.GetParent(voluem_dir).FullName;
-			if (!File.Exists(Path.Combine(parent_dir, "layout.js")))
-			{
-				File.Copy(@"Asset\layout.js", Path.Combine(parent_dir, "layout.js"), true);
-				File.Copy(@"Asset\jquery.js", Path.Combine(parent_dir, "jquery.js"), true);
-				File.Copy(@"Asset\layout.css", Path.Combine(parent_dir, "layout.css"), true);
-			}
-
-			for (int i = 0; i < files.Count; i++)
-			{
-				img_dom_list += string.Format(@"
-					<div class=""img_frame"" index=""{0:D3}"">
-						<div><span class=""page_num"">{0:D3} / {1:D3}</span></div>
-						<img class=""page"" index=""{0:D3}"" src=""{2:D3}""/>
-					</div>
-					<hr />", i, files.Count, Path.GetFileName(files[i])
-				);
-			}
-			StreamReader sr = new StreamReader(@"Asset\layout.html");
-			string layout_html = sr.ReadToEnd();
-			sr.Close();
-
-			layout_html = layout_html.Replace("<?= img_dom_list ?>", img_dom_list);
-
-			StreamWriter sw = new StreamWriter(Path.Combine(voluem_dir, "index.html"));
-			sw.Write(layout_html);
-			sw.Close();
 		}
 
 		private void Log_error(Exception ex, string url = "")
