@@ -765,8 +765,15 @@ namespace ComicSpider
 		{
 			Update_settings();
 
-			Save_vol_info_list();
-			Save_page_info_list();
+			try
+			{
+				Save_vol_info_list();
+				Save_page_info_list();
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message + "\n" + ex.StackTrace);
+			}
 		}
 		private void Save_vol_info_list()
 		{

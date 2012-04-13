@@ -9,6 +9,8 @@ namespace ComicSpider
 	{
 		public App()
 		{
+			App.Current.ShutdownMode = System.Windows.ShutdownMode.OnMainWindowClose;
+
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 		}
 

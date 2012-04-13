@@ -40,13 +40,20 @@
 				<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1" KeySpline="0.14,0.56,0.66,0.92"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
+		<ContextMenu x:Key="main_menu">
+			<MenuItem Header="View volume" Click="View_volume"></MenuItem>
+			<MenuItem Header="Open folder" Click="Open_folder"></MenuItem>
+			<MenuItem Header="Dashboard" Click="btn_dashboard_Click"></MenuItem>
+			<MenuItem Header="Close" Click="Close"></MenuItem>
+		</ContextMenu>
 	</Window.Resources>
 	<Window.Triggers>
 		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
 			<BeginStoryboard x:Name="sb_show_window_BeginStoryboard" Storyboard="{StaticResource sb_show_window}"/>
 		</EventTrigger>
 	</Window.Triggers>
-	<Border x:Name="border" CornerRadius="5" Margin="5" RenderTransformOrigin="0.5,0.5" BorderBrush="#FF3E4E60" BorderThickness="1">
+
+	<Border x:Name="border" CornerRadius="5" Margin="5" RenderTransformOrigin="0.5,0.5" BorderBrush="#FF3E4E60" BorderThickness="1" ContextMenu="{StaticResource ResourceKey=main_menu}">
 		<i:Interaction.Triggers>
 			<i:EventTrigger EventName="MouseEnter">
 				<ic:GoToStateAction StateName="mouse_enter"/>
@@ -163,14 +170,14 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<Button x:Name="btn_hide" ToolTip="hotkey : Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" />
-					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" />
+					<Button x:Name="btn_hide" ToolTip="hotkey : Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" IsCancel="True" />
+					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" IsDefault="True" />
 				</Grid>
 			</Grid>
 
 			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="58,9,150,19" />
 
-			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
+			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" ContextMenu="{StaticResource ResourceKey=main_menu}" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
 				<tb:TaskbarIcon.TrayToolTip>
 					<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
 						<Border.Background>

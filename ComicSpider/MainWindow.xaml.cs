@@ -23,6 +23,9 @@ using ComicSpider.UserTableAdapters;
 using System.Data.SQLite;
 using System.Windows.Media.Animation;
 using System.Windows.Input;
+using System.Linq;
+using ys.Web;
+using System.IO;
 
 namespace ComicSpider
 {
@@ -200,6 +203,48 @@ namespace ComicSpider
 			};
 			sb_hide_window.Begin();
 		}
+		private void Open_folder(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(Dashboard.Instance.txt_dir.Text);
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
+		}
+		private void View_volume(object sender, RoutedEventArgs e)
+		{
+			var list = Dashboard.Instance.volume_list.Items;
+			Web_src_info list_item = null;
+			for (int i = list.Count - 1; i > -1; i--)
+			{
+				if ((list[i] as Web_src_info).State == Web_src_info.State_downloaded)
+				{
+					list_item = list[i] as Web_src_info;
+					string path = "";
+					Web_src_info parent = list_item;
+					while ((parent = parent.Parent) != null)
+					{
+						path = Path.Combine(parent.Name, path);
+					}
+					path = Path.Combine(Main_settings.Main.Root_dir, path);
+
+					string file_path = Path.Combine(Path.Combine(path, list_item.Name), "index.html");
+					if (File.Exists(file_path))
+						System.Diagnostics.Process.Start(file_path);
+					else
+						Message_box.Show("No view page found.");
+					break;
+				}
+			}
+
+			if (list_item == null)
+			{
+				Message_box.Show("No view page found.");
+			}
+		}
 		private void btn_dashboard_Click(object sender, RoutedEventArgs e)
 		{
 			Dashboard.Instance.Show();
@@ -207,6 +252,22 @@ namespace ComicSpider
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
+		}
+		private void Close(object sender, RoutedEventArgs e)
+		{
+			if (this.Visibility != System.Windows.Visibility.Visible)
+			{
+				this.Visibility = System.Windows.Visibility.Visible;
+				sb_show_window.Completed += (oo, ee) =>
+				{
+					this.Activate();
+					tray.Visibility = System.Windows.Visibility.Collapsed;
+					this.Close();
+				};
+				sb_show_window.Begin();
+			}
+			else
+				this.Close();
 		}
 
 		private void cb_auto_begin_Click(object sender, RoutedEventArgs e)
@@ -253,13 +314,16 @@ namespace ComicSpider
 		}
 		private void Window_Closed(object sender, EventArgs e)
 		{
-			Save_settings();
+			try
+			{
+				Save_settings();
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message + '\n' + ex.StackTrace);
+			}
 
 			tray.Dispose();
-			if (Dashboard.Is_initialized)
-			{
-				Dashboard.Instance.Close();
-			}
 		}
 
 		private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
@@ -281,10 +345,6 @@ namespace ComicSpider
 
 				case System.Windows.Input.Key.F1:
 					Help();
-					break;
-
-				case System.Windows.Input.Key.Escape:
-					btn_hide_Click(null, null);
 					break;
 			}
 		}
