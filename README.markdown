@@ -21,7 +21,7 @@ along with this program. If not, see http://www.gnu.org/licenses/.
 
 [Video Demo](http://player.youku.com/player.php/sid/XMzgwNzk1NjIw/v.swf)
 
-[Download ComicSpider_1.0.0.0 Bin](https://github.com/downloads/ysmood/ComicSpider/ComicSpider_1.0.0.0.zip)
+[Download Comic_Spider_1.0.0.0 Bin](https://github.com/downloads/ysmood/ComicSpider/Comic_Spider_1.0.0.0.zip)
 
 Maybe use mono will make the project more open, but now windows only.
 I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).
