@@ -305,11 +305,14 @@ namespace ys.Web
 			{
 				ComicSpider.UserTableAdapters.Error_logTableAdapter a = new ComicSpider.UserTableAdapters.Error_logTableAdapter();
 				a.Connection.Open();
-				a.Insert(
-					DateTime.Now,
-					url,
-					ex.Message,
-					ex.StackTrace);
+
+				a.Adapter.UpdateCommand = a.Connection.CreateCommand();
+				a.Adapter.UpdateCommand.CommandText = "insert or replace into Error_log ([Date_time], [Url], [Title], [Detail]) values (@Date_time, @Url, @Title, @Detail)";
+				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Date_time", DateTime.Now);
+				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Url", url);
+				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Title", ex.Message);
+				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Detail", ex.StackTrace);
+
 				a.Connection.Close();
 			}
 			catch
@@ -410,6 +413,12 @@ namespace ys.Web
 				{
 					#region Create folder
 					string dir_path = "";
+
+					foreach (var c in Path.GetInvalidFileNameChars())
+					{
+						vol_info.Parent.Name = vol_info.Parent.Name.Replace(c, ' ');
+					}
+
 					dir_path = Path.Combine(vol_info.Parent.Name, vol_info.Name);
 					dir_path = Path.Combine(Main_settings.Main.Root_dir, dir_path);
 					if (!Directory.Exists(dir_path))
@@ -616,7 +625,7 @@ namespace ys.Web
 						)
 					);
 				wc.Headers.Add("Cookie", file_info.Parent.Cookie);
-				if (file_info.Parent != null) wc.Headers.Add("Referer", Uri.EscapeDataString(file_info.Parent.Url));
+				if (file_info.Parent != null) wc.Headers.Add("Referer", file_info.Parent.Url);
 
 				try
 				{
