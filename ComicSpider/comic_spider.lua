@@ -63,7 +63,7 @@ External objects:
 settings = 
 {
 	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
-	requires = { '' },
+	requires = { 'http://archer.sinaapp.com/lib/comic_spider.lua' },
 
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
