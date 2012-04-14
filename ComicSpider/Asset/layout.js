@@ -40,6 +40,11 @@ function init_page_waterfall()
 
 function init_css()
 {
+	if($.browser.msie && $.browser.version < 9)
+	{
+		$('html').addClass('ie-shadow-fix');
+	}
+
 	$('#navibar').css('right', -205).hover(
 		function ()
 		{

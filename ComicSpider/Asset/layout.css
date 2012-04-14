@@ -26,6 +26,10 @@ hr {
 	margin: 5px 0;
 }
 
+.ie-shadow-fix .img_frame, .ie-shadow-fix #navibar {
+	border: 1px solid #ddd;
+}
+
 .img_frame, #title, #navibar {
 	background: #fff;
 
