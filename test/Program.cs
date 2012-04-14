@@ -23,7 +23,7 @@ foo({'1','2',3})
 ");
 
 
-			Console.WriteLine();
+			Console.WriteLine(lua.GetString("aaa"));
 			Console.ReadLine();
 		}
 

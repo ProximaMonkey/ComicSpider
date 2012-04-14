@@ -39,18 +39,18 @@ namespace ComicSpider
 
 			User.CheckAndFix();
 
+			Init_settings();
+			Init_global_hotkey();
+
 			Main = this;
 
 			this.Title = "Comic Spider "
-				+ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()
+				+ Main_settings.Main.App_version
 				+ " April 2012 y.s.";
 			img_logo.ToolTip = this.Title;
 
 			sb_show_window = Resources["sb_show_window"] as Storyboard;
 			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
-
-			Init_global_hotkey();
-			Init_settings();
 
 			Taskbar = new ys.Win7.TaskBar();
 		}
@@ -103,6 +103,7 @@ namespace ComicSpider
 			kv_adpter.Connection.Close();
 
 			Main_settings.Main.Max_console_line = 500;
+			Main_settings.Main.App_version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 		}
 		public void Save_settings()
 		{
@@ -154,6 +155,22 @@ namespace ComicSpider
 				else
 					System.Media.SystemSounds.Asterisk.Play();
 			}
+		}
+
+		public delegate void Show_update_info_delegate(string info, string downlaod_page);
+		public void Show_update_info(string info, string downlaod_page)
+		{
+			Show_balloon(info, (o, e) =>
+			{
+				try
+				{
+					System.Diagnostics.Process.Start(downlaod_page);
+				}
+				catch (Exception ex)
+				{
+					Message_box.Show(ex.Message);
+				}
+			});
 		}
 
 		/***************************** Private ********************************/

@@ -44,26 +44,29 @@ External objects:
 	Lua_controller lc:
 		Current lua controller.
 
-	Dashboard dashboard:
+	Dashboard lc.main:
+		The main window.
+
+	Dashboard lc.dashboard:
 		The main dashboard window.
 
-	Main_settings settings:
+	Main_settings lc.settings:
 		Main settings of Comic Spider.
 
 	string html:
-		Html context of current page.
+		Html context of current page. Only available when in step function.
 
 	Web_src_info src_info:
-		Information about current page.
+		Information about current page. Only available when in step function.
 
 	List<Web_src_info> info_list:
-		link information list of current page.
+		link information list of current page. Only available when in step function.
 ]]
 
 settings = 
 {
 	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
-	requires = { 'http://archer.sinaapp.com/lib/comic_spider.lua' },
+	requires = { 'http://github.com/downloads/ysmood/ComicSpider/comic_spider.lua' },
 
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },

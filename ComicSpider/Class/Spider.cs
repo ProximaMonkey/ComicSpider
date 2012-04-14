@@ -227,7 +227,24 @@ namespace ys.Web
 
 						WebClientEx wc = new WebClientEx();
 						wc.Encoding = System.Text.Encoding.UTF8;
-						lua_script += '\n' + wc.DownloadString(url);
+						string loaded_script = wc.DownloadString(url);
+						lua_script += '\n' + loaded_script;
+						
+						lua.DoString(loaded_script);
+
+						// Check version
+						LuaTable app_info = lua.GetTable("app_info");
+						if (app_info != null &&
+							(app_info["version"] as string).CompareTo(Main_settings.Main.App_version) > 0)
+						{
+							MainWindow.Main.Dispatcher.Invoke(
+								new MainWindow.Show_update_info_delegate(MainWindow.Main.Show_update_info),
+								app_info["notice"],
+								app_info["url"]
+							);
+							Report(app_info["notice"] as string);
+							Report(app_info["url"] as string);
+						}
 
 						Report("Remote script '{0}' loaded.", url);
 					}
@@ -681,9 +698,15 @@ namespace ys.Web
 				this.DoString(Comic_spider.lua_script);
 
 				this["lc"] = this;
-				this["dashboard"] = Dashboard.Instance;
-				this["settings"] = Main_settings.Main;
+
+				main = MainWindow.Main;
+				dashboard = Dashboard.Instance;
+				settings = Main_settings.Main;
 			}
+
+			public MainWindow main;
+			public Dashboard dashboard;
+			public Main_settings settings;
 
 			public string find(string pattern)
 			{

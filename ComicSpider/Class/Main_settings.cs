@@ -37,5 +37,6 @@ namespace ComicSpider
 		public string Thread_count { get; set; }
 		public bool Auto_begin { get; set; }
 		public int Max_console_line { get; set; }
+		public string App_version { get; set; }
 	}
 }
