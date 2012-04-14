@@ -131,7 +131,7 @@ namespace ComicSpider
 						if (Main_settings.Main.Auto_begin)
 							btn_start_Click(null, null);
 					}
-					else
+					else if (Main_settings.Main.Auto_begin)
 						comic_spider.Add_volume_list(added_list);
 				}
 				else if (list.Count > 0)
