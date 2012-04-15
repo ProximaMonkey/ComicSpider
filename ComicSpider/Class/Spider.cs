@@ -42,6 +42,8 @@ namespace ys.Web
 		}
 		public void Async_start(System.Collections.IEnumerable vol_info_list)
 		{
+			Report("Begin downloading...");
+
 			stopped = false;
 
 			volume_queue.Clear();
@@ -73,8 +75,6 @@ namespace ys.Web
 				file_list_getter.Start();
 				thread_list.Add(file_list_getter);
 			}
-
-			Report("Comic Spider start...");
 		}
 
 		public void Add_volume_list(List<Web_src_info> list)
@@ -186,9 +186,10 @@ namespace ys.Web
 		private object volume_queue_lock;
 		private List<Thread> thread_list;
 
-		private bool script_loaded;
 		private List<string> file_types;
 		private List<string> user_agents;
+
+		private static bool script_loaded;
 		private static string lua_script;
 
 		private Random random;
@@ -516,11 +517,6 @@ namespace ys.Web
 
 		private List<Web_src_info> Get_info_list_from_html(Lua_controller lua_c, Web_src_info src_info, params string[] func_list)
 		{
-			while (!script_loaded)
-			{
-				Thread.Sleep(100);
-			}
-
 			List<Web_src_info> info_list = new List<Web_src_info>();
 			src_info.Children = info_list;
 
@@ -704,6 +700,11 @@ namespace ys.Web
 		{
 			public Lua_controller()
 			{
+				while (!Comic_spider.script_loaded)
+				{
+					Thread.Sleep(100);
+				}
+
 				this.DoString(Comic_spider.lua_script);
 
 				this["lc"] = this;
