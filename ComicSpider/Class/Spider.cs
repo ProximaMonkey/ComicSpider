@@ -54,7 +54,8 @@ namespace ys.Web
 			{
 				lock (volume_queue_lock)
 				{
-					volume_queue.Enqueue(vol_info); 
+					if (vol_info.State != Web_src_info.State_downloaded)
+						volume_queue.Enqueue(vol_info);
 				}
 			}
 
@@ -450,10 +451,12 @@ namespace ys.Web
 				else
 				{
 					vol_info.State = Web_src_info.State_missed;
-					Dashboard.Instance.Dispatcher.Invoke(
-						new Dashboard.Stop_downloading_delegate(Dashboard.Instance.Stop_downloading),
-						"No page found in " + vol_info.Url
-					);
+					Report("No page found in " + vol_info.Url);
+
+					lock (volume_queue_lock)
+					{
+						volume_queue.Enqueue(vol_info);
+					}
 				}
 			}
 		}
