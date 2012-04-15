@@ -528,7 +528,7 @@ namespace ys.Web
 						random.Next(user_agents.Count())
 					)
 				);
-			if (src_info.Parent != null) wc.Headers.Add("Referer", src_info.Parent.Url);
+			if (src_info.Parent != null) wc.Headers.Add("Referer", Uri.EscapeUriString(src_info.Parent.Url));
 
 			try
 			{
@@ -621,7 +621,7 @@ namespace ys.Web
 						)
 					);
 				wc.Headers.Add("Cookie", file_info.Parent.Cookie);
-				if (file_info.Parent != null) wc.Headers.Add("Referer", file_info.Parent.Url);
+				if (file_info.Parent != null) wc.Headers.Add("Referer", Uri.EscapeUriString(file_info.Parent.Url));
 
 				try
 				{
