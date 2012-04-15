@@ -34,41 +34,54 @@ VC++ runtime is required for Lua, I put it in the ComicSpider/Asset/vcredist_x86
 
 Techniques required
 
-* C#, .NET3.5, WPF, http
+* C#, .NET3.5, WPF, http protocol, regular expression 
 * SQLite
 * html5, css3, js, jQuery
 * Lua
 
 # Spider main work flow
-There are two main task queues:
+There are three main task queues:
 
+1. Volume info queue
 1. Page info queue
 2. File info queue
 
 Multiply producer and consumer threads will be created to work with these queues.
 
-Info producer threads will try to use regular expression and Levenshtein distance to find valuable info,
-then push file info into file info queue.
+Info producer threads will try to find valuable info, then push file info into file info queue.
 File downloader threads will simply download files in the file info queue.
 
-Most unpredictable part is the producer part. Every site has is way handling with info presentation.
-But most sites has a same routine:
+Most unpredictable part is the producer part. Every site has is way handle info presentation.
+But most sites has a same routine, they has a classic tree with depth 3 and with unknown leaves.
 
-1. Load lua controller
-2. Volume list
-3. Page list
+1. Volume list
+2. Page list
+3. File list
 
 They may protect their resource by check request header's Cookie, User-Agent and Referer.
+The spider will do the camouflage work in background automatically.
 
+By default I won't parse the html tree. Because it may take up a lot of resource to handle broken tags or file fragment when the network is bad.
+Regular expression is a more efficient way to ignore all of these unexceptions.
+For example if you want select the javascript fragment in the html, it could be embarrassed to use a xml parser.
+And it really simple for testing regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
 
-Detail work flow of producer:
+### Detail work flow of producer
 
+1. Load lua controller
 1. Get comic name (create comic folder)
 2. Get volume list (create volume folder)
 3. Get page list
 4. Get file list
 
-Detail work flow of downloader:
+### Detail work flow of downloader
 
 1. download file
-2. create index.html to present each volume
+2. create a presentation page to present images of each volume
+
+### Auto created presentation page
+
+It has many useful functions for browsing images. Such as auto resize large image and auto split wide image.
+With html5 an animated UI, it will be great to use it browsing image collections, not only mangas.
+
+![View page](https://raw.github.com/ysmood/ComicSpider/master/Documentation/contents/img/snap/view.png)
