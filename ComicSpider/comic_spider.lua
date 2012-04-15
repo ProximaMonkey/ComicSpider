@@ -7,7 +7,7 @@ This doc should be utf-8 encoded only.
 Most of the .NET assemblies are visible. You can control most behaviors of the spider.
 For more information please see the source code of the CSharp project:
 https://github.com/ysmood/ComicSpider
-Becareful when you use functions out of the list below,
+Be careful when you use functions out of the list below,
 it will be hard to debug without the Visual Studio :)
 
 ******************************************************************************************
@@ -29,11 +29,11 @@ External functions:
 		Except the last pattern in the table, others are all use to select contents.
 		Url match group should named with 'url'.
 		Name match group should named with 'name'.
-		Varialble url and name are visible in step function.
+		Variable url and name are visible in step function.
 
 	void lc:fill_list(JsonArray arr, function step(int index, string str, JsonArray arr)):
 		Fill info_list with an array, and loop with a callback function.
-		Varialble url and name are visible in step function.
+		Variable url and name are visible in step function.
 
 	void lc:add(string url, int index, string name, Web_src_info parent = null):
 		Add a new Web_src_info instance to info_list.
@@ -71,8 +71,10 @@ settings =
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
 
-	-- Http requst User-Agent header list. Fake your info here. It will randomly choose one of them.
+	-- Http request User-Agent header list. Fake your info here. It will randomly choose one of them.
 	user_agents = { 'Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2' },
+
+	proxy = '',
 }
 
 comic_spider =
@@ -165,6 +167,25 @@ comic_spider =
 					url = 'http://' .. img_hosts[n] .. '.manhua.178.com/' .. str
 				end
 			)
+		end,
+	},
+
+	['yande.re'] =
+	{
+		charset = 'utf-8',
+
+		home = 'https://yande.re/',
+
+		get_comic_name = function()
+		end,
+
+		get_volume_list = function()
+		end,
+
+		get_page_list = function()
+		end,
+
+		get_file_list = function()
 		end,
 	},
 }

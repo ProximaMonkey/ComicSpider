@@ -2,6 +2,8 @@
 # License
 
 Comic Spider - a tool to download and view online manga.
+The purposes of this software is sharing and learning which means it is for previewing purposes only.
+If you like the mangas/illustrations please support the author by purchasing them.
 
 This program is free software: you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 

@@ -179,6 +179,8 @@ namespace ys.Web
 
 		private bool stopped;
 
+		private WebProxy proxy;
+
 		private Queue<Web_src_info> file_queue;
 		private Queue<Web_src_info> page_queue;
 		private Queue<Web_src_info> volume_queue;
@@ -222,12 +224,16 @@ namespace ys.Web
 						user_agents.Add(item);
 					}
 
+					if (!string.IsNullOrEmpty(lua.GetString("settings.proxy")))
+						proxy = new WebProxy(lua.GetString("settings.proxy"), true);
+
 					foreach (string url in (lua.GetTable("settings.requires") as LuaTable).Values)
 					{
 						if (string.IsNullOrEmpty(url))
 							continue;
 
 						WebClientEx wc = new WebClientEx();
+						wc.Proxy = proxy;
 						wc.Encoding = System.Text.Encoding.UTF8;
 						string loaded_script = wc.DownloadString(url);
 						lua_script += '\n' + loaded_script;
@@ -526,6 +532,7 @@ namespace ys.Web
 			string host = get_host(src_info.Url);
 
 			WebClientEx wc = new WebClientEx();
+			wc.Proxy = proxy;
 			if (user_agents != null)
 				wc.Headers.Add("User-Agent", user_agents.ElementAt(
 						random.Next(user_agents.Count())
@@ -617,6 +624,7 @@ namespace ys.Web
 				#endregion
 
 				WebClient wc = new WebClient();
+				wc.Proxy = proxy;
 				FileStream stream = null;
 				if (user_agents != null)
 					wc.Headers.Add("User-Agent", user_agents.ElementAt(
