@@ -23,8 +23,8 @@ External functions:
 		CSharp Regex.fill_list method. Param pattern will be automatically convert to string.
 		Return the match group which is named 'find'.
 
-	void lc:fill_list(string regex_pattern, function step(int index, GroupCollection gs, MatchCollection mc)):
-	void lc:fill_list(LuaTable regex_patterns, function step(int index, GroupCollection gs, MatchCollection mc)):
+	void lc:fill_list(string regex_pattern, function step(int index, GroupCollection gs, MatchCollection mc) = null):
+	void lc:fill_list(LuaTable regex_patterns, function step(int index, GroupCollection gs, MatchCollection mc) = null):
 		Matches all, fill info_list with matched url and name, and loop with a callback function.
 		Except the last pattern in the table, others are all use to select contents.
 		Url match group should named with 'url'.
@@ -32,8 +32,14 @@ External functions:
 		Variable url and name are visible in step function.
 
 	void lc:fill_list(JsonArray arr, function step(int index, string str, JsonArray arr)):
+		No default value for step function.
 		Fill info_list with an array, and loop with a callback function.
 		Variable url and name are visible in step function.
+
+	void lc:xfill_list(selector, function step(int index, HtmlNode node, HtmlNodeCollection nodes)):
+		No default value for step function.
+		Fill info_list via XPath selector. For more information, search HtmlAgilityPack.
+		Should manually set the url of src_info.
 
 	void lc:add(string url, int index, string name, Web_src_info parent = null):
 		Add a new Web_src_info instance to info_list.
@@ -53,14 +59,23 @@ External objects:
 	Main_settings lc.settings:
 		Main settings of Comic Spider.
 
-	string html:
-		Html context of current page. Only available when in step function.
+	Only visible in 'get_volume_list', 'get_page_list', 'get_file_list'.
+		string html:
+			Html context of current page. 
 
-	Web_src_info src_info:
-		Information about current page. Only available when in step function.
+		Web_src_info src_info:
+			Information about current page.
 
-	List<Web_src_info> info_list:
-		link information list of current page. Only available when in step function.
+		List<Web_src_info> info_list:
+			Link information list of current page.
+
+	Only visible in 'handle_file'.
+		string dir:
+			Current directory path.
+		string name:
+			Current file name.
+		string ext:
+			Current file extension.
 ]]
 
 settings = 
@@ -86,16 +101,21 @@ comic_spider =
 
 		home = '',
 
-		get_comic_name = function()
-		end,
+		is_create_view_page = true,
+
+		indexed_file_name = true,
 
 		get_volume_list = function()
+			src_info.Name = ''
 		end,
 
 		get_page_list = function()
 		end,
 
 		get_file_list = function()
+		end,
+
+		handle_file = function()
 		end,
 	},
 	]]
@@ -105,11 +125,10 @@ comic_spider =
 	{
 		home = 'http://www.mangahere.com/',
 
-		get_comic_name = function()
-			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
-		end,
-
 		get_volume_list = function()
+			-- First get comic's main name.
+			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
+			-- Get volume list.
 			lc:fill_list({
 				[[class="detail_list"[\s\S]+?/ul]],
 				[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
@@ -131,6 +150,10 @@ comic_spider =
 		get_file_list = function()
 			lc:fill_list([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]])
 		end,
+
+		set_file_path = function()
+
+		end,
 	},
 
 	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
@@ -138,11 +161,10 @@ comic_spider =
 	{
 		home = 'http://manhua.178.com/',
 
-		get_comic_name = function()
-			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
-		end,
-
 		get_volume_list = function()
+			-- 首先获取漫画名
+			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
+			-- 获取卷列表
 			lc:fill_list({
 				[[<div class="cartoon_online_border"[\s\S]+?<div]],
 				[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
@@ -170,22 +192,23 @@ comic_spider =
 		end,
 	},
 
-	['yande.re'] =
+	-- Example for a Danbooru site.
+	['konachan.com'] =
 	{
-		charset = 'utf-8',
+		home = 'http://konachan.com',
 
-		home = 'https://yande.re/',
+		is_indexed_file_name = false,
+		is_create_view_page = false,
 
-		get_comic_name = function()
-		end,
-
+		-- Example for usage of XPath. Slower but easier than regex.
 		get_volume_list = function()
-		end,
-
-		get_page_list = function()
-		end,
-
-		get_file_list = function()
+			src_info.Name = 'konachan'
+			lc:xfill_list(
+				"//a[@id='highres']",
+				function(i, node, nodes)
+					url = node.Attributes["href"].Value
+				end
+			)
 		end,
 	},
 }

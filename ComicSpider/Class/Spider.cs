@@ -9,6 +9,7 @@ using LuaInterface;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Web;
 
 namespace ys.Web
 {
@@ -179,8 +180,6 @@ namespace ys.Web
 
 		private bool stopped;
 
-		private WebProxy proxy;
-
 		private Queue<Web_src_info> file_queue;
 		private Queue<Web_src_info> page_queue;
 		private Queue<Web_src_info> volume_queue;
@@ -225,7 +224,9 @@ namespace ys.Web
 					}
 
 					if (!string.IsNullOrEmpty(lua.GetString("settings.proxy")))
-						proxy = new WebProxy(lua.GetString("settings.proxy"), true);
+					{
+						WebRequest.DefaultWebProxy = new WebProxy(lua.GetString("settings.proxy"), true);
+					}
 
 					foreach (string url in (lua.GetTable("settings.requires") as LuaTable).Values)
 					{
@@ -233,7 +234,6 @@ namespace ys.Web
 							continue;
 
 						WebClientEx wc = new WebClientEx();
-						wc.Proxy = proxy;
 						wc.Encoding = System.Text.Encoding.UTF8;
 						string loaded_script = wc.DownloadString(url);
 						lua_script += '\n' + loaded_script;
@@ -342,7 +342,7 @@ namespace ys.Web
 
 		private string get_host(string url)
 		{
-			string main = Regex.Match(url, @"(http://)?(?<host>.+?)/").Groups["host"].Value;
+			string main = Regex.Match(url, @"(https?://)?(?<host>.+?)/").Groups["host"].Value;
 			string[] sections = main.Split('.');
 			if (sections.Length >= 2)
 			{
@@ -352,13 +352,14 @@ namespace ys.Web
 				return string.Empty;
 		}
 
-		private void Get_volume_list(object url)
+		private void Get_volume_list(object arg)
 		{
-			Web_src_info comic_info = new Web_src_info(url as string, 0, "");
+			string url = arg as string;
+			Web_src_info comic_info = new Web_src_info(url, 0, "");
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
 			Lua_controller lua_c = new Lua_controller();
 
-			vol_info_list = Get_info_list_from_html(lua_c, comic_info, "get_comic_name", "get_volume_list");
+			vol_info_list = Get_info_list_from_html(lua_c, comic_info, "get_volume_list");
 
 			if (comic_info.Children.Count > 0)
 			{
@@ -427,8 +428,11 @@ namespace ys.Web
 						vol_info.Parent.Name = vol_info.Parent.Name.Replace(c, ' ');
 					}
 
-					dir_path = Path.Combine(vol_info.Parent.Name, vol_info.Name);
-					dir_path = Path.Combine(Main_settings.Main.Root_dir, dir_path);
+					dir_path = ys.Common.Combine_path(
+						Main_settings.Main.Root_dir,
+						vol_info.Parent.Name,
+						vol_info.Name);
+
 					if (!Directory.Exists(dir_path))
 					{
 						try
@@ -532,7 +536,6 @@ namespace ys.Web
 			string host = get_host(src_info.Url);
 
 			WebClientEx wc = new WebClientEx();
-			wc.Proxy = proxy;
 			if (user_agents != null)
 				wc.Headers.Add("User-Agent", user_agents.ElementAt(
 						random.Next(user_agents.Count())
@@ -543,7 +546,6 @@ namespace ys.Web
 			try
 			{
 				#region Lua lua_script controller
-
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
 
@@ -557,7 +559,6 @@ namespace ys.Web
 				}
 				if (exists_method)
 				{
-
 					string encoding = lua_c.DoString(string.Format("return comic_spider['{0}']['charset']", host))[0] as string;
 
 					wc.Encoding = System.Text.Encoding.GetEncoding(
@@ -597,6 +598,7 @@ namespace ys.Web
 		private void Downloader()
 		{
 			Web_src_info file_info;
+			Lua_controller lua_c = new Lua_controller();
 
 			while (!stopped)
 			{
@@ -611,20 +613,59 @@ namespace ys.Web
 					file_info = file_queue.Dequeue();
 				}
 
+				string host = get_host(file_info.Url);
+
+				bool is_create_view_page = true;
+				bool is_indexed_file_name = true;
+				is_indexed_file_name = (bool)lua_c.DoString(string.Format("return comic_spider['{0}']['is_indexed_file_name'] == true", host))[0];
+				is_create_view_page = (bool)lua_c.DoString(string.Format("return comic_spider['{0}']['is_create_view_page'] == true", host))[0];
+
 				#region Create file name
-				string file_name = string.Format("{0:D3}{1}", file_info.Parent.Index, Path.GetExtension(file_info.Url));
+
+				string file_path = string.Empty;
+
+				lua_c["src_info"] = file_info;
+				if (is_indexed_file_name)
+				{
+					lua_c["name"] = string.Format("{0:D3}", file_info.Parent.Index + 1);
+				}
+				else if (string.IsNullOrEmpty(file_info.Name))
+				{
+					lua_c["name"] = HttpUtility.UrlDecode(Path.GetFileName(file_info.Url));
+				}
+				else
+				{
+					lua_c["name"] = file_info.Name;
+				}
+				lua_c["ext"] = Path.GetExtension(file_info.Url);
+
 				string dir = "";
 				Web_src_info parent = file_info.Parent;
 				while ((parent = parent.Parent) != null)
 				{
 					dir = Path.Combine(parent.Name, dir);
 				}
-				dir = Path.Combine(Main_settings.Main.Root_dir, dir);
-				file_name = Path.Combine(dir, file_name);
+				lua_c["dir"] = ys.Common.Combine_path(Main_settings.Main.Root_dir, dir);
+
+				try
+				{
+					if (lua_c.DoString(string.Format("return comic_spider['{0}']['handle_file']", host))[0] != null)
+					{
+						lua_c.DoString(string.Format("comic_spider['{0}']['handle_file']()", host));
+					}
+				}
+				catch (Exception ex)
+				{
+					Report("Lua exception, " + ex.Message);
+				}
+
+				file_path = ys.Common.Combine_path(
+					lua_c.GetString("dir"),
+					lua_c.GetString("name") + lua_c.GetString("ext"));
+
 				#endregion
 
 				WebClient wc = new WebClient();
-				wc.Proxy = proxy;
 				FileStream stream = null;
 				if (user_agents != null)
 					wc.Headers.Add("User-Agent", user_agents.ElementAt(
@@ -636,13 +677,12 @@ namespace ys.Web
 
 				try
 				{
-					wc.DownloadFile(file_info.Url, file_name);
 					byte[] data = wc.DownloadData(file_info.Url);
 
 					if (wc.ResponseHeaders["Content-Type"].Contains("html"))
 						throw new Exception("Remote sever error: download file failed.");
 
-					stream = new FileStream(file_name, FileMode.Create);
+					stream = new FileStream(file_path, FileMode.Create);
 					stream.Write(data, 0, data.Length);
 					stream.Close();
 
@@ -660,13 +700,17 @@ namespace ys.Web
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
 						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
-						try
+
+						if (is_create_view_page)
 						{
-							Create_display_page(dir, file_info.Parent.Parent.Parent.Name);
-						}
-						catch (Exception ex)
-						{
-							Log_error(ex, file_info.Url);
+							try
+							{
+								Create_display_page(lua_c.GetString("dir"), file_info.Parent.Parent.Parent.Name);
+							}
+							catch (Exception ex)
+							{
+								Log_error(ex, file_info.Url);
+							}
 						}
 
 						Thread.Sleep(500);		// Wait other Dispatcher done.
@@ -750,17 +794,13 @@ namespace ys.Web
 					this["url"] = mc[i].Groups["url"].Value;
 					this["name"] = mc[i].Groups["name"].Value.Trim();
 
-					if (string.IsNullOrEmpty(this.GetString("name")))
-						this["name"] = Path.GetFileName(this.GetString("url").TrimEnd('/')).Trim();
-
 					if (!string.IsNullOrEmpty(src_info.Name))
 						this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
 
 					if (step != null)
 						(step as LuaFunction).Call(i, mc[i].Groups, mc);
 
-					if (string.IsNullOrEmpty(this.GetString("url")) ||
-						string.IsNullOrEmpty(this.GetString("name")))
+					if (string.IsNullOrEmpty(this.GetString("url")))
 						continue;
 
 					list.Add(
@@ -797,17 +837,13 @@ namespace ys.Web
 					this["url"] = mc[i].Groups["url"].Value;
 					this["name"] = mc[i].Groups["name"].Value.Trim();
 
-					if (string.IsNullOrEmpty(this.GetString("name")))
-						this["name"] = Path.GetFileName(this.GetString("url").TrimEnd('/')).Trim();
-
 					if (!string.IsNullOrEmpty(src_info.Name))
 						this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
 
 					if (step != null)
 						(step as LuaFunction).Call(i, mc[i].Groups, mc);
 
-					if (string.IsNullOrEmpty(this.GetString("url")) ||
-						string.IsNullOrEmpty(this.GetString("name")))
+					if (string.IsNullOrEmpty(this.GetString("url")))
 						continue;
 					
 					list.Add(
@@ -829,19 +865,53 @@ namespace ys.Web
 					this["url"] = arr[i].ToString();
 					this["name"] = Path.GetFileName(this.GetString("url")).Trim();
 
-					if (string.IsNullOrEmpty(this.GetString("name")))
-						this["name"] = Path.GetFileName(this.GetString("url").TrimEnd('/')).Trim();
-
 					if (!string.IsNullOrEmpty(src_info.Name))
 						this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
 
 					if (step != null)
 						(step as LuaFunction).Call(i, arr[i].ToString(), arr);
 
-					if (string.IsNullOrEmpty(this.GetString("url")) ||
-						string.IsNullOrEmpty(this.GetString("name")))
+					if (string.IsNullOrEmpty(this.GetString("url")))
 						continue;
 					
+					list.Add(
+						new Web_src_info(
+							this.GetString("url"),
+							i,
+							ys.Common.Format_for_number_sort(this.GetString("name")),
+							src_info
+						)
+					);
+				}
+			}
+			public void xfill_list(string selector, LuaFunction step)
+			{
+				Web_src_info src_info = this["src_info"] as Web_src_info;
+				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+
+				HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+				doc.LoadHtml(this.GetString("html"));
+
+				HtmlAgilityPack.HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes(selector);
+
+				if (nodes == null)
+					throw new Exception("XPath: nothing selected.");
+
+				this["name"] = string.Empty;
+
+				for (int i = 0; i < nodes.Count; i++)
+				{
+					if (step != null)
+						(step as LuaFunction).Call(i, nodes[i], nodes);
+
+					if (string.IsNullOrEmpty(this.GetString("url")))
+						continue;
+					else
+					{
+						if (!string.IsNullOrEmpty(src_info.Name))
+							this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
+					}
+
 					list.Add(
 						new Web_src_info(
 							this.GetString("url"),
@@ -855,10 +925,7 @@ namespace ys.Web
 
 			public void add(string url, int index, string name, Web_src_info parent = null)
 			{
-				if (parent == null ||
-					string.IsNullOrEmpty(parent.Name) ||
-					string.IsNullOrEmpty(name) ||
-					string.IsNullOrEmpty(url))
+				if (string.IsNullOrEmpty(url))
 					return;
 
 				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;

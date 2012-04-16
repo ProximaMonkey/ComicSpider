@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using LuaInterface;
+using System.IO;
 
 namespace test
 {
@@ -11,40 +12,14 @@ namespace test
 	{
 		static void Main(string[] args)
 		{
-			Program program = new Program();
-			Lua lua = new Lua();
+			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+			doc.Load("test.html");
+			foreach (var item in doc.DocumentNode.SelectNodes("//a[@id='highres']"))
+			{
+				Console.WriteLine(item.Attributes["href"].Value);
+			}
 
-			List<string> list = new List<string>();
-			list.Add("a");
-			lua["list"] = new List<string>();
-			lua.RegisterFunction("foo", program, program.GetType().GetMethod("foo"));
-			lua.DoString(@"
-foo({'1','2',3})
-");
-
-
-			Console.WriteLine(lua.GetString("aaa"));
 			Console.ReadLine();
-		}
-
-		public void foo(LuaTable t)
-		{
-			foreach (var item in t.Values)
-			{
-				Console.WriteLine(item);
-			}
-		}
-
-		private class Persion
-		{
-			public string name = "Jack";
-			public Lua lua;
-
-			public void m(string m = "")
-			{
-				m += "OK ";
-				Console.WriteLine(lua["v"]);
-			}
 		}
 	}
 }

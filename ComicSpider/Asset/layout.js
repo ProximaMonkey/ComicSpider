@@ -131,7 +131,7 @@ function append_img(count)
 	{
 		var frame = $(
 			'<div class="img_frame">' +
-				'<div><span class="page_num">' + img_count + ' / ' + img_list.length + '</span></div>' +
+				'<div><span class="page_num">' + (img_count + 1) + ' / ' + img_list.length + '</span></div>' +
 			'</div>'
 		);
 

@@ -36,7 +36,7 @@ VC++ runtime is required for Lua, I put it in the ComicSpider/Asset/vcredist_x86
 
 Techniques required
 
-* C#, .NET3.5, WPF, http protocol, regular expression 
+* C#, .NET3.5, WPF, http protocol, regular expression, XPath
 * SQLite
 * html5, css3, js, jQuery
 * Lua
@@ -67,6 +67,7 @@ By default I won't parse the html tree. Because it may take up a lot of resource
 Regular expression is a more efficient way to ignore all of these unexceptions.
 For example if you want select the javascript fragment in the html, it could be embarrassed to use a xml parser.
 And it really simple for testing regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
+But still you can use XPath to get info, I implemented a lua api for [HtmlAgilityPack](http://htmlagilitypack.codeplex.com/).
 
 ### Detail work flow of producer
 

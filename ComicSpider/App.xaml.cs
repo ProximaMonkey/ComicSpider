@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using System.IO;
+using System.Diagnostics;
 
 namespace ComicSpider
 {
@@ -9,6 +10,16 @@ namespace ComicSpider
 	{
 		public App()
 		{
+			// Get Reference to the current Process
+			Process thisProc = Process.GetCurrentProcess();
+			// Check how many total processes have the same name as the current one
+			if (Process.GetProcessesByName(thisProc.ProcessName).Length > 1)
+			{
+				// If their is more than one, than it is already running.
+				Message_box.Show("Application is already running.");
+				return;
+			}
+
 			App.Current.ShutdownMode = System.Windows.ShutdownMode.OnMainWindowClose;
 
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);

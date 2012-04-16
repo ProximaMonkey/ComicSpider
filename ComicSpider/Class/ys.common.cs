@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace ys
 {
@@ -170,6 +171,16 @@ namespace ys
 			fileop.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION;
 
 			SHFileOperation(ref fileop);
+		}
+
+		public static string Combine_path(string root, params string[]paths)
+		{
+			foreach (var path in paths)
+			{
+				root = Path.Combine(root, path);
+			}
+
+			return root;
 		}
 	}
 }
