@@ -99,9 +99,9 @@
 				<TextBlock Margin="3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F"/>
 				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5" Background="#BFFFFFFF"/>
 			</StackPanel>
-			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" SelectedIndex="0" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
-				<ComboBoxItem Content="open supported website" IsSelected="True" IsEnabled="False" />
+			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged" DisplayMemberPath="Name">
 			</ComboBox>
+			<TextBlock Grid.Column="2" Text="open supported website" Margin="15,9,0,11" IsHitTestVisible="False" />
 		</Grid>
 		<StackPanel Orientation="Horizontal" Grid.Row="1">
 			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />

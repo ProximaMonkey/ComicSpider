@@ -144,13 +144,14 @@ namespace ComicSpider
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
-		public delegate void Show_supported_sites_delegate(List<string> list);
-		public void Show_supported_sites(List<string> list)
+		public delegate void Show_supported_sites_delegate(List<Website_info> list);
+		public void Show_supported_sites(List<Website_info> list)
 		{
-			foreach (string item in list.Distinct())
+			cb_supported_websites.Items.Clear();
+			cb_supported_websites.Items.Add(new Website_info("", ""));
+			foreach (var item in list)
 			{
-				if (!cb_supported_websites.Items.Contains(item))
-					cb_supported_websites.Items.Add(item);
+				cb_supported_websites.Items.Add(item);
 			}
 		}
 
@@ -432,11 +433,12 @@ namespace ComicSpider
 
 		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			if (cb_supported_websites.SelectedValue is string)
+			Website_info site_info = cb_supported_websites.SelectedValue as Website_info;
 			{
+				if (string.IsNullOrEmpty(site_info.Home)) return;
 				try
 				{
-					System.Diagnostics.Process.Start(cb_supported_websites.SelectedValue as string);
+					System.Diagnostics.Process.Start(site_info.Home);
 				}
 				catch (Exception ex)
 				{

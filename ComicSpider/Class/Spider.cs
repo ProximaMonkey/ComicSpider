@@ -204,7 +204,7 @@ namespace ys.Web
 			{
 				file_types = new List<string>();
 				user_agents = new List<string>();
-				List<string> supported_websites = new List<string>();
+				List<Website_info> supported_websites = new List<Website_info>();
 				lua_script = "";
 
 				try
@@ -263,8 +263,9 @@ namespace ys.Web
 
 					foreach (LuaTable website in (lua.GetTable("comic_spider") as LuaTable).Values)
 					{
-						string home_url = website["home"] as string;
-						supported_websites.Add(home_url);
+						string name = website["name"] as string;
+						string home = website["home"] as string;
+						supported_websites.Add(new Website_info(name, home));
 					}
 
 					Dashboard.Instance.Dispatcher.Invoke(

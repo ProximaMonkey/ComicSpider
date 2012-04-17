@@ -100,9 +100,11 @@ comic_spider =
 	--[[ Default behaviors here. Name is long, but meaningful :)
 	['default'] =
 	{
-		charset = 'utf-8',
+		name = '',
 
 		home = '',
+
+		charset = 'utf-8',
 
 		is_create_view_page = true,
 
@@ -126,6 +128,7 @@ comic_spider =
 	-- A sample english manga site. You can follow code below to parse another site.
 	['mangahere.com'] =
 	{
+		name = 'Manga Here',
 		home = 'http://www.mangahere.com/',
 
 		get_volume_list = function()
@@ -162,6 +165,7 @@ comic_spider =
 	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
 	['178.com'] =
 	{
+		name = '178 漫画频道',
 		home = 'http://manhua.178.com/',
 
 		get_volume_list = function()
@@ -198,6 +202,7 @@ comic_spider =
 	-- Example for a Danbooru site.
 	['yande.re'] =
 	{
+		name = 'Moe imouto',
 		home = 'https://yande.re/post?tags=rating%3Asafe',
 
 		is_create_view_page = false,

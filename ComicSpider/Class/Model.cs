@@ -127,4 +127,16 @@ namespace ys.Web
 		private string state;
 		private List<Web_src_info> children;
 	}
+
+	public class Website_info
+	{
+		public Website_info(string name, string home)
+		{
+			Name = name;
+			Home = home;
+		}
+
+		public string Name { get; set; }
+		public string Home { get; set; }
+	}
 }
