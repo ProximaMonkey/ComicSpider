@@ -27,16 +27,6 @@ namespace ComicSpider.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("data source=user.db")]
-        public string UserDBConnectionString {
-            get {
-                return ((string)(this["UserDBConnectionString"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("data source=E:\\CSharp\\ComicSpider\\ComicSpider\\bin\\Debug\\user.db")]
         public string userConnectionString {
             get {
                 return ((string)(this["userConnectionString"]));

@@ -193,7 +193,6 @@ namespace ys.Win7
 		public ThumbButtonMask dwMask;
 		public uint iID;
 		public uint iBitmap;
-		IntPtr hIcon;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
 		public string szTip;
 		public ThumbButtonFlags dwFlags;

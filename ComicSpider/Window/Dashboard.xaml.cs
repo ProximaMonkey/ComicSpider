@@ -109,7 +109,7 @@ namespace ComicSpider
 			skip: ;
 			}
 
-			if(volume_list.Items.Count > 0)
+			if (added_list.Count > 0)
 				btn_start.IsEnabled = true;
 
 			if(comic_spider.Stopped)

@@ -726,9 +726,14 @@ namespace ys.Web
 					Report("Lua exception, " + ex.Message);
 				}
 
-				file_path = ys.Common.Combine_path(
-					lua_c.GetString("dir"),
-					lua_c.GetString("name") + lua_c.GetString("ext"));
+				string name = lua_c.GetString("name") + lua_c.GetString("ext");
+				// Remove invalid char
+				foreach (var c in Path.GetInvalidFileNameChars())
+				{
+					name = name.Replace(c, ' ');
+				}
+
+				file_path = ys.Common.Combine_path(lua_c.GetString("dir"), name);
 
 				#endregion
 
