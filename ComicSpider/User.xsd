@@ -2,8 +2,9 @@
 <xs:schema id="User" targetNamespace="http://tempuri.org/User.xsd" xmlns:mstns="http://tempuri.org/User.xsd" xmlns="http://tempuri.org/User.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
   <xs:annotation>
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
-      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
         <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
           <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
         </Connections>
         <Tables>
@@ -297,21 +298,21 @@
   <xs:element name="User" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="User" msprop:Generator_UserDSName="User">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Error_log" msprop:Generator_TableClassName="Error_logDataTable" msprop:Generator_TableVarName="tableError_log" msprop:Generator_TablePropName="Error_log" msprop:Generator_RowDeletingName="Error_logRowDeleting" msprop:Generator_RowChangingName="Error_logRowChanging" msprop:Generator_RowEvHandlerName="Error_logRowChangeEventHandler" msprop:Generator_RowDeletedName="Error_logRowDeleted" msprop:Generator_UserTableName="Error_log" msprop:Generator_RowChangedName="Error_logRowChanged" msprop:Generator_RowEvArgName="Error_logRowChangeEvent" msprop:Generator_RowClassName="Error_logRow">
+        <xs:element name="Error_log" msprop:Generator_TableClassName="Error_logDataTable" msprop:Generator_TableVarName="tableError_log" msprop:Generator_TablePropName="Error_log" msprop:Generator_RowDeletingName="Error_logRowDeleting" msprop:Generator_UserTableName="Error_log" msprop:Generator_RowChangingName="Error_logRowChanging" msprop:Generator_RowEvHandlerName="Error_logRowChangeEventHandler" msprop:Generator_RowDeletedName="Error_logRowDeleted" msprop:Generator_RowEvArgName="Error_logRowChangeEvent" msprop:Generator_RowChangedName="Error_logRowChanged" msprop:Generator_RowClassName="Error_logRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="Date_time" msprop:Generator_ColumnVarNameInTable="columnDate_time" msprop:Generator_ColumnPropNameInRow="Date_time" msprop:Generator_ColumnPropNameInTable="Date_timeColumn" msprop:Generator_UserColumnName="Date_time" type="xs:dateTime" />
               <xs:element name="Url" msprop:Generator_ColumnVarNameInTable="columnUrl" msprop:Generator_ColumnPropNameInRow="Url" msprop:Generator_ColumnPropNameInTable="UrlColumn" msprop:Generator_UserColumnName="Url">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="200" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="Title" msprop:Generator_ColumnVarNameInTable="columnTitle" msprop:Generator_ColumnPropNameInRow="Title" msprop:Generator_ColumnPropNameInTable="TitleColumn" msprop:Generator_UserColumnName="Title">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
@@ -325,20 +326,20 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Volume_list" msprop:Generator_TableClassName="Volume_listDataTable" msprop:Generator_TableVarName="tableVolume_list" msprop:Generator_TablePropName="Volume_list" msprop:Generator_RowDeletingName="Volume_listRowDeleting" msprop:Generator_RowChangingName="Volume_listRowChanging" msprop:Generator_RowEvHandlerName="Volume_listRowChangeEventHandler" msprop:Generator_RowDeletedName="Volume_listRowDeleted" msprop:Generator_UserTableName="Volume_list" msprop:Generator_RowChangedName="Volume_listRowChanged" msprop:Generator_RowEvArgName="Volume_listRowChangeEvent" msprop:Generator_RowClassName="Volume_listRow">
+        <xs:element name="Volume_list" msprop:Generator_TableClassName="Volume_listDataTable" msprop:Generator_TableVarName="tableVolume_list" msprop:Generator_TablePropName="Volume_list" msprop:Generator_RowDeletingName="Volume_listRowDeleting" msprop:Generator_UserTableName="Volume_list" msprop:Generator_RowChangingName="Volume_listRowChanging" msprop:Generator_RowEvHandlerName="Volume_listRowChangeEventHandler" msprop:Generator_RowDeletedName="Volume_listRowDeleted" msprop:Generator_RowEvArgName="Volume_listRowChangeEvent" msprop:Generator_RowChangedName="Volume_listRowChanged" msprop:Generator_RowClassName="Volume_listRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="Url" msprop:Generator_ColumnVarNameInTable="columnUrl" msprop:Generator_ColumnPropNameInRow="Url" msprop:Generator_ColumnPropNameInTable="UrlColumn" msprop:Generator_UserColumnName="Url">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="200" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
@@ -353,14 +354,14 @@
               <xs:element name="Parent_url" msprop:Generator_ColumnVarNameInTable="columnParent_url" msprop:Generator_ColumnPropNameInRow="Parent_url" msprop:Generator_ColumnPropNameInTable="Parent_urlColumn" msprop:Generator_UserColumnName="Parent_url" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="200" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="Parent_name" msprop:Generator_ColumnVarNameInTable="columnParent_name" msprop:Generator_ColumnPropNameInRow="Parent_name" msprop:Generator_ColumnPropNameInTable="Parent_nameColumn" msprop:Generator_UserColumnName="Parent_name" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
@@ -375,13 +376,13 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Key_value" msprop:Generator_TableClassName="Key_valueDataTable" msprop:Generator_TableVarName="tableKey_value" msprop:Generator_TablePropName="Key_value" msprop:Generator_RowDeletingName="Key_valueRowDeleting" msprop:Generator_RowChangingName="Key_valueRowChanging" msprop:Generator_RowEvHandlerName="Key_valueRowChangeEventHandler" msprop:Generator_RowDeletedName="Key_valueRowDeleted" msprop:Generator_UserTableName="Key_value" msprop:Generator_RowChangedName="Key_valueRowChanged" msprop:Generator_RowEvArgName="Key_valueRowChangeEvent" msprop:Generator_RowClassName="Key_valueRow">
+        <xs:element name="Key_value" msprop:Generator_TableClassName="Key_valueDataTable" msprop:Generator_TableVarName="tableKey_value" msprop:Generator_TablePropName="Key_value" msprop:Generator_RowDeletingName="Key_valueRowDeleting" msprop:Generator_UserTableName="Key_value" msprop:Generator_RowChangingName="Key_valueRowChanging" msprop:Generator_RowEvHandlerName="Key_valueRowChangeEventHandler" msprop:Generator_RowDeletedName="Key_valueRowDeleted" msprop:Generator_RowEvArgName="Key_valueRowChangeEvent" msprop:Generator_RowChangedName="Key_valueRowChanged" msprop:Generator_RowClassName="Key_valueRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="Key" msprop:Generator_ColumnVarNameInTable="columnKey" msprop:Generator_ColumnPropNameInRow="Key" msprop:Generator_ColumnPropNameInTable="KeyColumn" msprop:Generator_UserColumnName="Key">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="50" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
@@ -389,20 +390,20 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Page_list" msprop:Generator_TableClassName="Page_listDataTable" msprop:Generator_TableVarName="tablePage_list" msprop:Generator_TablePropName="Page_list" msprop:Generator_RowDeletingName="Page_listRowDeleting" msprop:Generator_RowChangingName="Page_listRowChanging" msprop:Generator_RowEvHandlerName="Page_listRowChangeEventHandler" msprop:Generator_RowDeletedName="Page_listRowDeleted" msprop:Generator_UserTableName="Page_list" msprop:Generator_RowChangedName="Page_listRowChanged" msprop:Generator_RowEvArgName="Page_listRowChangeEvent" msprop:Generator_RowClassName="Page_listRow">
+        <xs:element name="Page_list" msprop:Generator_TableClassName="Page_listDataTable" msprop:Generator_TableVarName="tablePage_list" msprop:Generator_TablePropName="Page_list" msprop:Generator_RowDeletingName="Page_listRowDeleting" msprop:Generator_UserTableName="Page_list" msprop:Generator_RowChangingName="Page_listRowChanging" msprop:Generator_RowEvHandlerName="Page_listRowChangeEventHandler" msprop:Generator_RowDeletedName="Page_listRowDeleted" msprop:Generator_RowEvArgName="Page_listRowChangeEvent" msprop:Generator_RowChangedName="Page_listRowChanged" msprop:Generator_RowClassName="Page_listRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="Url" msprop:Generator_ColumnVarNameInTable="columnUrl" msprop:Generator_ColumnPropNameInRow="Url" msprop:Generator_ColumnPropNameInTable="UrlColumn" msprop:Generator_UserColumnName="Url">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="200" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
@@ -417,14 +418,14 @@
               <xs:element name="Parent_url" msprop:Generator_ColumnVarNameInTable="columnParent_url" msprop:Generator_ColumnPropNameInRow="Parent_url" msprop:Generator_ColumnPropNameInTable="Parent_urlColumn" msprop:Generator_UserColumnName="Parent_url" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="200" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="Parent_name" msprop:Generator_ColumnVarNameInTable="columnParent_name" msprop:Generator_ColumnPropNameInRow="Parent_name" msprop:Generator_ColumnPropNameInTable="Parent_nameColumn" msprop:Generator_UserColumnName="Parent_name" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
+                    <xs:maxLength value="300" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>

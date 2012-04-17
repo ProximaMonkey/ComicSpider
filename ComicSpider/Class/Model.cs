@@ -10,6 +10,11 @@ namespace ys.Web
 	{
 		public Web_src_info()
 		{
+			Url = string.Empty;
+			Index = 0;
+			Name = string.Empty;
+			state = string.Empty;
+			Cookie = string.Empty;
 		}
 		public Web_src_info(
 			string url,

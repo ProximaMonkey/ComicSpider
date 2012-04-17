@@ -190,8 +190,6 @@ namespace ComicSpider
 					}
 				}, true);
 			}
-
-			Save_all();
 		}
 
 		public delegate void Alert_delegate(string info);
@@ -307,6 +305,21 @@ namespace ComicSpider
 		{
 			this.Closing -= Window_Closing;
 			base.Close();
+		}
+
+		public void Save_all()
+		{
+			Update_settings();
+
+			try
+			{
+				Save_vol_info_list();
+				Save_page_info_list();
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message + "\n" + ex.StackTrace);
+			}
 		}
 
 		/***************************** Private ********************************/
@@ -437,7 +450,7 @@ namespace ComicSpider
 			if (volume_list.Items.Count == 0)
 				return;
 
-			Save_all();
+			Update_settings();
 
 			if (btn_start.Content.ToString() == "Start")
 			{
@@ -545,7 +558,7 @@ namespace ComicSpider
 		{
 			try
 			{
-				System.Diagnostics.Process.Start("notepad.exe", "comic_spider.lua");
+				System.Diagnostics.Process.Start(comic_spider.Default_script_editor, "comic_spider.lua");
 			}
 			catch (Exception ex)
 			{
@@ -848,20 +861,6 @@ namespace ComicSpider
 			return downloaded;
 		}
 
-		private void Save_all()
-		{
-			Update_settings();
-
-			try
-			{
-				Save_vol_info_list();
-				Save_page_info_list();
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message + "\n" + ex.StackTrace);
-			}
-		}
 		private void Save_vol_info_list()
 		{
 			Volume_listTableAdapter vol_adapter = new Volume_listTableAdapter();
@@ -885,7 +884,7 @@ namespace ComicSpider
 					item.State,
 					item.Parent.Url,
 					item.Parent.Name,
-					item.Parent.Cookie + "",
+					item.Parent.Cookie,
 					DateTime.Now
 				);
 			}
@@ -918,7 +917,7 @@ namespace ComicSpider
 											item.State,
 											vol.Url,
 											vol.Name,
-											item.Parent.Cookie + "",
+											item.Parent.Cookie,
 											DateTime.Now
 										);
 				}

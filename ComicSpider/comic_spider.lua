@@ -90,6 +90,9 @@ settings =
 	user_agents = { 'Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2' },
 
 	proxy = '',
+
+	-- Default script editor for this lua script.
+	script_editor = [[C:\Program Files\Sublime Text 2\sublime_text.exe]],
 }
 
 comic_spider =
@@ -197,6 +200,7 @@ comic_spider =
 	{
 		home = 'https://yande.re',
 
+		is_create_view_page = false,
 		is_indexed_file_name = false,
 
 		-- Example for usage of XPath. Slower but easier than regex.

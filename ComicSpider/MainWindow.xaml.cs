@@ -27,6 +27,7 @@ using ComicSpider.UserTableAdapters;
 using ys.Web;
 using System.Windows.Controls;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace ComicSpider
 {
@@ -36,7 +37,7 @@ namespace ComicSpider
 		{
 			InitializeComponent();
 
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+			App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
 
 			User.CheckAndFix();
 
@@ -278,6 +279,7 @@ namespace ComicSpider
 		{
 			MenuItem item = sender as MenuItem;
 			Main_settings.Main.Is_silent = item.IsChecked;
+			throw new Exception();
 		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
@@ -384,11 +386,17 @@ namespace ComicSpider
 			}
 		}
 
-		private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			Exception ex = e.ExceptionObject as Exception;
-			Message_box.Show(ex.Message + '\n' + ex.InnerException.StackTrace);
-			Window_Closed(null, null);
+			Exception ex = e.Exception;
+			Message_box.Show(ex.Message + '\n' + ex.StackTrace);
+			try
+			{
+				Save_settings();
+				if (Dashboard.Is_initialized)
+					Dashboard.Instance.Save_all();
+			}
+			catch { }
 		}
 	}
 }

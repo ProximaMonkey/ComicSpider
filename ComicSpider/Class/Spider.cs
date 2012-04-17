@@ -82,12 +82,9 @@ namespace ys.Web
 
 		public void Add_volume_list(List<Web_src_info> list)
 		{
-			lock (volume_queue_lock)
+			foreach (var vol_info in list)
 			{
-				foreach (var vol_info in list)
-				{
-					volume_queue.Enqueue(vol_info);
-				}
+				volume_queue.Enqueue(vol_info);
 			}
 		}
 
@@ -177,6 +174,8 @@ namespace ys.Web
 		}
 		public bool Stopped { get { return stopped; } }
 
+		public string Default_script_editor = "notepad.exe";
+
 		/***************************** Private ********************************/
 
 		private bool stopped;
@@ -227,6 +226,11 @@ namespace ys.Web
 					if (!string.IsNullOrEmpty(lua.GetString("settings.proxy")))
 					{
 						WebRequest.DefaultWebProxy = new WebProxy(lua.GetString("settings.proxy"), true);
+					}
+
+					if (!string.IsNullOrEmpty(lua.GetString("settings.script_editor")))
+					{
+						Default_script_editor = lua.GetString("settings.script_editor");
 					}
 
 					foreach (string url in (lua.GetTable("settings.requires") as LuaTable).Values)
