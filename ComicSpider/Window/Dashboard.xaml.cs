@@ -147,11 +147,14 @@ namespace ComicSpider
 		public delegate void Show_supported_sites_delegate(List<Website_info> list);
 		public void Show_supported_sites(List<Website_info> list)
 		{
+			var label = cb_supported_websites.Items[0];
 			cb_supported_websites.Items.Clear();
-			cb_supported_websites.Items.Add(new Website_info("", ""));
+			cb_supported_websites.Items.Add(label);
+			cb_supported_websites.SelectedIndex = 0;
 			foreach (var item in list)
 			{
-				cb_supported_websites.Items.Add(item);
+				cb_supported_websites.Items.Add(
+					new ComboBoxItem() { Content = item.Name, Tag = item.Home });
 			}
 		}
 
@@ -435,19 +438,20 @@ namespace ComicSpider
 
 		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			Website_info site_info = cb_supported_websites.SelectedValue as Website_info;
+			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
+
+			if (item == null || 
+				string.IsNullOrEmpty(item.Tag as string))
+				return;
+			try
 			{
-				if (string.IsNullOrEmpty(site_info.Home)) return;
-				try
-				{
-					System.Diagnostics.Process.Start(site_info.Home);
-				}
-				catch (Exception ex)
-				{
-					Message_box.Show(ex.Message);
-				}
-				cb_supported_websites.SelectedIndex = 0;
-			}		
+				System.Diagnostics.Process.Start(item.Tag as string);
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
+			cb_supported_websites.SelectedIndex = 0;
 		}
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)

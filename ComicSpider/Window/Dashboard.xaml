@@ -92,20 +92,29 @@
 			</Grid.RowDefinitions>
 			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF26335F" Text="Main url"/>
 			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
-			<Button HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
+			<Button Margin="5,5,0,5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
 			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
 
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">
 				<TextBlock Margin="3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F"/>
 				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5" Background="#BFFFFFFF"/>
 			</StackPanel>
-			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged" DisplayMemberPath="Name">
+			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
+				<ComboBoxItem Content="open supported website" IsEnabled="False" IsSelected="True"></ComboBoxItem>
 			</ComboBox>
-			<TextBlock Grid.Column="2" Text="open supported website" Margin="15,9,0,11" IsHitTestVisible="False" />
 		</Grid>
 		<StackPanel Orientation="Horizontal" Grid.Row="1">
 			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
-			<Button Content="Start" x:Name="btn_start" Click="btn_start_Click" IsEnabled="False" Margin="5" Padding="5,0" />
+			<Button Content="Start" x:Name="btn_start" IsEnabled="False" Click="btn_start_Click" Margin="5" Padding="5,0" Width="60" >
+				<Button.Background>
+					<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+						<GradientStop Color="#BFFFFCD4" Offset="0"/>
+						<GradientStop Color="#BFFFF9BA" Offset="0.5"/>
+						<GradientStop Color="#BFF7EE8F" Offset="0.5"/>
+						<GradientStop Color="#BFF5F2CE" Offset="1"/>
+					</LinearGradientBrush>
+				</Button.Background>
+			</Button>
 			<Button Content="Select downloaded" x:Name="btn_select_downloaded" Margin="5" Padding="5,0" Click="btn_select_downloaded_Click" />
 			<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Click="btn_logs_Click" />
 			<Button Content="Fix display pages" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Click="btn_fix_display_pages_Click" />
