@@ -20,14 +20,16 @@ namespace ys.Web
 			string url,
 			int index,
 			string name,
-			Web_src_info parent = null)
+			string path,
+			Web_src_info parent)
 		{
 			Url = url;
 			Index = index;
 			Name = name;
-			Parent = parent;
 			state = "";
 			Cookie = "";
+			Path = path;
+			Parent = parent;
 		}
 
 		public const string State_downloaded = "OK";
@@ -75,6 +77,7 @@ namespace ys.Web
 		public int Index { get; set; }
 		public string Cookie { get; set; }
 		public Web_src_info Parent { get; protected set; }
+		public string Path { get; set; }
 
 		public int Count
 		{

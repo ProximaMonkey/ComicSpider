@@ -422,7 +422,7 @@ namespace ys.Web
 		private void Get_volume_list(object arg)
 		{
 			string url = arg as string;
-			Web_src_info comic_info = new Web_src_info(url, 0, "");
+			Web_src_info comic_info = new Web_src_info(url, 0, "", "", null);
 			List<Web_src_info> vol_info_list = new List<Web_src_info>();
 			Lua_controller lua_c = new Lua_controller();
 
@@ -499,6 +499,8 @@ namespace ys.Web
 						Main_settings.Main.Root_dir,
 						vol_info.Parent.Name,
 						vol_info.Name);
+
+					vol_info.Path = dir_path;
 
 					if (!Directory.Exists(dir_path))
 					{
@@ -642,7 +644,7 @@ namespace ys.Web
 				}
 				else
 				{
-					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, src_info));
+					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, "", src_info));
 					src_info.Cookie = src_info.Parent.Cookie;
 				}
 				#endregion
@@ -758,6 +760,7 @@ namespace ys.Web
 					stream.Write(data, 0, data.Length);
 					stream.Close();
 
+					file_info.Parent.Path = file_path;
 					file_info.Parent.State = Web_src_info.State_downloaded;
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
@@ -880,6 +883,7 @@ namespace ys.Web
 							this.GetString("url"),
 							i,
 							ys.Common.Format_for_number_sort(this.GetString("name")),
+							"",
 							src_info
 						)
 					);
@@ -923,6 +927,7 @@ namespace ys.Web
 							this.GetString("url"),
 							i,
 							ys.Common.Format_for_number_sort(this.GetString("name")),
+							"",
 							src_info
 						)
 					);
@@ -951,6 +956,7 @@ namespace ys.Web
 							this.GetString("url"),
 							i,
 							ys.Common.Format_for_number_sort(this.GetString("name")),
+							"",
 							src_info
 						)
 					);
@@ -989,6 +995,7 @@ namespace ys.Web
 							this.GetString("url"),
 							i,
 							ys.Common.Format_for_number_sort(this.GetString("name")),
+							"",
 							src_info
 						)
 					);
@@ -1010,6 +1017,7 @@ namespace ys.Web
 					url,
 					index,
 					ys.Common.Format_for_number_sort(name),
+					"",
 					parent)
 				);
 			}

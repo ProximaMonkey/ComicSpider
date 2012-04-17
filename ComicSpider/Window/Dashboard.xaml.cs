@@ -368,13 +368,14 @@ namespace ComicSpider
 					{
 						if (comic == null)
 						{
-							comic = new Web_src_info(row.Parent_url, 0, row.Parent_name);
+							comic = new Web_src_info(row.Parent_url, 0, row.Parent_name, "", null);
 							comic.Children = new List<Web_src_info>();
 						}
 						Web_src_info src_info = new Web_src_info(
 							row.Url,
 							row.Index,
 							row.Name,
+							row.Path,
 							comic);
 
 						comic.Children.Add(src_info);
@@ -410,6 +411,7 @@ namespace ComicSpider
 							row.Url,
 							row.Index,
 							row.Name,
+							row.Path,
 							volume)
 						{
 							State = row.State,
@@ -569,41 +571,33 @@ namespace ComicSpider
 			}
 		}
 
-		private void View_volume_Click(object sender, RoutedEventArgs e)
+		private void View_Click(object sender, RoutedEventArgs e)
 		{
-			Update_settings();
-			MenuItem menu_item = sender as MenuItem;
-			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			try
+			ListView list_view;
+			if (sender is ListView)
 			{
-				foreach (Web_src_info list_item in list_view.SelectedItems)
-				{
-					string path = "";
-					Web_src_info parent = list_item;
-					while ((parent = parent.Parent) != null)
-					{
-						path = Path.Combine(parent.Name, path);
-					}
-					path = Path.Combine(Main_settings.Main.Root_dir, path);
-
-					string file_path = Path.Combine(path, "index.html");
-					if (File.Exists(file_path))
-					{
-						System.Diagnostics.Process.Start(file_path);
-						return;
-					}
-
-					file_path = Path.Combine(Path.Combine(path, list_item.Name), "index.html");
-					if (File.Exists(file_path))
-						System.Diagnostics.Process.Start(file_path);
-					else
-						Message_box.Show("No view page found. May be you should check you root folder path.");
-					break;
-				}
+				list_view = sender as ListView;
 			}
-			catch (Exception ex)
+			else
 			{
-				Message_box.Show(ex.Message);
+				MenuItem menu_item = sender as MenuItem;
+				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			}
+			Web_src_info item = list_view.SelectedItem as Web_src_info;
+
+			if(item == null) return;
+
+			if (File.Exists(item.Path))
+				System.Diagnostics.Process.Start(item.Path);
+			else
+			{
+				string file_path = Path.Combine(item.Path, "index.html");
+				if (File.Exists(file_path))
+					System.Diagnostics.Process.Start(file_path);
+				else
+				{
+					Message_box.Show("No target file found.");
+				}
 			}
 		}
 		private void Copy_name_Click(object sender, RoutedEventArgs e)
@@ -637,7 +631,6 @@ namespace ComicSpider
 		}
 		private void Open_folder_Click(object sender, RoutedEventArgs e)
 		{
-			Update_settings();
 			MenuItem menu_item = sender as MenuItem;
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			try
@@ -739,30 +732,9 @@ namespace ComicSpider
 		}
 		private void volume_list_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Update_settings();
+			Web_src_info item = (sender as ListView).SelectedItem as Web_src_info;
 
-			try
-			{
-				Web_src_info parent = volume_list.SelectedItem as Web_src_info;
-				string path = parent.Name;
-				while ((parent = parent.Parent) != null)
-				{
-					path = Path.Combine(parent.Name, path);
-				}
-				path = Path.Combine(Main_settings.Main.Root_dir, path);
-
-				string file_path = Path.Combine(path, "index.html");
-				if (File.Exists(file_path))
-				{
-					System.Diagnostics.Process.Start(file_path);
-					return;
-				}
-				else
-					Message_box.Show("No view page found.");
-			}
-			catch
-			{
-			}
+			View_Click(sender, null);
 		}
 
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
@@ -888,6 +860,7 @@ namespace ComicSpider
 					item.Parent.Url,
 					item.Parent.Name,
 					item.Parent.Cookie,
+					item.Path,
 					DateTime.Now
 				);
 			}
@@ -921,6 +894,7 @@ namespace ComicSpider
 											vol.Url,
 											vol.Name,
 											item.Parent.Cookie,
+											item.Path,
 											DateTime.Now
 										);
 				}

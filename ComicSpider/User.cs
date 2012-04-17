@@ -28,6 +28,7 @@ create table if not exists [Volume_list] (
 	[Parent_url] nvarchar(300),
 	[Parent_name] nvarchar(300),
 	[Parent_cookie] text,
+	[Path] nvarchar(300),
 	[Data_time] datetime NOT NULL
 );
 create table if not exists [Page_list] (
@@ -38,6 +39,7 @@ create table if not exists [Page_list] (
 	[Parent_url] nvarchar(300),
 	[Parent_name] nvarchar(300),
 	[Parent_cookie] text,
+	[Path] nvarchar(300),
 	[Data_time] datetime NOT NULL
 );
 insert or ignore into [Key_value] ([Key], [Value]) values ('Settings', NULL);";

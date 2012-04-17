@@ -279,7 +279,6 @@ namespace ComicSpider
 		{
 			MenuItem item = sender as MenuItem;
 			Main_settings.Main.Is_silent = item.IsChecked;
-			throw new Exception();
 		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
