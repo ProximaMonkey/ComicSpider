@@ -28,7 +28,7 @@ April 2012 y.s.
 
 ### [Video Demo](http://js.tudouui.com/bin/player2/olc_1.swf?iid=126173758&swfPath=http://js.tudouui.com/bin/player2/olm_8.swf&adSourceId=81000&autoPlay=false&listType=0&rurl=&resourceId=110337721_04_05_99&rpid=110337721&autostart=false&snap_pic=http%3A%2F%2Fi1.tdimg.com%2F126%2F173%2F758%2Fw.jpg&code=Cm3deG4DLak&tag=comic+%2Cdemo%2Ctool&title=Comic+Spider+Demonstration&mediaType=vi&totalTime=162160&hdType=1&hasPassword=0&nWidth=800&isOriginal=1&channelId=99&nHeight=450&banPublic=false&uid=110337721&juid=016qgpe8mj2pqm&aopRate=0.001)
 
-### [Download latest Comic Spider bin](https://raw.github.com/ysmood/ComicSpider/master/Deploy/Comic_Spider_1.0.0.0.zip)
+### [Download latest Comic Spider bin](https://github.com/downloads/ysmood/ComicSpider/Comic_Spider.zip)
 
 Maybe use mono will make the project more open, but now windows only.
 I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).
