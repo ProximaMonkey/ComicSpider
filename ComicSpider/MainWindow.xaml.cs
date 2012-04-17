@@ -26,6 +26,7 @@ using System.Windows.Media.Animation;
 using ComicSpider.UserTableAdapters;
 using ys.Web;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace ComicSpider
 {
@@ -99,6 +100,11 @@ namespace ComicSpider
 			}
 
 			cb_auto_begin.IsChecked = Main_settings.Main.Is_auto_begin;
+			foreach (MenuItem item in this.ContextMenu.Items)
+			{
+				if (item.Name == "cb_is_slient")
+					item.IsChecked = Main_settings.Main.Is_silent;
+			}
 
 			kv_adpter.Connection.Close();
 

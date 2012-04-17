@@ -677,8 +677,8 @@ namespace ys.Web
 
 				string host = get_host(file_info.Url);
 
-				var is_create_view_page = lua_c.DoString(string.Format("return comic_spider['{0}']['is_indexed_file_name']", host))[0];
-				var is_indexed_file_name = lua_c.DoString(string.Format("return comic_spider['{0}']['is_create_view_page']", host))[0];
+				var is_create_view_page = lua_c.DoString(string.Format("return comic_spider['{0}']['is_create_view_page']", host))[0];
+				var is_indexed_file_name = lua_c.DoString(string.Format("return comic_spider['{0}']['is_indexed_file_name']", host))[0];
 				is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
 				is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
 

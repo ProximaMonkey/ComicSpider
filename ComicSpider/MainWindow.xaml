@@ -11,7 +11,8 @@
 		Closed="Window_Closed"
 		Topmost="True"
 		FontSize="12"
-		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True">
+		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True"
+		 ContextMenu="{DynamicResource ResourceKey=main_menu}">
 	<Window.Resources>
 		<Storyboard x:Key="sb_hide_window">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="border">
@@ -44,7 +45,7 @@
 			<MenuItem Header="View volume" Click="View_volume"></MenuItem>
 			<MenuItem Header="Open folder" Click="Open_folder"></MenuItem>
 			<MenuItem Header="Dashboard" Click="btn_dashboard_Click"></MenuItem>
-			<MenuItem Header="Silent" Click="cb_is_slient_Click" IsCheckable="True"></MenuItem>
+			<MenuItem Header="Silent" x:Name="cb_is_slient" Click="cb_is_slient_Click" IsCheckable="True"></MenuItem>
 			<MenuItem Header="Close" Click="Close"></MenuItem>
 		</ContextMenu>
 	</Window.Resources>
@@ -54,7 +55,7 @@
 		</EventTrigger>
 	</Window.Triggers>
 
-	<Border x:Name="border" CornerRadius="5" Margin="5" RenderTransformOrigin="0.5,0.5" BorderBrush="#FF3E4E60" BorderThickness="1" ContextMenu="{StaticResource ResourceKey=main_menu}">
+	<Border x:Name="border" CornerRadius="5" Margin="5" RenderTransformOrigin="0.5,0.5" BorderBrush="#FF3E4E60" BorderThickness="1">
 		<i:Interaction.Triggers>
 			<i:EventTrigger EventName="MouseEnter">
 				<ic:GoToStateAction StateName="mouse_enter"/>

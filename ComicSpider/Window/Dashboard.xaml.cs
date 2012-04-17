@@ -320,8 +320,15 @@ namespace ComicSpider
 				Clear_cache();
 
 			comic_spider = new Comic_spider();
-			
-			Init_info_list();
+
+			try
+			{
+				Init_info_list();
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message + '\n' + ex.StackTrace);
+			}
 
 			txt_main_url.Text = Main_settings.Main.Main_url;
 			txt_dir.Text = Main_settings.Main.Root_dir;

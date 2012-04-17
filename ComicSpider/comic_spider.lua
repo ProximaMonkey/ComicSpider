@@ -193,16 +193,15 @@ comic_spider =
 	},
 
 	-- Example for a Danbooru site.
-	['konachan.com'] =
+	['yande.re'] =
 	{
-		home = 'http://konachan.com',
+		home = 'https://yande.re',
 
 		is_indexed_file_name = false,
-		is_create_view_page = false,
 
 		-- Example for usage of XPath. Slower but easier than regex.
 		get_volume_list = function()
-			src_info.Name = 'konachan'
+			src_info.Name = 'Moe imouto'
 			lc:xfill_list(
 				"//a[@id='highres']",
 				function(i, node, nodes)
