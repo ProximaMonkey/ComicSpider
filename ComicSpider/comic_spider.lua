@@ -199,7 +199,7 @@ comic_spider =
 		end,
 	},
 
-	-- Example for a Danbooru site.
+	-- Example for a Danbooru like none comic website.
 	['yande.re'] =
 	{
 		name = 'Moe imouto',

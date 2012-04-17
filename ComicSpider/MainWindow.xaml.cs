@@ -54,6 +54,9 @@ namespace ComicSpider
 			sb_show_window = Resources["sb_show_window"] as Storyboard;
 			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
 
+			cb_is_slient = Find_menu_item(this.Resources["main_menu"], "cb_is_slient");
+			cb_topmost = Find_menu_item(this.Resources["main_menu"], "cb_topmost");
+
 			Taskbar = new ys.Win7.TaskBar();
 		}
 
@@ -126,7 +129,7 @@ namespace ComicSpider
 			kv_adapter.Connection.Close();
 		}
 
-		public void Help()
+		public void Help(object sender, RoutedEventArgs e)
 		{
 			try
 			{
@@ -188,6 +191,22 @@ namespace ComicSpider
 		private ManagedWinapi.Hotkey global_hotkey;
 		private Storyboard sb_show_window;
 		private Storyboard sb_hide_window;
+
+		private MenuItem cb_topmost;
+		private MenuItem cb_is_slient;
+
+		private MenuItem Find_menu_item(object resource, string name)
+		{
+			MenuItem item = null;
+			foreach (MenuItem i in (resource as ContextMenu).Items)
+			{
+				if (i.Name == name)
+				{
+					return item = i;
+				}
+			}
+			return item;
+		}
 
 		private void Init_global_hotkey()
 		{
@@ -328,7 +347,6 @@ namespace ComicSpider
 			sb_show_window.Begin();
 		}
 
-
 		private void window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			this.DragMove();
@@ -375,12 +393,26 @@ namespace ComicSpider
 					btn_dashboard_Click(null, null);
 					break;
 
+				case System.Windows.Input.Key.O:
+					Open_folder(null, null);
+					break;
+
 				case System.Windows.Input.Key.T:
-					cb_topmost_Click(null, null);
+					cb_topmost.IsChecked = !cb_topmost.IsChecked;
+					this.Topmost = cb_topmost.IsChecked;
+					break;
+
+				case System.Windows.Input.Key.S:
+					cb_is_slient.IsChecked = !cb_is_slient.IsChecked;
+					Main_settings.Main.Is_silent = cb_is_slient.IsChecked;
+					break;
+
+				case System.Windows.Input.Key.V:
+					View_volume(null, null);
 					break;
 
 				case System.Windows.Input.Key.F1:
-					Help();
+					Help(null, null);
 					break;
 			}
 		}

@@ -109,7 +109,7 @@ namespace ComicSpider
 			skip: ;
 			}
 
-			if (added_list.Count > 0)
+			if (Volume_downloaded() < volume_list.Items.Count)
 				btn_start.IsEnabled = true;
 
 			if(comic_spider.Stopped)
@@ -335,7 +335,7 @@ namespace ComicSpider
 				Clear_cache();
 
 			comic_spider = new Comic_spider();
-
+			
 			try
 			{
 				Init_info_list();
@@ -699,7 +699,7 @@ namespace ComicSpider
 		}
 		private void btn_help_Click(object sender, RoutedEventArgs e)
 		{
-			MainWindow.Main.Help();
+			MainWindow.Main.Help(null, null);
 		}
 
 		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

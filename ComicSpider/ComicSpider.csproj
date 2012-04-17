@@ -286,7 +286,6 @@
     <Content Include="Asset\main_bg.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\Metro-Loading-Blue-100.png" />
     <Resource Include="Images\running.png" />
     <Resource Include="Images\y.s.ico" />
     <Resource Include="Images\ys.png" />
