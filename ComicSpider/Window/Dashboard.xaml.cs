@@ -149,7 +149,8 @@ namespace ComicSpider
 		{
 			foreach (string item in list.Distinct())
 			{
-				cb_supported_websites.Items.Add(item);
+				if (!cb_supported_websites.Items.Contains(item))
+					cb_supported_websites.Items.Add(item);
 			}
 		}
 

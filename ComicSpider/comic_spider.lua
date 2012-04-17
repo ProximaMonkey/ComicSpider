@@ -198,7 +198,7 @@ comic_spider =
 	-- Example for a Danbooru site.
 	['yande.re'] =
 	{
-		home = 'https://yande.re',
+		home = 'https://yande.re/post?tags=rating%3Asafe',
 
 		is_create_view_page = false,
 		is_indexed_file_name = false,
