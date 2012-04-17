@@ -18,14 +18,14 @@
 */
 
 using System;
-using System.Windows;
-using ComicSpider.UserTableAdapters;
 using System.Data.SQLite;
-using System.Windows.Media.Animation;
-using System.Windows.Input;
-using System.Linq;
-using ys.Web;
 using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
+using ComicSpider.UserTableAdapters;
+using ys.Web;
+using System.Windows.Controls;
 
 namespace ComicSpider
 {
@@ -98,7 +98,7 @@ namespace ComicSpider
 				Main_settings.Main = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
 			}
 
-			cb_auto_begin.IsChecked = Main_settings.Main.Auto_begin;
+			cb_auto_begin.IsChecked = Main_settings.Main.Is_auto_begin;
 
 			kv_adpter.Connection.Close();
 
@@ -133,6 +133,8 @@ namespace ComicSpider
 
 		public void Show_balloon(string info, MouseButtonEventHandler click_event = null, bool play_sound = false)
 		{
+			if (Main_settings.Main.Is_silent) return;
+
 			tray_balloon = new Tray_balloon();
 
 			tray_balloon.PreviewMouseDown += (o, e) =>
@@ -266,6 +268,11 @@ namespace ComicSpider
 		{
 			Dashboard.Instance.Show();
 		}
+		private void cb_is_slient_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = sender as MenuItem;
+			Main_settings.Main.Is_silent = item.IsChecked;
+		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
@@ -289,7 +296,7 @@ namespace ComicSpider
 
 		private void cb_auto_begin_Click(object sender, RoutedEventArgs e)
 		{
-			Main_settings.Main.Auto_begin = cb_auto_begin.IsChecked == true;
+			Main_settings.Main.Is_auto_begin = cb_auto_begin.IsChecked == true;
 		}
 		private void cb_topmost_Click(object sender, RoutedEventArgs e)
 		{
@@ -313,6 +320,7 @@ namespace ComicSpider
 			};
 			sb_show_window.Begin();
 		}
+
 
 		private void window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
@@ -353,7 +361,7 @@ namespace ComicSpider
 			{
 				case System.Windows.Input.Key.A:
 					cb_auto_begin.IsChecked = !cb_auto_begin.IsChecked;
-					Main_settings.Main.Auto_begin = cb_auto_begin.IsChecked == true;
+					Main_settings.Main.Is_auto_begin = cb_auto_begin.IsChecked == true;
 					break;
 
 				case System.Windows.Input.Key.D:

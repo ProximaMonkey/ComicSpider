@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ComicSpider;
-using LuaInterface;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Web;
+using ComicSpider;
+using ComicSpider.UserTableAdapters;
+using LuaInterface;
+using System.Text;
 
 namespace ys.Web
 {
@@ -233,9 +234,8 @@ namespace ys.Web
 						if (string.IsNullOrEmpty(url))
 							continue;
 
-						WebClientEx wc = new WebClientEx();
-						wc.Encoding = System.Text.Encoding.UTF8;
-						string loaded_script = wc.DownloadString(url);
+						// Get remote script
+						string loaded_script = Load_remote_script(url);
 						lua_script += '\n' + loaded_script;
 						
 						lua.DoString(loaded_script);
@@ -278,11 +278,73 @@ namespace ys.Web
 				}
 
 				script_loaded = true;
+
+				// App usage analytics
+				var app_analytics_info = new Dictionary<string, string>();
+				app_analytics_info.Add("version", Main_settings.Main.App_version);
+				app_analytics_info.Add("os", Environment.OSVersion.ToString());
+				ys.Web.App_usage_analytics.Post(app_analytics_info);
 			}));
 
 			thread.Name = "ScriptLoader";
 			thread.Start();
 			thread_list.Add(thread);
+		}
+		private string Load_remote_script(string url)
+		{
+			Lua_script lua_script;
+			string hash = string.Empty;
+			WebClientEx wc = new WebClientEx();
+			wc.Encoding = System.Text.Encoding.UTF8;
+
+			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
+			kv_adpter.Adapter.SelectCommand = kv_adpter.Connection.CreateCommand();
+			kv_adpter.Adapter.SelectCommand.CommandText = "select * from [Key_value] where [Key] = @url";
+			kv_adpter.Adapter.SelectCommand.Parameters.AddWithValue("@url", url);
+
+			kv_adpter.Connection.Open();
+
+			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
+
+			if (data_reader.Read())
+			{
+				lua_script = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Lua_script;
+
+				// Chech if has been modified.
+				wc.Headers.Add("If-None-Match", lua_script.ETag);
+				try
+				{
+					string loaded_script = wc.DownloadString(url);
+
+					lua_script.ETag = wc.ResponseHeaders["ETag"];
+					lua_script.Script = loaded_script;
+
+					kv_adpter.Update(
+						ys.Common.ObjectToByteArray(lua_script),
+						data_reader["Key"] as string,
+						data_reader["Value"] as byte[]
+					);
+				}
+				catch{ }
+			}
+			else
+			{
+				string loaded_script = wc.DownloadString(url);
+
+				lua_script = new Lua_script(
+					loaded_script,
+					hash
+				);
+
+				kv_adpter.Insert(
+					url,
+					ys.Common.ObjectToByteArray(lua_script)
+				);
+			}
+
+			kv_adpter.Connection.Close();
+
+			return lua_script.Script;
 		}
 		private void Init_lua_script_watcher()
 		{
@@ -615,23 +677,23 @@ namespace ys.Web
 
 				string host = get_host(file_info.Url);
 
-				bool is_create_view_page = true;
-				bool is_indexed_file_name = true;
-				is_indexed_file_name = (bool)lua_c.DoString(string.Format("return comic_spider['{0}']['is_indexed_file_name'] == true", host))[0];
-				is_create_view_page = (bool)lua_c.DoString(string.Format("return comic_spider['{0}']['is_create_view_page'] == true", host))[0];
+				var is_create_view_page = lua_c.DoString(string.Format("return comic_spider['{0}']['is_indexed_file_name']", host))[0];
+				var is_indexed_file_name = lua_c.DoString(string.Format("return comic_spider['{0}']['is_create_view_page']", host))[0];
+				is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
+				is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
 
 				#region Create file name
 
 				string file_path = string.Empty;
 
 				lua_c["src_info"] = file_info;
-				if (is_indexed_file_name)
+				if ((bool)is_indexed_file_name)
 				{
 					lua_c["name"] = string.Format("{0:D3}", file_info.Parent.Index + 1);
 				}
 				else if (string.IsNullOrEmpty(file_info.Name))
 				{
-					lua_c["name"] = HttpUtility.UrlDecode(Path.GetFileName(file_info.Url));
+					lua_c["name"] = HttpUtility.UrlDecode(Path.GetFileNameWithoutExtension(file_info.Url));
 				}
 				else
 				{
@@ -701,7 +763,7 @@ namespace ys.Web
 					{
 						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
 
-						if (is_create_view_page)
+						if ((bool)is_create_view_page)
 						{
 							try
 							{
@@ -951,6 +1013,20 @@ namespace ys.Web
 			{
 				return Newtonsoft.Json.JsonConvert.DeserializeObject(input);
 			}
+		}
+
+		[Serializable]
+		private class Lua_script
+		{
+			public Lua_script(string script, string hash)
+			{
+				Script = script;
+				ETag = hash;
+			}
+
+			public string Script { get; set; }
+			public string ETag { get; set; }
+			public DateTime Date { get; set; }
 		}
 	}
 }

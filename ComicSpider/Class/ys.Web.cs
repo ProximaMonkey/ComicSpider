@@ -15,4 +15,22 @@ namespace ys.Web
 			return request;
 		}
 	}
+
+	public static class App_usage_analytics
+	{
+		public static void Post(Dictionary<string, string> addition_infos)
+		{
+			string data = "";
+
+			foreach (var info in addition_infos)
+			{
+				data += System.Web.HttpUtility.UrlEncode(info.Key) + "=" 
+					+ System.Web.HttpUtility.UrlEncode(info.Value) + "&";
+			}
+
+			WebClient wc = new WebClient();
+			wc.Headers["Content-type"] = "application/x-www-form-urlencoded";
+			string ret = wc.UploadString("http://comicspider.sinaapp.com/analytics/?r=a", data);
+		}
+	}
 }

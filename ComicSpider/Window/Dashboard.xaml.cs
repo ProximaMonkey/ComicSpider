@@ -128,10 +128,10 @@ namespace ComicSpider
 
 					if (comic_spider.Stopped)
 					{
-						if (Main_settings.Main.Auto_begin)
+						if (Main_settings.Main.Is_auto_begin)
 							btn_start_Click(null, null);
 					}
-					else if (Main_settings.Main.Auto_begin)
+					else if (Main_settings.Main.Is_auto_begin)
 						comic_spider.Add_volume_list(added_list);
 				}
 				else if (list.Count > 0)
@@ -315,6 +315,9 @@ namespace ComicSpider
 		private Dashboard()
 		{
 			InitializeComponent();
+
+			if (Main_settings.Main.Is_need_clear_cache)
+				Clear_cache();
 
 			comic_spider = new Comic_spider();
 			
@@ -802,6 +805,19 @@ namespace ComicSpider
 			}
 		}
 
+		private void Clear_cache()
+		{
+			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
+
+			kv_adpter.Connection.Open();
+
+			kv_adpter.Adapter.DeleteCommand = kv_adpter.Connection.CreateCommand();
+			kv_adpter.Adapter.DeleteCommand.CommandText = @"delete from [Key_value] where [Key] != 'Settings'; delete from [Error_log] where 1;";
+
+			kv_adpter.Adapter.DeleteCommand.ExecuteNonQuery();
+
+			kv_adpter.Connection.Close();
+		}
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			this.Visibility = System.Windows.Visibility.Collapsed;

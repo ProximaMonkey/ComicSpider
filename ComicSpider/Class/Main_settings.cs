@@ -29,14 +29,31 @@ namespace ComicSpider
 		private Main_settings()
 		{
 			Thread_count = "5";
-			Auto_begin = true;
+			Is_auto_begin = true;
+
+			clear_cache_date = DateTime.Now;
 		}
 
 		public string Main_url { get; set; }
 		public string Root_dir { get; set; }
 		public string Thread_count { get; set; }
-		public bool Auto_begin { get; set; }
+
+		public bool Is_auto_begin { get; set; }
+		public bool Is_silent { get; set; }
+
 		public int Max_console_line { get; set; }
+
 		public string App_version { get; set; }
+
+		public bool Is_need_clear_cache
+		{
+			get
+			{
+				return DateTime.Now.Subtract(clear_cache_date).TotalDays > 30;
+			}
+		}
+
+
+		private DateTime clear_cache_date { get; set; }
 	}
 }

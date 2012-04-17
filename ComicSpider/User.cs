@@ -11,7 +11,7 @@
 @"PRAGMA foreign_keys = OFF;
 
 create table if not exists [Key_value] (
-	[Key] nvarchar(50) PRIMARY KEY NOT NULL,
+	[Key] nvarchar(300) PRIMARY KEY NOT NULL,
 	[Value] image
 );
 create table if not exists [Error_log] (

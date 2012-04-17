@@ -44,6 +44,7 @@
 			<MenuItem Header="View volume" Click="View_volume"></MenuItem>
 			<MenuItem Header="Open folder" Click="Open_folder"></MenuItem>
 			<MenuItem Header="Dashboard" Click="btn_dashboard_Click"></MenuItem>
+			<MenuItem Header="Silent" Click="cb_is_slient_Click" IsCheckable="True"></MenuItem>
 			<MenuItem Header="Close" Click="Close"></MenuItem>
 		</ContextMenu>
 	</Window.Resources>
