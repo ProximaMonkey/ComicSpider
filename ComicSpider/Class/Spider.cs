@@ -267,9 +267,13 @@ namespace ys.Web
 					{
 						string home = lua.DoString(string.Format("return comic_spider['{0}'].home", site_name))[0] as string;
 						List<string> hosts = new List<string>();
-						foreach (string host in (lua.DoString(string.Format("return comic_spider['{0}'].hosts", site_name))[0] as LuaTable).Values)
+						var host = lua.DoString(string.Format("return comic_spider['{0}'].hosts", site_name))[0];
+						if ((host as LuaTable) != null)
 						{
-							hosts.Add(host);
+							foreach (string item in (host as LuaTable).Values)
+							{
+								hosts.Add(item);
+							}
 						}
 						supported_websites.Add(new Website_info(site_name, home, hosts));
 					}

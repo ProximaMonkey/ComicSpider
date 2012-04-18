@@ -96,8 +96,7 @@ settings = {
 
 comic_spider = {
 	--[[ Default behaviors here. Name is long, but meaningful :)
-	['default'] =
-	{
+	['default'] = {
 		home = '',
 
 		hosts = { '' },
@@ -123,8 +122,13 @@ comic_spider = {
 	},
 	]]
 
+	-- Project home
+	['-- Comic Spider Project --'] = {
+		home = 'https://github.com/ysmood/ComicSpider',
+	},
+
 	-- A sample english manga site. You can follow code below to parse another site.
-	['Manga Here'] =	{
+	['* Manga Here'] = {
 		home = 'http://www.mangahere.com/',
 
 		hosts = { 'mangahere.com' },
@@ -161,7 +165,7 @@ comic_spider = {
 	},
 
 	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
-	['178 漫画频道'] = {
+	['* 178 漫画频道'] = {
 		home = 'http://manhua.178.com/',
 
 		hosts = { '178.com' },
@@ -197,18 +201,18 @@ comic_spider = {
 		end,
 	},
 
-	-- Example for a Danbooru like none comic website.
-	['Moe imouto'] = {
+	-- Example for Danbooru like none comic websites.
+	['* Moe imouto'] = {
 		home = 'https://yande.re/post?tags=rating%3Asafe',
 
-		hosts = { 'yande.re' },
+		hosts = { 'yande.re', 'konachan.com', 'donmai.us', 'behoimi.org', 'nekobooru.net', 'sankakucomplex.com', 'sankakustatic.com' },
 
 		is_create_view_page  = false,
 		is_indexed_file_name = false,
 
 		-- Example for usage of XPath. Slower but easier than regex.
 		get_volume_list = function(self)
-			src_info.Name = self.name
+			src_info.Name = 'Danbooru sites'
 			lc:xfill_list(
 				"//a[@id='highres']",
 				function(i, node, nodes)
@@ -222,13 +226,13 @@ comic_spider = {
 -- Example: clone Danbooru websites.
 -- You can find more tricks in the book "Programming in Lua".
 for i, t in pairs {
-	{ 'Konachan'            , 'http://konachan.com'            , { 'konachan.com'       } },
-	{ 'Donmai'              , 'http://donmai.us'               , { 'donmai.us'          } },
-	{ 'Behoimi'             , 'http://behoimi.org'             , { 'behoimi.org'        } },
-	{ 'Nekobooru'           , 'http://nekobooru.net'           , { 'nekobooru.net'      } },
-	{ 'Sankakucomplex Idol' , 'http://idol.sankakucomplex.com' , { 'sankakucomplex.com', 'sankakustatic.com' } },
-	{ 'Sankakucomplex Chan' , 'http://chan.sankakucomplex.com' , { 'sankakucomplex.com', 'sankakustatic.com' } },
+	{ 'Konachan'            , 'http://konachan.com'            },
+	{ 'Donmai'              , 'http://donmai.us'               },
+	{ 'Behoimi'             , 'http://behoimi.org'             },
+	{ 'Nekobooru'           , 'http://nekobooru.net'           },
+	{ 'Sankakucomplex Idol' , 'http://idol.sankakucomplex.com' },
+	{ 'Sankakucomplex Chan' , 'http://chan.sankakucomplex.com' },
 } do 
-	site = { home = t[2] .. '/post?tags=rating%3Asafe', hosts = t[3] }
+	site = { home = t[2] .. '/post?tags=rating%3Asafe' }
 	comic_spider[t[1]] = setmetatable(site, { __index = comic_spider['yande.re'] })
 end
