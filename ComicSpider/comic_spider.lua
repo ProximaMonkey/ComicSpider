@@ -226,12 +226,12 @@ comic_spider = {
 -- Example: clone Danbooru websites.
 -- You can find more tricks in the book "Programming in Lua".
 for i, t in pairs {
-	{ 'Konachan'            , 'http://konachan.com'            },
-	{ 'Donmai'              , 'http://donmai.us'               },
-	{ 'Behoimi'             , 'http://behoimi.org'             },
-	{ 'Nekobooru'           , 'http://nekobooru.net'           },
-	{ 'Sankakucomplex Idol' , 'http://idol.sankakucomplex.com' },
-	{ 'Sankakucomplex Chan' , 'http://chan.sankakucomplex.com' },
+	{ 'Konachan'               , 'http://konachan.com'            },
+	{ 'Donmai'                 , 'http://donmai.us'               },
+	{ 'Behoimi'                , 'http://behoimi.org'             },
+	{ 'Nekobooru'              , 'http://nekobooru.net'           },
+	{ 'Sankakucomplex Idol'    , 'http://idol.sankakucomplex.com' },
+	{ 'Sankakucomplex Channel' , 'http://chan.sankakucomplex.com' },
 } do 
 	site = { home = t[2] .. '/post?tags=rating%3Asafe' }
 	comic_spider[t[1]] = setmetatable(site, { __index = comic_spider['yande.re'] })
