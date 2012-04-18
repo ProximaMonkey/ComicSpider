@@ -133,13 +133,15 @@ namespace ys.Web
 
 	public class Website_info
 	{
-		public Website_info(string name, string home)
+		public Website_info(string name, string home, List<string> hosts)
 		{
 			Name = name;
 			Home = home;
+			Hosts = hosts;
 		}
 
 		public string Name { get; set; }
 		public string Home { get; set; }
+		public List<string> Hosts { get; set; }
 	}
 }

@@ -78,8 +78,7 @@ External objects:
 			Current file extension.
 ]]
 
-settings = 
-{
+settings = {
 	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
 	requires = { 'https://raw.github.com/ysmood/ComicSpider/master/comic_spider.lua' },
 
@@ -95,14 +94,13 @@ settings =
 	script_editor = [[C:\Program Files\Sublime Text 2\sublime_text.exe]],
 }
 
-comic_spider =
-{
+comic_spider = {
 	--[[ Default behaviors here. Name is long, but meaningful :)
 	['default'] =
 	{
-		name = '',
-
 		home = '',
+
+		hosts = { '' },
 
 		charset = 'utf-8',
 
@@ -126,10 +124,10 @@ comic_spider =
 	]]
 
 	-- A sample english manga site. You can follow code below to parse another site.
-	['mangahere.com'] =
-	{
-		name = 'Manga Here',
+	['Manga Here'] =	{
 		home = 'http://www.mangahere.com/',
+
+		hosts = { 'mangahere.com' },
 
 		get_volume_list = function()
 			-- First get comic's main name.
@@ -163,10 +161,10 @@ comic_spider =
 	},
 
 	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
-	['178.com'] =
-	{
-		name = '178 漫画频道',
+	['178 漫画频道'] = {
 		home = 'http://manhua.178.com/',
+
+		hosts = { '178.com' },
 
 		get_volume_list = function()
 			-- 首先获取漫画名
@@ -200,21 +198,13 @@ comic_spider =
 	},
 
 	-- Example for a Danbooru like none comic website.
-	['yande.re'] =
-	{
-		name = 'Moe imouto',
+	['Moe imouto'] = {
 		home = 'https://yande.re/post?tags=rating%3Asafe',
 
-		is_create_view_page = false,
-		is_indexed_file_name = false,
+		hosts = { 'yande.re' },
 
-		new = function(self, name, home)
-			new_site = {}
-			setmetatable(new_site, { __index = self })
-			new_site.name = self.name
-			new_site.home = self.home
-			return new_site
-		end,
+		is_create_view_page  = false,
+		is_indexed_file_name = false,
 
 		-- Example for usage of XPath. Slower but easier than regex.
 		get_volume_list = function(self)
@@ -227,14 +217,18 @@ comic_spider =
 			)
 		end,
 	},
-
-	['konachan.com'] =
-	{
-		init = function(self)
-			self = comic_spider['yande.re']:new(
-				'Konachan',
-				'http://konachan.com/post?tags=rating%3Asafe'
-			)
-		end,
-	},
 }
+
+-- Example: clone Danbooru websites.
+-- You can find more tricks in the book "Programming in Lua".
+for i, t in pairs {
+	{ 'Konachan'            , 'http://konachan.com'            , { 'konachan.com'       } },
+	{ 'Donmai'              , 'http://donmai.us'               , { 'donmai.us'          } },
+	{ 'Behoimi'             , 'http://behoimi.org'             , { 'behoimi.org'        } },
+	{ 'Nekobooru'           , 'http://nekobooru.net'           , { 'nekobooru.net'      } },
+	{ 'Sankakucomplex Idol' , 'http://idol.sankakucomplex.com' , { 'sankakucomplex.com', 'sankakustatic.com' } },
+	{ 'Sankakucomplex Chan' , 'http://chan.sankakucomplex.com' , { 'sankakucomplex.com', 'sankakustatic.com' } },
+} do 
+	site = { home = t[2] .. '/post?tags=rating%3Asafe', hosts = t[3] }
+	comic_spider[t[1]] = setmetatable(site, { __index = comic_spider['yande.re'] })
+end

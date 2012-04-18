@@ -704,8 +704,8 @@ namespace ComicSpider
 				{
 					btn_start.IsEnabled = false;
 				}
-				MainWindow.Main.Main_progress = this.Main_progress;
 			}
+			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{

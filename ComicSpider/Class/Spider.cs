@@ -188,6 +188,8 @@ namespace ys.Web
 		private object volume_queue_lock;
 		private List<Thread> thread_list;
 
+		private List<Website_info> supported_websites;
+
 		private List<string> file_types;
 		private List<string> user_agents;
 
@@ -204,7 +206,7 @@ namespace ys.Web
 			{
 				file_types = new List<string>();
 				user_agents = new List<string>();
-				List<Website_info> supported_websites = new List<Website_info>();
+				supported_websites = new List<Website_info>();
 				lua_script = "";
 
 				try
@@ -261,12 +263,18 @@ namespace ys.Web
 						Report("Remote script '{0}' loaded.", url);
 					}
 
-					foreach (LuaTable website in (lua.GetTable("comic_spider") as LuaTable).Values)
+					foreach (string site_name in (lua.GetTable("comic_spider") as LuaTable).Keys)
 					{
-						string name = website["name"] as string;
-						string home = website["home"] as string;
-						supported_websites.Add(new Website_info(name, home));
+						string home = lua.DoString(string.Format("return comic_spider['{0}'].home", site_name))[0] as string;
+						List<string> hosts = new List<string>();
+						foreach (string host in (lua.DoString(string.Format("return comic_spider['{0}'].hosts", site_name))[0] as LuaTable).Values)
+						{
+							hosts.Add(host);
+						}
+						supported_websites.Add(new Website_info(site_name, home, hosts));
 					}
+
+					supported_websites.Sort((x, y) => { return x.Name.CompareTo(y.Name); });
 
 					Dashboard.Instance.Dispatcher.Invoke(
 						new Dashboard.Show_supported_sites_delegate(Dashboard.Instance.Show_supported_sites),
@@ -407,16 +415,23 @@ namespace ys.Web
 			}
 		}
 
-		private string get_host(string url)
+		private string get_corresponding_controller_name(string url)
 		{
-			string main = Regex.Match(url, @"(https?://)?(?<host>.+?)/").Groups["host"].Value;
-			string[] sections = main.Split('.');
-			if (sections.Length >= 2)
+			string host = Regex.Match(url, @"(https?://)?(?<host>.+?)/").Groups["host"].Value;
+			string controller_name = string.Empty;
+
+			foreach (var site in supported_websites)
 			{
-				return sections[sections.Length - 2] + '.' + sections[sections.Length - 1];
+				foreach (var item in site.Hosts)
+				{
+					if (host.Contains(item))
+					{
+						return site.Name;
+					}
+				}
 			}
-			else
-				return string.Empty;
+
+			return controller_name;
 		}
 
 		private void Get_volume_list(object arg)
@@ -602,7 +617,7 @@ namespace ys.Web
 			List<Web_src_info> info_list = new List<Web_src_info>();
 			src_info.Children = info_list;
 
-			string host = get_host(src_info.Url);
+			string controller_name = get_corresponding_controller_name(src_info.Url);
 
 			WebClientEx wc = new WebClientEx();
 			if (user_agents != null)
@@ -618,17 +633,21 @@ namespace ys.Web
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
 
-				if (lua_c.DoString(string.Format("return comic_spider['{0}']", host))[0] == null)
-					throw new Exception("No controller found for " + host);
+				if (lua_c.DoString(string.Format("return comic_spider['{0}']", controller_name))[0] == null)
+					throw new Exception("No controller found for " + controller_name);
 
 				bool exists_method = false;
 				foreach (var func in func_list)
 				{
-					exists_method = lua_c.DoString(string.Format("return comic_spider['{0}']['{1}']", host, func))[0] != null;
+					exists_method = lua_c.DoString(
+						string.Format("return comic_spider['{0}']['{1}']", controller_name, func)
+					)[0] != null;
 				}
 				if (exists_method)
 				{
-					string encoding = lua_c.DoString(string.Format("return comic_spider['{0}']['charset']", host))[0] as string;
+					string encoding = lua_c.DoString(
+						string.Format("return comic_spider['{0}']['charset']", controller_name)
+					)[0] as string;
 
 					wc.Encoding = System.Text.Encoding.GetEncoding(
 						string.IsNullOrEmpty(encoding) ? "utf-8" : encoding);
@@ -637,7 +656,7 @@ namespace ys.Web
 
 					foreach (var func in func_list)
 					{
-						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", host, func));
+						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", controller_name, func));
 					}
 
 					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
@@ -682,10 +701,14 @@ namespace ys.Web
 					file_info = file_queue.Dequeue();
 				}
 
-				string host = get_host(file_info.Url);
+				string controller_name = get_corresponding_controller_name(file_info.Url);
 
-				var is_create_view_page = lua_c.DoString(string.Format("return comic_spider['{0}']['is_create_view_page']", host))[0];
-				var is_indexed_file_name = lua_c.DoString(string.Format("return comic_spider['{0}']['is_indexed_file_name']", host))[0];
+				var is_create_view_page = lua_c.DoString(
+					string.Format("return comic_spider['{0}']['is_create_view_page']", controller_name)
+				)[0];
+				var is_indexed_file_name = lua_c.DoString(
+					string.Format("return comic_spider['{0}']['is_indexed_file_name']", controller_name)
+				)[0];
 				is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
 				is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
 
@@ -718,9 +741,9 @@ namespace ys.Web
 
 				try
 				{
-					if (lua_c.DoString(string.Format("return comic_spider['{0}']['handle_file']", host))[0] != null)
+					if (lua_c.DoString(string.Format("return comic_spider['{0}']['handle_file']", controller_name))[0] != null)
 					{
-						lua_c.DoString(string.Format("comic_spider['{0}']['handle_file']()", host));
+						lua_c.DoString(string.Format("comic_spider['{0}']['handle_file']()", controller_name));
 					}
 				}
 				catch (Exception ex)
