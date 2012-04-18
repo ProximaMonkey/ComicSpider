@@ -664,11 +664,6 @@ namespace ComicSpider
 		}
 		private void Delelte_list_item_Click(object sender, RoutedEventArgs e)
 		{
-			if (!comic_spider.Stopped)
-			{
-				Message_box.Show("Stop downloading before deleting.");
-				return;
-			}
 			ListView list_view;
 			if (sender is ListView)
 			{
@@ -680,19 +675,37 @@ namespace ComicSpider
 				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			}
 
-			while (list_view.SelectedItems.Count > 0)
+			int failed_count = 0;
+			int delete_count = 0;
+			int all = list_view.SelectedItems.Count;
+			while (list_view.SelectedItems.Count > 0 &&
+				all > (failed_count + delete_count))
 			{
-				int index = list_view.SelectedIndex;
-				list_view.Items.RemoveAt(index);
+				if (comic_spider.Stopped ||
+					(list_view.SelectedItem as Web_src_info).State == Web_src_info.State_downloaded)
+				{
+					int index = list_view.SelectedIndex;
+					list_view.Items.RemoveAt(index);
+					delete_count++;
+				}
+				else
+				{
+					failed_count++;
+				}
 			}
 
-			if (Volume_downloaded() == volume_list.Items.Count)
+			if (failed_count > 0)
+				Message_box.Show("Only downloaded item(s) have been deleted.");
+			if (delete_count > 0)
+				this.Title = "Volume(s) deleted.";
+			else
 			{
-				btn_start.IsEnabled = false;
+				if (Volume_downloaded() == volume_list.Items.Count)
+				{
+					btn_start.IsEnabled = false;
+				}
+				MainWindow.Main.Main_progress = this.Main_progress;
 			}
-
-			this.Title = "Volume(s) deleted.";
-			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{

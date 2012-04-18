@@ -208,14 +208,32 @@ comic_spider =
 		is_create_view_page = false,
 		is_indexed_file_name = false,
 
+		new = function(self, name, home)
+			new_site = {}
+			setmetatable(new_site, { __index = self })
+			new_site.name = self.name
+			new_site.home = self.home
+			return new_site
+		end,
+
 		-- Example for usage of XPath. Slower but easier than regex.
-		get_volume_list = function()
-			src_info.Name = 'Moe imouto'
+		get_volume_list = function(self)
+			src_info.Name = self.name
 			lc:xfill_list(
 				"//a[@id='highres']",
 				function(i, node, nodes)
 					url = node.Attributes["href"].Value
 				end
+			)
+		end,
+	},
+
+	['konachan.com'] =
+	{
+		init = function(self)
+			self = comic_spider['yande.re']:new(
+				'Konachan',
+				'http://konachan.com/post?tags=rating%3Asafe'
 			)
 		end,
 	},

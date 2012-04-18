@@ -275,11 +275,11 @@ namespace ys.Web
 				}
 				catch (LuaException ex)
 				{
-					Report("Lua exception, " + ex.Message);
+					System.Windows.MessageBox.Show("Lua exception, " + ex.Message);
 				}
 				catch (Exception ex)
 				{
-					Report(ex.Message);
+					System.Windows.MessageBox.Show(ex.Message);
 				}
 
 				script_loaded = true;
@@ -637,7 +637,7 @@ namespace ys.Web
 
 					foreach (var func in func_list)
 					{
-						lua_c.DoString(string.Format("comic_spider['{0}']['{1}']();", host, func));
+						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", host, func));
 					}
 
 					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
@@ -835,13 +835,13 @@ namespace ys.Web
 					Thread.Sleep(100);
 				}
 
-				this.DoString(Comic_spider.lua_script);
-
 				this["lc"] = this;
 
 				main = MainWindow.Main;
 				dashboard = Dashboard.Instance;
 				settings = Main_settings.Main;
+
+				this.DoString(Comic_spider.lua_script);
 			}
 
 			public MainWindow main;

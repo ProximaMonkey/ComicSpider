@@ -4,8 +4,7 @@
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
         <Connections>
-          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
-          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
         </Connections>
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="Error_logTableAdapter" GeneratorDataComponentClassName="Error_logTableAdapter" Name="Error_log" UserDataComponentName="Error_logTableAdapter">
