@@ -40,7 +40,7 @@ namespace ys.Web
 			thread.Name = "Show_volume_list";
 			thread.Start(Main_settings.Main.Main_url);
 			
-			Report("Show volume list...");
+			Report("Downloading volume list...");
 		}
 		public void Async_start(System.Collections.IEnumerable vol_info_list)
 		{
@@ -68,7 +68,7 @@ namespace ys.Web
 				page_list_getter.Start();
 				thread_list.Add(page_list_getter);
 
-				Thread downloader = new Thread(new ThreadStart(Downloader));
+				Thread downloader = new Thread(new ThreadStart(Download_file));
 				downloader.Name = "Downloader " + i;
 				downloader.Start();
 				thread_list.Add(downloader);
@@ -175,6 +175,8 @@ namespace ys.Web
 		public bool Stopped { get { return stopped; } }
 
 		public string Default_script_editor = "notepad.exe";
+
+		public const string Raw_folder_name = "Raw file";
 
 		/***************************** Private ********************************/
 
@@ -441,15 +443,23 @@ namespace ys.Web
 		private void Get_volume_list(object arg)
 		{
 			string url = arg as string;
-			Web_src_info comic_info = new Web_src_info(url, 0, "", "", null);
-			List<Web_src_info> vol_info_list = new List<Web_src_info>();
+			Web_src_info src_info = new Web_src_info(url, 0, "", "", null);
 			Lua_controller lua_c = new Lua_controller();
 
-			vol_info_list = Get_info_list_from_html(lua_c, comic_info, "get_volume_list");
-
-			if (comic_info.Children.Count > 0)
+			if (file_types.Contains(Path.GetExtension(url)))
 			{
-				Report("Get volume list: {0}, Count: {1}", comic_info.Name, comic_info.Children.Count);
+				src_info.Name = Comic_spider.Raw_folder_name;
+				src_info.Children = new List<Web_src_info>();
+				src_info.Children.Add(new Web_src_info(url, 0, "", "", src_info));
+			}
+			else
+			{
+				src_info.Children = Get_info_list_from_html(lua_c, src_info, "get_volume_list");
+			}
+
+			if (src_info.Children.Count > 0)
+			{
+				Report("Get volume list: {0}, Count: {1}", src_info.Name, src_info.Children.Count);
 			}
 			else
 			{
@@ -461,7 +471,7 @@ namespace ys.Web
 
 			Dashboard.Instance.Dispatcher.Invoke(
 				new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
-				vol_info_list
+				src_info.Children
 			);
 		}
 		private void Get_page_list()
@@ -492,7 +502,16 @@ namespace ys.Web
 				{
 					try
 					{
-						vol_info.Children = Get_info_list_from_html(lua_c, vol_info, "get_page_list");
+						if (file_types.Contains(Path.GetExtension(vol_info.Url)))
+						{
+							vol_info.Name = "";
+							vol_info.Children = new List<Web_src_info>();
+							vol_info.Children.Add(new Web_src_info(vol_info.Url, 0, "", "", vol_info));
+						}
+						else
+						{
+							vol_info.Children = Get_info_list_from_html(lua_c, vol_info, "get_page_list");
+						}
 					}
 					catch (ThreadAbortException)
 					{
@@ -527,6 +546,9 @@ namespace ys.Web
 						{
 							Directory.CreateDirectory(dir_path);
 							Report("Create dir: {0}", dir_path);
+						}
+						catch (ThreadAbortException)
+						{
 						}
 						catch (Exception ex)
 						{
@@ -588,7 +610,16 @@ namespace ys.Web
 
 				try
 				{
-					List<Web_src_info> file_info_list = Get_info_list_from_html(lua_c, page_info, "get_file_list");
+					List<Web_src_info> file_info_list;
+					if (file_types.Contains(Path.GetExtension(page_info.Url)))
+					{
+						file_info_list = new List<Web_src_info>();
+						file_info_list.Add(new Web_src_info(page_info.Url, 0, "", "", page_info));
+					}
+					else
+					{
+						file_info_list = Get_info_list_from_html(lua_c, page_info, "get_file_list");
+					}
 
 					if (file_info_list.Count == 0 ||
 						file_info_list[0] == null)
@@ -619,7 +650,6 @@ namespace ys.Web
 		private List<Web_src_info> Get_info_list_from_html(Lua_controller lua_c, Web_src_info src_info, params string[] func_list)
 		{
 			List<Web_src_info> info_list = new List<Web_src_info>();
-			src_info.Children = info_list;
 
 			string controller_name = get_corresponding_controller_name(src_info.Url);
 
@@ -658,12 +688,12 @@ namespace ys.Web
 
 					lua_c["html"] = wc.DownloadString(src_info.Url);
 
+					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
+
 					foreach (var func in func_list)
 					{
 						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", controller_name, func));
 					}
-
-					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
 				}
 				else
 				{
@@ -687,7 +717,7 @@ namespace ys.Web
 			return info_list;
 		}
 
-		private void Downloader()
+		private void Download_file()
 		{
 			Web_src_info file_info;
 			Lua_controller lua_c = new Lua_controller();
@@ -707,21 +737,21 @@ namespace ys.Web
 
 				string controller_name = get_corresponding_controller_name(file_info.Url);
 
-				var is_create_view_page = lua_c.DoString(
-					string.Format("return comic_spider['{0}']['is_create_view_page']", controller_name)
-				)[0];
-				var is_indexed_file_name = lua_c.DoString(
-					string.Format("return comic_spider['{0}']['is_indexed_file_name']", controller_name)
-				)[0];
-				is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
-				is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
-
 				#region Create file name
 
 				string file_path = string.Empty;
+				bool? is_indexed_file_name = true;
+				bool? is_create_view_page = true;
 
-				lua_c["src_info"] = file_info;
-				if ((bool)is_indexed_file_name)
+				string dir = "";
+				Web_src_info parent = file_info.Parent;
+				while ((parent = parent.Parent) != null)
+				{
+					dir = Path.Combine(parent.Name, dir);
+				}
+				lua_c["dir"] = ys.Common.Combine_path(Main_settings.Main.Root_dir, dir);
+
+				if (is_indexed_file_name == true)
 				{
 					lua_c["name"] = string.Format("{0:D3}", file_info.Parent.Index + 1);
 				}
@@ -735,24 +765,39 @@ namespace ys.Web
 				}
 				lua_c["ext"] = Path.GetExtension(file_info.Url);
 
-				string dir = "";
-				Web_src_info parent = file_info.Parent;
-				while ((parent = parent.Parent) != null)
+				if (file_info.Parent.Parent.Name != Comic_spider.Raw_folder_name)
 				{
-					dir = Path.Combine(parent.Name, dir);
-				}
-				lua_c["dir"] = ys.Common.Combine_path(Main_settings.Main.Root_dir, dir);
-
-				try
-				{
-					if (lua_c.DoString(string.Format("return comic_spider['{0}']['handle_file']", controller_name))[0] != null)
+					try
 					{
-						lua_c.DoString(string.Format("comic_spider['{0}']['handle_file']()", controller_name));
+						is_create_view_page = lua_c.DoString(
+							string.Format("return comic_spider['{0}']['is_create_view_page']", controller_name)
+						)[0] as bool?;
+						is_indexed_file_name = lua_c.DoString(
+							string.Format("return comic_spider['{0}']['is_indexed_file_name']", controller_name)
+						)[0] as bool?;
+						is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
+						is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
+
+						lua_c["src_info"] = file_info;
+
+						lua_c.DoString(
+							string.Format(
+								"if comic_spider['{0}']['handle_file'] then comic_spider['{0}']['handle_file']() end",
+								controller_name
+							)
+						);
 					}
-				}
-				catch (Exception ex)
-				{
-					Report("Lua exception, " + ex.Message);
+					catch (ThreadAbortException)
+					{
+					}
+					catch (LuaException ex)
+					{
+						Report("Lua exception, " + ex.Message);
+					}
+					catch (Exception ex)
+					{
+						Report(ex.Message);
+					}
 				}
 
 				string name = lua_c.GetString("name") + lua_c.GetString("ext");
@@ -797,13 +842,13 @@ namespace ys.Web
 						file_info.Parent.Parent.Name,
 						downloaded,
 						file_info.Parent.Parent.Count,
-						file_info.Name);
+						file_path);
 
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
 						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
 
-						if ((bool)is_create_view_page)
+						if (is_create_view_page == true)
 						{
 							try
 							{

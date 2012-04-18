@@ -420,7 +420,14 @@ namespace ComicSpider
 							State = row.State,
 						}
 						);
-						volume.Cookie = row.Parent_cookie;
+						try
+						{
+							volume.Cookie = row.Parent_cookie;
+						}
+						catch
+						{
+							volume.Cookie = "";
+						}
 						if (volume.Downloaded == volume.Count)
 						{
 							volume.State = Web_src_info.State_downloaded;

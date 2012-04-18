@@ -11,7 +11,7 @@
 		Closed="Window_Closed"
 		Topmost="True"
 		FontSize="12"
-		KeyUp="Window_KeyUp" DragEnter="Window_DragEnter" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True"
+		KeyUp="Window_KeyUp" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True"
 		 ContextMenu="{DynamicResource ResourceKey=main_menu}">
 	<Window.Resources>
 		<Storyboard x:Key="sb_hide_window">
@@ -156,7 +156,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock x:Name="textBlock" Text="Drop Link Here" FontFamily="/Comic Spider;component/Fonts/#Segoe UI Light" Foreground="#FF747474" FontSize="24" RenderTransformOrigin="0.5,0.6" IsHitTestVisible="False" VerticalAlignment="Top" Margin="26,11,0,0" HorizontalAlignment="Left">
+					<TextBlock x:Name="textBlock" Text="Drop Link Here" FontFamily="/Comic Spider;component/Fonts/#Segoe UI Light" Foreground="#FF747474" FontSize="24" RenderTransformOrigin="0.5,0.6" IsHitTestVisible="False" VerticalAlignment="Top" Margin="31.166,6,0,0" HorizontalAlignment="Left">
 						<TextBlock.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform/>
@@ -182,7 +182,7 @@
 				</Grid>
 			</Grid>
 
-			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="58,9,150,19" />
+			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="63.666,4.5,144.333,23.5" d:LayoutOverrides="HorizontalMargin" />
 
 			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" ContextMenu="{StaticResource ResourceKey=main_menu}" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
 				<tb:TaskbarIcon.TrayToolTip>

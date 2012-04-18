@@ -91,7 +91,7 @@ settings = {
 	proxy = '',
 
 	-- Default script editor for this lua script.
-	script_editor = [[C:\Program Files\Sublime Text 2\sublime_text.exe]],
+	script_editor = [[notepad.exe]],
 }
 
 comic_spider = {
@@ -131,7 +131,7 @@ comic_spider = {
 	['* Manga Here'] = {
 		home = 'http://www.mangahere.com/',
 
-		hosts = { 'mangahere.com' },
+		hosts = { 'mangahere.com', 'mhcdn.net' },
 
 		get_volume_list = function()
 			-- First get comic's main name.
@@ -212,7 +212,9 @@ comic_spider = {
 
 		-- Example for usage of XPath. Slower but easier than regex.
 		get_volume_list = function(self)
-			src_info.Name = 'Danbooru sites'
+			name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'
+			name = name .. (html:find('Rating: Safe') and '' or '[unsafe]')
+			src_info.Name = name
 			lc:xfill_list(
 				"//a[@id='highres']",
 				function(i, node, nodes)
@@ -224,15 +226,13 @@ comic_spider = {
 }
 
 -- Example: clone Danbooru websites.
--- You can find more tricks in the book "Programming in Lua".
-for i, t in pairs {
-	{ 'Konachan'               , 'http://konachan.com'            },
-	{ 'Donmai'                 , 'http://donmai.us'               },
-	{ 'Behoimi'                , 'http://behoimi.org'             },
-	{ 'Nekobooru'              , 'http://nekobooru.net'           },
-	{ 'Sankakucomplex Idol'    , 'http://idol.sankakucomplex.com' },
-	{ 'Sankakucomplex Channel' , 'http://chan.sankakucomplex.com' },
-} do 
-	site = { home = t[2] .. '/post?tags=rating%3Asafe' }
-	comic_spider[t[1]] = setmetatable(site, { __index = comic_spider['yande.re'] })
+for n, h in pairs {
+	['Konachan']               = 'http://konachan.com'           ,
+	['Donmai']                 = 'http://donmai.us'              ,
+	['Behoimi']                = 'http://behoimi.org'            ,
+	['Nekobooru']              = 'http://nekobooru.net'          ,
+	['Sankakucomplex Idol']    = 'http://idol.sankakucomplex.com',
+	['Sankakucomplex Channel'] = 'http://chan.sankakucomplex.com',
+} do
+	comic_spider[n] = { home = h .. '/post?tags=rating%3Asafe' }
 end

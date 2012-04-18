@@ -225,18 +225,16 @@ namespace ComicSpider
 			}
 		}
 
-		private void Window_DragEnter(object sender, DragEventArgs e)
-		{
-			e.Effects = DragDropEffects.All;
-		}
 		private void Window_Drop(object sender, DragEventArgs e)
 		{
 			string url = e.Data.GetData(typeof(string)) as string;
-			
+
 			if (url != null)
 			{
 				Dashboard.Instance.Get_volume_list(url);
 			}
+			else
+				this.Title = "not an available link";
 		}
 
 		private void btn_hide_Click(object sender, RoutedEventArgs e)
