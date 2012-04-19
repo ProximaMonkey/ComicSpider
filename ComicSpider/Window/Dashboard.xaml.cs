@@ -847,8 +847,6 @@ namespace ComicSpider
 			comic_spider.Stop();
 
 			Save_all();
-
-			Environment.Exit(0);
 		}
 
 		private int Volume_downloaded()

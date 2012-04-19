@@ -570,7 +570,7 @@ namespace ys.Web
 				}
 				else
 				{
-					vol_info.State = Web_src_info.State_missed;
+					vol_info.State = Web_src_info.State_failed;
 					Report("No page found in " + vol_info.Url);
 
 					lock (volume_queue_lock)
@@ -637,7 +637,7 @@ namespace ys.Web
 				}
 				catch (Exception ex)
 				{
-					page_info.State = Web_src_info.State_missed;
+					page_info.State = Web_src_info.State_failed;
 					lock (page_queue_lock)
 					{
 						page_queue.Enqueue(page_info);
@@ -688,7 +688,7 @@ namespace ys.Web
 
 					lua_c["html"] = wc.DownloadString(src_info.Url);
 
-					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"];
+					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"] + "";
 
 					foreach (var func in func_list)
 					{
@@ -697,8 +697,8 @@ namespace ys.Web
 				}
 				else
 				{
+					src_info.Cookie = src_info.Parent.Cookie + "";
 					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, "", src_info));
-					src_info.Cookie = src_info.Parent.Cookie;
 				}
 				#endregion
 			}
@@ -886,7 +886,7 @@ namespace ys.Web
 						catch { }
 					}
 
-					file_info.Parent.State = Web_src_info.State_missed;
+					file_info.Parent.State = Web_src_info.State_failed;
 
 					lock (file_queue_lock)
 					{

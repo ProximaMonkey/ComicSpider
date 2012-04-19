@@ -26,14 +26,16 @@ namespace ys.Web
 			Url = url;
 			Index = index;
 			Name = name;
-			state = "";
+			state = State_Wait;
 			Cookie = "";
 			Path = path;
 			Parent = parent;
 		}
 
+		public const string State_Wait = "Wait";
 		public const string State_downloaded = "OK";
-		public const string State_missed = "X";
+		public const string State_Cancel = "Cancel";
+		public const string State_failed = "X";
 
 		public string Url
 		{
