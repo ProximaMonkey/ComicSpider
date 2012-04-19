@@ -419,9 +419,10 @@ namespace ComicSpider
 							row.Name,
 							row.Path,
 							volume)
-						{
-							State = row.State,
-						}
+							{
+								State = row.State,
+								Size = row.Size,
+							}
 						);
 						try
 						{
@@ -837,7 +838,6 @@ namespace ComicSpider
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			comic_spider.Stop();
-
 			Save_all();
 		}
 
