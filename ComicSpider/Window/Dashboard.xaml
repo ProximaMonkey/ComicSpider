@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:ComicSpider="clr-namespace:ComicSpider"
 		x:Class="ComicSpider.Dashboard"
-		Title="Comic Spider Dashboard" MinHeight="500" MinWidth="700" Height="500" Width="650" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
+		Title="Comic Spider Dashboard" MinHeight="500" MinWidth="750" Height="500" Width="650" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
 	<Window.Resources>
 		<DataTemplate x:Key="HeaderTemplateArrowUp">
 			<DockPanel>
@@ -123,14 +123,14 @@
 		</StackPanel>
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1.7*" />
+				<ColumnDefinition Width="1.5*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
 			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State}"></GridViewColumn>
-						<GridViewColumn Header="Group" Width="150" DisplayMemberBinding="{Binding Parent.Name}"/>
+						<GridViewColumn Header="Main" Width="160" DisplayMemberBinding="{Binding Parent.Name}"/>
 						<GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}"/>
 					</GridView>
 				</ListView.View>
@@ -140,7 +140,7 @@
 			<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State}"/>
+						<GridViewColumn Header="State" Width="120" DisplayMemberBinding="{Binding State}"/>
 						<GridViewColumn Header="Url" Width="150">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>

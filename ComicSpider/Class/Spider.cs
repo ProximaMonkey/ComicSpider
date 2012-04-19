@@ -699,6 +699,7 @@ namespace ys.Web
 					MemoryStream cache = new MemoryStream();
 					int total_recieved_bytes = 0;
 					int current_recieved_bytes = 0;
+					int speed_recorder = 0;
 					do
 					{
 						if (stopped)
@@ -710,13 +711,18 @@ namespace ys.Web
 						cache.Write(buffer, 0, current_recieved_bytes);
 
 						// Report state may take up lots of resources.
-						if (DateTime.Now.Subtract(timestamp).Seconds > 1)
+						total_recieved_bytes += current_recieved_bytes;
+						speed_recorder += current_recieved_bytes;
+						double time_span = (DateTime.Now - timestamp).TotalSeconds;
+						if (time_span > 0.5)
 						{
 							timestamp = DateTime.Now;
 							file_info.Parent.State = string.Format(
-								"{0:00.0}%",
-								(double)total_recieved_bytes / (double)response.ContentLength * 100.0
+								"{0:00.0}%  {1:0.0}KB/s",
+								(double)total_recieved_bytes / (double)response.ContentLength * 100.0,
+								(double)speed_recorder / time_span / 1024.0
 							);
+							speed_recorder = 0;
 						}
 					}
 					while (current_recieved_bytes > 0);

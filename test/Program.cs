@@ -12,13 +12,13 @@ namespace test
 	{
 		static void Main(string[] args)
 		{
-			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			doc.Load("test.html");
-			foreach (var item in doc.DocumentNode.SelectNodes("//a[@id='highres']"))
-			{
-				Console.WriteLine(item.Attributes["href"].Value);
-			}
-
+			//HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+			//doc.Load("test.html");
+			//foreach (var item in doc.DocumentNode.SelectNodes("//a[@id='highres']"))
+			//{
+			//    Console.WriteLine(item.Attributes["href"].Value);
+			//}
+			Console.WriteLine(string.Format("{0:000.0}", 45.123));
 			Console.ReadLine();
 		}
 	}

@@ -135,10 +135,13 @@ namespace ComicSpider
 						comic_spider.Add_volume_list(added_list);
 				}
 				else if (list.Count > 0)
-					MainWindow.Main.Show_balloon("No newer volume added to task list.", (o, e) =>
+				{
+					this.Title = "No newer volume added to task list.";
+					MainWindow.Main.Show_balloon(this.Title, (o, e) =>
 					{
 						this.Show();
 					}, true);
+				}
 			}
 
 			MainWindow.Main.Main_progress = this.Main_progress;
@@ -781,7 +784,7 @@ namespace ComicSpider
 				header.Column.HeaderTemplate = arrow_down;
 				temp_list = list.OrderByDescending(info =>
 				{
-					if (col_name == "Comic")
+					if (col_name == "Main")
 						return info.Parent.Name;
 					else
 						return info.GetType().GetProperty(col_name).GetValue(info, null);
@@ -792,7 +795,7 @@ namespace ComicSpider
 				header.Column.HeaderTemplate = arrow_up;
 				temp_list = list.OrderBy(info =>
 				{
-					if (col_name == "Comic")
+					if (col_name == "Main")
 						return info.Parent.Name;
 					else
 						return info.GetType().GetProperty(col_name).GetValue(info, null);
