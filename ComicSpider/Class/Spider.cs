@@ -708,11 +708,6 @@ namespace ys.Web
 					int speed_recorder = 0;
 					do
 					{
-						if (stopped)
-						{
-							file_info.Parent.State = Web_src_state.Stopped;
-							return;
-						}
 						current_recieved_bytes = remote_stream.Read(buffer, 0, buffer.Length);
 						cache.Write(buffer, 0, current_recieved_bytes);
 
@@ -724,14 +719,14 @@ namespace ys.Web
 						{
 							timestamp = DateTime.Now;
 							file_info.Parent.State_text = string.Format(
-								"{0:00.0}%  {1:000.0}KB/s",
+								"{0:00.0}%  {1:0}KB/s",
 								(double)total_recieved_bytes / (double)response.ContentLength * 100.0,
 								(double)speed_recorder / time_span / 1024.0
 							);
 							speed_recorder = 0;
 						}
 					}
-					while (current_recieved_bytes > 0);
+					while (!stopped || current_recieved_bytes > 0);
 
 					#endregion
 

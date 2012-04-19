@@ -368,7 +368,18 @@ namespace ComicSpider
 				int count = 0;
 				foreach (Web_src_info vol in volume_list.Items)
 				{
-					count += vol.Count;
+					switch(vol.State)
+					{
+						case Web_src_state.Loading:
+						case Web_src_state.Downloaded:
+							count += vol.Count;
+							break;
+
+						case Web_src_state.Wait:
+						case Web_src_state.Failed:
+							count++;
+							break;
+					}
 				}
 				return count;
 			}
@@ -462,7 +473,10 @@ namespace ComicSpider
 						{
 							volume.Cookie = "";
 						}
-						if (volume.Downloaded == volume.Count)
+
+						if (row.State == "X")
+							volume.State = Web_src_state.Failed;
+						else if (volume.Downloaded == volume.Count)
 						{
 							volume.State = Web_src_state.Downloaded;
 						}

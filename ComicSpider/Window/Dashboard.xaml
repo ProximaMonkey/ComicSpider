@@ -140,7 +140,7 @@
 			<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="State" Width="110" DisplayMemberBinding="{Binding State_text}" />
+						<GridViewColumn Header="State" Width="100" DisplayMemberBinding="{Binding State_text}" />
 						<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size, StringFormat=0.00MB}" />
 						<GridViewColumn Header="Url" Width="170">
 							<GridViewColumn.CellTemplate>

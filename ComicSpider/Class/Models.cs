@@ -9,9 +9,8 @@ namespace ys.Web
 	public enum Web_src_state
 	{
 		Wait,
-		Downloading,
+		Loading,
 		Downloaded,
-		Stopped,
 		Failed
 	};
 
@@ -65,14 +64,11 @@ namespace ys.Web
 					case "OK":
 						state = Web_src_state.Downloaded;
 						break;
-					case "Stopped":
-						state = Web_src_state.Stopped;
-						break;
 					case "X":
 						state = Web_src_state.Failed;
 						break;
 					default:
-						state = Web_src_state.Downloading;
+						state = Web_src_state.Loading;
 						break;
 				}
 				NotifyPropertyChanged("State_text");
@@ -85,8 +81,6 @@ namespace ys.Web
 						return "";
 					case Web_src_state.Downloaded:
 						return "OK";
-					case Web_src_state.Stopped:
-						return "Stopped";
 					case Web_src_state.Failed:
 						return "X";
 					default:
