@@ -15,6 +15,8 @@ namespace ComicSpider
 {
 	public partial class Dashboard : Window
 	{
+		/***************************** Public ********************************/
+
 		public static Dashboard Instance
 		{
 			get
@@ -28,32 +30,6 @@ namespace ComicSpider
 			}
 		}
 		public static bool Is_initialized = false;
-
-		public new void Show()
-		{
-			base.Show();
-			this.WindowState = System.Windows.WindowState.Normal;
-			this.Activate();
-		}
-
-		public void Get_volume_list(string url)
-		{
-			Update_settings();
-
-			txt_main_url.Text = url;
-			if (string.IsNullOrEmpty(txt_dir.Text))
-			{
-				if (Set_root_dir("Please select a folder to save the comic", false))
-				{
-					btn_get_list_Click(null, null);
-				}
-			}
-			else
-			{
-				btn_get_list_Click(null, null);
-			}
-		}
-
 		public new string Title
 		{
 			get { return base.Title; }
@@ -73,18 +49,45 @@ namespace ComicSpider
 				txt_console.AppendText(">> " + value + '\n');
 			}
 		}
-
 		public string Main_progress
 		{
-			get 
+			get
 			{
-				int count = Volume_downloaded();
-				int all = volume_list.Items.Count;
+				int count = downloaded_files_count;
+				int all = all_files_count;
 				MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
 				return string.Format("{0} / {1}", count, all);
 			}
 		}
+
 		public bool All_downloaded { get; set; }
+
+		public new void Show()
+		{
+			base.Show();
+			this.WindowState = System.Windows.WindowState.Normal;
+			this.Activate();
+		}
+
+		public void Get_volume_list(string url)
+		{
+			Update_settings();
+
+			txt_main_url.Text = url;
+			if (string.IsNullOrEmpty(txt_dir.Text))
+			{
+				string path = Get_direcotry("Please select a folder to save the comic");
+				if (!string.IsNullOrEmpty(path))
+				{
+					txt_dir.Text = path;
+					btn_get_list_Click(null, null);
+				}
+			}
+			else
+			{
+				btn_get_list_Click(null, null);
+			}
+		}
 
 		public void Update_settings()
 		{
@@ -92,6 +95,27 @@ namespace ComicSpider
 			Main_settings.Main.Root_dir = txt_dir.Text;
 			Main_settings.Main.Thread_count = txt_thread.Text;
 		}
+		public void Save_all()
+		{
+			Update_settings();
+
+			try
+			{
+				Save_vol_info_list();
+				Save_page_info_list();
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message + "\n" + ex.StackTrace);
+			}
+		}
+		public new void Close()
+		{
+			this.Closing -= Window_Closing;
+			base.Close();
+		}
+
+		/**************** Delegate ****************/
 
 		public delegate void Show_volume_list_delegate(List<Web_src_info> list);
 		public void Show_volume_list(List<Web_src_info> list)
@@ -109,7 +133,7 @@ namespace ComicSpider
 			skip: ;
 			}
 
-			if (Volume_downloaded() < volume_list.Items.Count)
+			if (downloaded_files_count < all_files_count)
 				btn_start.IsEnabled = true;
 
 			if(comic_spider.Stopped)
@@ -174,7 +198,7 @@ namespace ComicSpider
 
 			MainWindow.Main.Main_progress = this.Main_progress;
 
-			if (Volume_downloaded() == volume_list.Items.Count)
+			if (downloaded_files_count == all_files_count)
 			{
 				All_downloaded = true;
 
@@ -226,8 +250,8 @@ namespace ComicSpider
 
 		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			if (!Set_root_dir("Selet the root folder for opertion"))
-				return;
+			string path = Get_direcotry("Selet the root folder for opertion");
+			if (string.IsNullOrEmpty(path)) return;
 
 			Control btn = sender as Control;
 			btn.IsEnabled = false;
@@ -239,7 +263,7 @@ namespace ComicSpider
 			{
 				try
 				{
-					comic_spider.Fix_display_pages(Main_settings.Main.Root_dir);
+					comic_spider.Fix_display_pages(path);
 				}
 				catch (Exception ex)
 				{
@@ -254,7 +278,7 @@ namespace ComicSpider
 				{
 					try
 					{
-						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+						System.Diagnostics.Process.Start(path);
 					}
 					catch (Exception ex)
 					{
@@ -268,7 +292,8 @@ namespace ComicSpider
 		}
 		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			if (!Set_root_dir("Selet the root folder for opertion"))
+			string path = Get_direcotry("Selet the root folder for opertion");
+			if (string.IsNullOrEmpty(path))
 				return;
 
 			Control btn = sender as Control;
@@ -281,7 +306,7 @@ namespace ComicSpider
 			{
 				try
 				{
-					comic_spider.Delete_display_pages();
+					comic_spider.Delete_display_pages(path);
 				}
 				catch (Exception ex)
 				{
@@ -296,7 +321,7 @@ namespace ComicSpider
 				{
 					try
 					{
-						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+						System.Diagnostics.Process.Start(path);
 					}
 					catch (Exception ex)
 					{
@@ -309,30 +334,8 @@ namespace ComicSpider
 			bg_worker.RunWorkerAsync();
 		}
 
-		public new void Close()
-		{
-			this.Closing -= Window_Closing;
-			base.Close();
-		}
-
-		public void Save_all()
-		{
-			Update_settings();
-			
-			try
-			{
-				Save_vol_info_list();
-				Save_page_info_list();
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message + "\n" + ex.StackTrace);
-			}
-		}
-
 		/***************************** Private ********************************/
 
-		private static Dashboard instance;
 		private Dashboard()
 		{
 			InitializeComponent();
@@ -356,7 +359,34 @@ namespace ComicSpider
 			txt_thread.Text = Main_settings.Main.Thread_count;
 		}
 
+		private static Dashboard instance;
 		private Comic_spider comic_spider;
+		private int all_files_count
+		{
+			get
+			{
+				int count = 0;
+				foreach (Web_src_info vol in volume_list.Items)
+				{
+					count += vol.Count;
+				}
+				return count;
+			}
+		}
+		private int downloaded_files_count
+		{
+			get
+			{
+				int count = 0;
+				foreach (Web_src_info vol in volume_list.Items)
+				{
+					count += vol.Downloaded;
+				}
+				return count;
+			}
+		}
+
+		/**************** Data ****************/
 
 		private void Init_info_list()
 		{
@@ -420,7 +450,7 @@ namespace ComicSpider
 							row.Path,
 							volume)
 							{
-								State = row.State,
+								State_text = row.State,
 								Size = row.Size,
 							}
 						);
@@ -434,11 +464,11 @@ namespace ComicSpider
 						}
 						if (volume.Downloaded == volume.Count)
 						{
-							volume.State = Web_src_info.State_downloaded;
+							volume.State = Web_src_state.Downloaded;
 						}
 						else
 						{
-							volume.State = string.Format("{0} / {1}", volume.Downloaded, volume.Count);
+							volume.State_text = string.Format("{0} / {1}", volume.Downloaded, volume.Count);
 						}
 					}
 				}
@@ -446,24 +476,89 @@ namespace ComicSpider
 
 			Show_volume_list(vol_list);
 		}
-
-		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void Save_vol_info_list()
 		{
-			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
+			Volume_listTableAdapter vol_adapter = new Volume_listTableAdapter();
+			vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
+			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Volume_list where 1";
 
-			if (item == null || 
-				string.IsNullOrEmpty(item.Tag as string))
-				return;
-			try
+			vol_adapter.Connection.Open();
+
+			SQLiteTransaction transaction = vol_adapter.Connection.BeginTransaction();
+
+			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
+
+			foreach (Web_src_info item in volume_list.Items)
 			{
-				System.Diagnostics.Process.Start(item.Tag as string);
+				if (item.Parent == null) continue;
+
+				vol_adapter.Insert(
+					item.Url,
+					item.Name,
+					item.Index,
+					item.State_text,
+					item.Parent.Url,
+					item.Parent.Name,
+					item.Parent.Cookie,
+					item.Path,
+					DateTime.Now
+				);
 			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message);
-			}
-			cb_supported_websites.SelectedIndex = 0;
+
+			transaction.Commit();
+
+			vol_adapter.Connection.Close();
 		}
+		private void Save_page_info_list()
+		{
+			Page_listTableAdapter page_adapter = new Page_listTableAdapter();
+			page_adapter.Adapter.DeleteCommand = page_adapter.Connection.CreateCommand();
+			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_list where 1";
+
+			page_adapter.Connection.Open();
+
+			SQLiteTransaction transaction = page_adapter.Connection.BeginTransaction();
+
+			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
+
+			foreach (Web_src_info vol in volume_list.Items)
+			{
+				if (vol.Children == null) continue;
+				foreach (Web_src_info item in vol.Children.Distinct(new Web_src_info.Comparer()))
+				{
+					page_adapter.Insert(
+											item.Url,
+											item.Name,
+											item.Index,
+											item.State_text,
+											item.Size,
+											vol.Url,
+											vol.Name,
+											item.Parent.Cookie,
+											item.Path,
+											DateTime.Now
+										);
+				}
+			}
+
+			transaction.Commit();
+			page_adapter.Connection.Close();
+		}
+		private void Clear_cache()
+		{
+			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
+
+			kv_adpter.Connection.Open();
+
+			kv_adpter.Adapter.DeleteCommand = kv_adpter.Connection.CreateCommand();
+			kv_adpter.Adapter.DeleteCommand.CommandText = @"delete from [Key_value] where [Key] != 'Settings'; delete from [Error_log] where 1;";
+
+			kv_adpter.Adapter.DeleteCommand.ExecuteNonQuery();
+
+			kv_adpter.Connection.Close();
+		}
+
+		/**************** Event ****************/
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
@@ -494,19 +589,17 @@ namespace ComicSpider
 			comic_spider.Async_get_volume_list();
 		}
 
-		private void btn_select_downloaded_Click(object sender, RoutedEventArgs e)
+		private void btn_controller_Click(object sender, RoutedEventArgs e)
 		{
-			volume_list.Focus();
-			volume_list.SelectedIndex = -1;
-			foreach (Web_src_info item in volume_list.Items)
+			try
 			{
-				if (item.State == Web_src_info.State_downloaded)
-				{
-					volume_list.SelectedItems.Add(item);
-				}
+				System.Diagnostics.Process.Start(comic_spider.Default_script_editor, "comic_spider.lua");
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
 			}
 		}
-
 		private void btn_logs_Click(object sender, RoutedEventArgs e)
 		{
 			if (bd_logs.Visibility == Visibility.Collapsed)
@@ -524,15 +617,9 @@ namespace ComicSpider
 			bd_logs.Visibility = Visibility.Collapsed;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="is_temp">Is this path will be only used temply?</param>
-		/// <returns></returns>
-		private bool Set_root_dir(string info, bool is_temp = true)
+		private string Get_direcotry(string info)
 		{
-			bool ret = false;
+			string path = null;
 
 			bool topmost_temp = MainWindow.Main.Topmost;
 			MainWindow.Main.Topmost = false;
@@ -541,49 +628,21 @@ namespace ComicSpider
 			dialog.ShowFullPathInEditBox = true;
 			dialog.SelectedPath = txt_dir.Text;
 			dialog.Description = info;
-			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK &&
+				Directory.Exists(dialog.SelectedPath))
 			{
-				if (is_temp)
-					Main_settings.Main.Root_dir = dialog.SelectedPath;
-				else
-					txt_dir.Text = dialog.SelectedPath;
-
-				ret = true;
+				path = dialog.SelectedPath;
 			}
 
 			MainWindow.Main.Topmost = topmost_temp;
 
-			return ret;
+			return path;
 		}
 		private void btn_save_to_Click(object sender, RoutedEventArgs e)
 		{
-			Set_root_dir("Please select a root folder", false);
-		}
-		private void ShowHide_window(object sender, RoutedEventArgs e)
-		{
-			if (this.Visibility == System.Windows.Visibility.Visible)
-			{
-				this.Visibility = System.Windows.Visibility.Collapsed;
-				this.ShowInTaskbar = false;
-			}
-			else
-			{
-				this.Visibility = System.Windows.Visibility.Visible;
-				this.ShowInTaskbar = true;
-				this.Activate();
-			}
-		}
-
-		private void btn_controller_Click(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				System.Diagnostics.Process.Start(comic_spider.Default_script_editor, "comic_spider.lua");
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message);
-			}
+			string path = Get_direcotry("Please select a root folder");
+			if (!string.IsNullOrEmpty(path))
+				txt_dir.Text = path;
 		}
 
 		private void View_Click(object sender, RoutedEventArgs e)
@@ -683,7 +742,7 @@ namespace ComicSpider
 				all > (failed_count + delete_count))
 			{
 				if (comic_spider.Stopped ||
-					(list_view.SelectedItem as Web_src_info).State == Web_src_info.State_downloaded)
+					(list_view.SelectedItem as Web_src_info).State == Web_src_state.Downloaded)
 				{
 					int index = list_view.SelectedIndex;
 					list_view.Items.RemoveAt(index);
@@ -701,7 +760,7 @@ namespace ComicSpider
 				this.Title = "Item(s) deleted.";
 			else
 			{
-				if (Volume_downloaded() == volume_list.Items.Count)
+				if (downloaded_files_count == all_files_count)
 				{
 					btn_start.IsEnabled = false;
 				}
@@ -719,7 +778,6 @@ namespace ComicSpider
 		{
 			MainWindow.Main.Help(null, null);
 		}
-
 		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
 			try
@@ -755,6 +813,35 @@ namespace ComicSpider
 			View_Click(sender, null);
 		}
 
+		private void btn_select_downloaded_Click(object sender, RoutedEventArgs e)
+		{
+			volume_list.Focus();
+			volume_list.SelectedIndex = -1;
+			foreach (Web_src_info item in volume_list.Items)
+			{
+				if (item.State == Web_src_state.Downloaded)
+				{
+					volume_list.SelectedItems.Add(item);
+				}
+			}
+		}
+		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
+
+			if (item == null ||
+				string.IsNullOrEmpty(item.Tag as string))
+				return;
+			try
+			{
+				System.Diagnostics.Process.Start(item.Tag as string);
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
+			cb_supported_websites.SelectedIndex = 0;
+		}
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
 		{
 
@@ -817,19 +904,6 @@ namespace ComicSpider
 			}
 		}
 
-		private void Clear_cache()
-		{
-			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
-
-			kv_adpter.Connection.Open();
-
-			kv_adpter.Adapter.DeleteCommand = kv_adpter.Connection.CreateCommand();
-			kv_adpter.Adapter.DeleteCommand.CommandText = @"delete from [Key_value] where [Key] != 'Settings'; delete from [Error_log] where 1;";
-
-			kv_adpter.Adapter.DeleteCommand.ExecuteNonQuery();
-
-			kv_adpter.Connection.Close();
-		}
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			this.Visibility = System.Windows.Visibility.Collapsed;
@@ -841,84 +915,19 @@ namespace ComicSpider
 			Save_all();
 		}
 
-		private int Volume_downloaded()
+		private void ShowHide_window(object sender, RoutedEventArgs e)
 		{
-			int downloaded = 0;
-			foreach (Web_src_info item in volume_list.Items)
+			if (this.Visibility == System.Windows.Visibility.Visible)
 			{
-				if (item.State == Web_src_info.State_downloaded)
-					downloaded++;
+				this.Visibility = System.Windows.Visibility.Collapsed;
+				this.ShowInTaskbar = false;
 			}
-			return downloaded;
-		}
-
-		private void Save_vol_info_list()
-		{
-			Volume_listTableAdapter vol_adapter = new Volume_listTableAdapter();
-			vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
-			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Volume_list where 1";
-
-			vol_adapter.Connection.Open();
-
-			SQLiteTransaction transaction = vol_adapter.Connection.BeginTransaction();
-
-			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
-
-			foreach (Web_src_info item in volume_list.Items)
+			else
 			{
-				if (item.Parent == null) continue;
-
-				vol_adapter.Insert(
-					item.Url,
-					item.Name,
-					item.Index,
-					item.State,
-					item.Parent.Url,
-					item.Parent.Name,
-					item.Parent.Cookie,
-					item.Path,
-					DateTime.Now
-				);
+				this.Visibility = System.Windows.Visibility.Visible;
+				this.ShowInTaskbar = true;
+				this.Activate();
 			}
-
-			transaction.Commit();
-
-			vol_adapter.Connection.Close();
-		}
-		private void Save_page_info_list()
-		{
-			Page_listTableAdapter page_adapter = new Page_listTableAdapter();
-			page_adapter.Adapter.DeleteCommand = page_adapter.Connection.CreateCommand();
-			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_list where 1";
-
-			page_adapter.Connection.Open();
-
-			SQLiteTransaction transaction = page_adapter.Connection.BeginTransaction();
-
-			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
-
-			foreach (Web_src_info vol in volume_list.Items)
-			{
-				if (vol.Children == null) continue;
-				foreach (Web_src_info item in vol.Children.Distinct(new Web_src_info.Comparer()))
-				{
-					page_adapter.Insert(
-											item.Url,
-											item.Name,
-											item.Index,
-											item.State,
-											item.Size,
-											vol.Url,
-											vol.Name,
-											item.Parent.Cookie,
-											item.Path,
-											DateTime.Now
-										);
-				}
-			}
-
-			transaction.Commit();
-			page_adapter.Connection.Close();
 		}
 	}
 }

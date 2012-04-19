@@ -56,7 +56,7 @@ namespace ys.Web
 			{
 				lock (volume_queue_lock)
 				{
-					if (vol_info.State != Web_src_info.State_downloaded)
+					if (vol_info.State != Web_src_state.Downloaded)
 						volume_queue.Enqueue(vol_info);
 				}
 			}
@@ -88,9 +88,8 @@ namespace ys.Web
 			}
 		}
 
-		public void Delete_display_pages()
+		public void Delete_display_pages(string root_dir)
 		{
-			string root_dir = Main_settings.Main.Root_dir;
 			List<string> old_files = new List<string>();
 			old_files.AddRange(Directory.GetFiles(root_dir, "layout.js", SearchOption.AllDirectories));
 			old_files.AddRange(Directory.GetFiles(root_dir, "jquery.js", SearchOption.AllDirectories));
@@ -103,24 +102,24 @@ namespace ys.Web
 		}
 		public void Fix_display_pages(string root_dir)
 		{
-			Delete_display_pages();
+			Delete_display_pages(root_dir);
 
 			foreach (var comic_dir in Directory.GetDirectories(root_dir))
 			{
 				string[] volume_dirs = Directory.GetDirectories(comic_dir);
 				if (volume_dirs.Length == 0)
 				{
-					Create_display_page(comic_dir, Path.GetFileName(root_dir));
+					Create_display_page(comic_dir);
 					continue;
 				}
 
 				foreach (var volume_dir in volume_dirs)
 				{
-					Create_display_page(volume_dir, Path.GetFileName(comic_dir));
+					Create_display_page(volume_dir);
 				}
 			}
 		}
-		public void Create_display_page(string voluem_dir, string comic_name)
+		public void Create_display_page(string voluem_dir)
 		{
 			string img_list = "";
 			List<string> files = new List<string>();
@@ -418,7 +417,10 @@ namespace ys.Web
 			{
 				string info = string.Format(format, arg);
 				Console.WriteLine(info);
-				Dashboard.Instance.Dispatcher.Invoke(new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress), info);
+				Dashboard.Instance.Dispatcher.Invoke(
+					new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress),
+					info
+				);
 			}
 			catch
 			{
@@ -575,7 +577,7 @@ namespace ys.Web
 				}
 				else
 				{
-					vol_info.State = Web_src_info.State_failed;
+					vol_info.State = Web_src_state.Failed;
 					Report("No page found in " + vol_info.Url);
 
 					lock (volume_queue_lock)
@@ -610,7 +612,7 @@ namespace ys.Web
 
 				if (stopped)
 					return;
-				if (page_info.State == Web_src_info.State_downloaded)
+				if (page_info.State == Web_src_state.Downloaded)
 					continue;
 
 				try
@@ -643,7 +645,7 @@ namespace ys.Web
 				}
 				catch (Exception ex)
 				{
-					page_info.State = Web_src_info.State_failed;
+					page_info.State = Web_src_state.Failed;
 					lock (page_queue_lock)
 					{
 						page_queue.Enqueue(page_info);
@@ -690,6 +692,8 @@ namespace ys.Web
 
 					#endregion
 
+					#region Download Stream
+
 					WebResponse response = request.GetResponse();
 					Stream remote_stream = response.GetResponseStream();
 					remote_stream.ReadTimeout = time_out;
@@ -706,7 +710,7 @@ namespace ys.Web
 					{
 						if (stopped)
 						{
-							file_info.Parent.State = Web_src_info.State_Stopped;
+							file_info.Parent.State = Web_src_state.Stopped;
 							return;
 						}
 						current_recieved_bytes = remote_stream.Read(buffer, 0, buffer.Length);
@@ -719,8 +723,8 @@ namespace ys.Web
 						if (time_span > 0.5)
 						{
 							timestamp = DateTime.Now;
-							file_info.Parent.State = string.Format(
-								"{0:00.0}%  {1:0.0}KB/s",
+							file_info.Parent.State_text = string.Format(
+								"{0:00.0}%  {1:000.0}KB/s",
 								(double)total_recieved_bytes / (double)response.ContentLength * 100.0,
 								(double)speed_recorder / time_span / 1024.0
 							);
@@ -728,6 +732,8 @@ namespace ys.Web
 						}
 					}
 					while (current_recieved_bytes > 0);
+
+					#endregion
 
 					#region Create file name
 
@@ -806,7 +812,7 @@ namespace ys.Web
 					fs.Close();
 
 					file_info.Parent.Path = file_path;
-					file_info.Parent.State = Web_src_info.State_downloaded;
+					file_info.Parent.State = Web_src_state.Downloaded;
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
 
@@ -819,31 +825,30 @@ namespace ys.Web
 
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
-						file_info.Parent.Parent.State = Web_src_info.State_downloaded;
+						file_info.Parent.Parent.State = Web_src_state.Downloaded;
 
 						if (is_create_view_page == true)
 						{
 							try
 							{
-								Create_display_page(lua_c.GetString("dir"), file_info.Parent.Parent.Parent.Name);
+								Create_display_page(lua_c.GetString("dir"));
 							}
 							catch (Exception ex)
 							{
 								Log_error(ex, file_info.Url);
 							}
 						}
-
-						Thread.Sleep(500);		// Wait other Dispatcher done.
-						Dashboard.Instance.Dispatcher.Invoke(
-							new Dashboard.Report_main_progress_delegate(
-								Dashboard.Instance.Report_main_progress
-							)
-						);
 					}
 					else
 					{
-						file_info.Parent.Parent.State = string.Format("{0} / {1}", downloaded, file_info.Parent.Parent.Count);
+						file_info.Parent.Parent.State_text = string.Format("{0} / {1}", downloaded, file_info.Parent.Parent.Count);
 					}
+
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Report_main_progress_delegate(
+							Dashboard.Instance.Report_main_progress
+						)
+					);
 				}
 				catch (ThreadAbortException)
 				{
@@ -854,7 +859,7 @@ namespace ys.Web
 				}
 				catch (Exception ex)
 				{
-					file_info.Parent.State = Web_src_info.State_failed;
+					file_info.Parent.State = Web_src_state.Failed;
 
 					lock (file_queue_lock)
 					{

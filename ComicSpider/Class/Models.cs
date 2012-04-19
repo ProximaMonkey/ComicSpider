@@ -6,6 +6,15 @@ using System.Linq;
 
 namespace ys.Web
 {
+	public enum Web_src_state
+	{
+		Wait,
+		Downloading,
+		Downloaded,
+		Stopped,
+		Failed
+	};
+
 	public class Web_src_info : System.ComponentModel.INotifyPropertyChanged
 	{
 		public Web_src_info()
@@ -13,7 +22,7 @@ namespace ys.Web
 			Url = string.Empty;
 			Index = 0;
 			Name = string.Empty;
-			state = string.Empty;
+			state = Web_src_state.Wait;
 			Cookie = string.Empty;
 		}
 		public Web_src_info(
@@ -27,16 +36,75 @@ namespace ys.Web
 			Url = url;
 			Index = index;
 			Name = name;
-			state = State_Wait;
+			state = Web_src_state.Wait;
+			state_text = string.Empty;
 			Path = path;
 			Parent = parent;
 			Cookie = cookie;
 		}
 
-		public const string State_Wait = "";
-		public const string State_downloaded = "OK";
-		public const string State_Stopped = "Stopped";
-		public const string State_failed = "X";
+		public Web_src_state State
+		{
+			get
+			{
+				return state;
+			}
+			set
+			{
+				state = value;
+				NotifyPropertyChanged("State_text");
+			}
+		}
+		public string State_text
+		{
+			set
+			{
+				state_text = value;
+				switch(value)
+				{
+					case "OK":
+						state = Web_src_state.Downloaded;
+						break;
+					case "Stopped":
+						state = Web_src_state.Stopped;
+						break;
+					case "X":
+						state = Web_src_state.Failed;
+						break;
+					default:
+						state = Web_src_state.Downloading;
+						break;
+				}
+				NotifyPropertyChanged("State_text");
+			}
+			get
+			{
+				switch (state)
+				{
+					case Web_src_state.Wait:
+						return "";
+					case Web_src_state.Downloaded:
+						return "OK";
+					case Web_src_state.Stopped:
+						return "Stopped";
+					case Web_src_state.Failed:
+						return "X";
+					default:
+						return state_text;
+				}
+			}
+		}
+
+		public List<Web_src_info> Children
+		{
+			get { return children; }
+			set
+			{
+				children = value;
+				NotifyPropertyChanged("Children");
+			}
+		}
+		public Web_src_info Parent { get; protected set; }
 
 		public string Url
 		{
@@ -56,18 +124,6 @@ namespace ys.Web
 				NotifyPropertyChanged("Name");
 			}
 		}
-		public string State
-		{
-			get
-			{
-				return state;
-			}
-			set
-			{
-				state = value;
-				NotifyPropertyChanged("State");
-			}
-		}
 		public double Size
 		{
 			get
@@ -80,18 +136,8 @@ namespace ys.Web
 				NotifyPropertyChanged("Size");
 			}
 		}
-		public List<Web_src_info> Children
-		{
-			get { return children; }
-			set
-			{
-				children = value;
-				NotifyPropertyChanged("Children");
-			}
-		}
 		public int Index { get; set; }
 		public string Cookie { get; set; }
-		public Web_src_info Parent { get; protected set; }
 		public string Path { get; set; }
 
 		public int Count
@@ -108,7 +154,9 @@ namespace ys.Web
 		{
 			get
 			{
-				return children.Count(c => c.State == Web_src_info.State_downloaded);
+				if (children == null) return 0;
+
+				return children.Count(c => c.State == Web_src_state.Downloaded);
 			}
 		}
 
@@ -132,17 +180,20 @@ namespace ys.Web
 			}
 		}
 
-		private void NotifyPropertyChanged(String info)
+		/***************************** Private ********************************/
+
+		private void NotifyPropertyChanged(String prop_name)
 		{
 			if (PropertyChanged != null)
 			{
-				PropertyChanged(this, new PropertyChangedEventArgs(info));
+				PropertyChanged(this, new PropertyChangedEventArgs(prop_name));
 			}
 		}
 
 		private string url;
 		private string name;
-		private string state;
+		private Web_src_state state;
+		private string state_text;
 		private double size;
 		private List<Web_src_info> children;
 	}

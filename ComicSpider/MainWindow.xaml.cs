@@ -263,7 +263,7 @@ namespace ComicSpider
 			Web_src_info list_item = null;
 			for (int i = list.Count - 1; i > -1; i--)
 			{
-				if ((list[i] as Web_src_info).State == Web_src_info.State_downloaded)
+				if ((list[i] as Web_src_info).State == Web_src_state.Downloaded)
 				{
 					list_item = list[i] as Web_src_info;
 					string path = "";
