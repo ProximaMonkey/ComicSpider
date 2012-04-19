@@ -123,15 +123,15 @@
 		</StackPanel>
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1.5*" />
+				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
 			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State}"></GridViewColumn>
-						<GridViewColumn Header="Main" Width="160" DisplayMemberBinding="{Binding Parent.Name}"/>
-						<GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}"/>
+						<GridViewColumn Header="Main" Width="140" DisplayMemberBinding="{Binding Parent.Name}"/>
+						<GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding Name}"/>
 					</GridView>
 				</ListView.View>
 			</ListView>
@@ -140,8 +140,9 @@
 			<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="State" Width="120" DisplayMemberBinding="{Binding State}"/>
-						<GridViewColumn Header="Url" Width="150">
+						<GridViewColumn Header="State" Width="110" DisplayMemberBinding="{Binding State}" />
+						<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size, StringFormat=00.00MB}" />
+						<GridViewColumn Header="Url" Width="170">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"/>

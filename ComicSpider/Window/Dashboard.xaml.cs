@@ -318,7 +318,7 @@ namespace ComicSpider
 		public void Save_all()
 		{
 			Update_settings();
-
+			
 			try
 			{
 				Save_vol_info_list();
@@ -802,7 +802,6 @@ namespace ComicSpider
 				});
 			}
 
-
 			List<Web_src_info> new_list = new List<Web_src_info>();
 			foreach (var item in temp_list)
 			{
@@ -908,6 +907,7 @@ namespace ComicSpider
 											item.Name,
 											item.Index,
 											item.State,
+											item.Size,
 											vol.Url,
 											vol.Name,
 											item.Parent.Cookie,

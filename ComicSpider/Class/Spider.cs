@@ -696,6 +696,8 @@ namespace ys.Web
 					if (response.Headers["Content-Type"].Contains("html"))
 						throw new Exception("Remote sever error: download file failed.");
 
+					file_info.Parent.Size = (double)response.ContentLength / 1024.0 / 1024.0;
+
 					MemoryStream cache = new MemoryStream();
 					int total_recieved_bytes = 0;
 					int current_recieved_bytes = 0;
