@@ -68,6 +68,18 @@ namespace ys.Web
 				NotifyPropertyChanged("State");
 			}
 		}
+		public double Size
+		{
+			get
+			{
+				return size;
+			}
+			set
+			{
+				size = value;
+				NotifyPropertyChanged("Size");
+			}
+		}
 		public List<Web_src_info> Children
 		{
 			get { return children; }
@@ -131,6 +143,7 @@ namespace ys.Web
 		private string url;
 		private string name;
 		private string state;
+		private double size;
 		private List<Web_src_info> children;
 	}
 
