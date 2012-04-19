@@ -532,6 +532,20 @@ namespace ys.Web
 
 				if (vol_info.Children.Count > 0)
 				{
+					lock (page_queue_lock)
+					{
+						foreach (var page_list in vol_info.Children)
+						{
+							page_queue.Enqueue(page_list);
+						}
+					}
+
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Report_main_progress_delegate(
+							Dashboard.Instance.Report_main_progress
+						)
+					);
+
 					#region Create folder
 					string dir_path = "";
 
@@ -566,14 +580,6 @@ namespace ys.Web
 						}
 					}
 					#endregion
-
-					lock (page_queue_lock)
-					{
-						foreach (var page_list in vol_info.Children)
-						{
-							page_queue.Enqueue(page_list);
-						} 
-					}
 				}
 				else
 				{
@@ -726,7 +732,7 @@ namespace ys.Web
 							speed_recorder = 0;
 						}
 					}
-					while (!stopped || current_recieved_bytes > 0);
+					while (!stopped && current_recieved_bytes > 0);
 
 					#endregion
 
