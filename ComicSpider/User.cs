@@ -36,6 +36,7 @@ create table if not exists [Page_list] (
 	[Name] nvarchar(300),
 	[Index] int,
 	[State] nvarchar(50),
+	[Size] float,
 	[Parent_url] nvarchar(300),
 	[Parent_name] nvarchar(300),
 	[Parent_cookie] text,
