@@ -21,20 +21,21 @@ namespace ys.Web
 			int index,
 			string name,
 			string path,
-			Web_src_info parent)
+			Web_src_info parent,
+			string cookie = "")
 		{
 			Url = url;
 			Index = index;
 			Name = name;
 			state = State_Wait;
-			Cookie = "";
 			Path = path;
 			Parent = parent;
+			Cookie = cookie;
 		}
 
-		public const string State_Wait = "Wait";
+		public const string State_Wait = "";
 		public const string State_downloaded = "OK";
-		public const string State_Cancel = "Cancel";
+		public const string State_Stopped = "Stopped";
 		public const string State_failed = "X";
 
 		public string Url

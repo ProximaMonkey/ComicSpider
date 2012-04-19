@@ -611,35 +611,6 @@ namespace ComicSpider
 				}
 			}
 		}
-		private void Copy_name_Click(object sender, RoutedEventArgs e)
-		{
-			MenuItem menu_item = sender as MenuItem;
-			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			foreach (Web_src_info list_item in list_view.SelectedItems)
-			{
-				Clipboard.SetText(list_item.Name);
-				break;
-			}
-		}
-		private void Copy_url_Click(object sender, RoutedEventArgs e)
-		{
-			MenuItem menu_item = sender as MenuItem;
-			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			foreach (Web_src_info list_item in list_view.SelectedItems)
-			{
-				Clipboard.SetText(list_item.Url);
-				break;
-			}
-		}
-		private void Open_url_Click(object sender, RoutedEventArgs e)
-		{
-			MenuItem menu_item = sender as MenuItem;
-			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			foreach (Web_src_info list_item in list_view.SelectedItems)
-			{
-				System.Diagnostics.Process.Start(list_item.Url);
-			}
-		}
 		private void Open_folder_Click(object sender, RoutedEventArgs e)
 		{
 			MenuItem menu_item = sender as MenuItem;
@@ -667,6 +638,25 @@ namespace ComicSpider
 			catch (Exception ex)
 			{
 				Message_box.Show(ex.Message);
+			}
+		}
+		private void Open_url_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			foreach (Web_src_info list_item in list_view.SelectedItems)
+			{
+				System.Diagnostics.Process.Start(list_item.Parent.Url);
+			}
+		}
+		private void Copy_url_Click(object sender, RoutedEventArgs e)
+		{
+			MenuItem menu_item = sender as MenuItem;
+			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			foreach (Web_src_info list_item in list_view.SelectedItems)
+			{
+				Clipboard.SetText(list_item.Url);
+				break;
 			}
 		}
 		private void Delelte_list_item_Click(object sender, RoutedEventArgs e)
@@ -704,7 +694,7 @@ namespace ComicSpider
 			if (failed_count > 0)
 				Message_box.Show("Only downloaded item(s) have been deleted.");
 			if (delete_count > 0)
-				this.Title = "Volume(s) deleted.";
+				this.Title = "Item(s) deleted.";
 			else
 			{
 				if (Volume_downloaded() == volume_list.Items.Count)

@@ -26,9 +26,8 @@
 		<ContextMenu x:Key="view_list_menu">
 			<MenuItem Header="View" Click="View_Click" />
 			<MenuItem Header="Open folder" Click="Open_folder_Click" />
-			<MenuItem Header="Copy Name" Click="Copy_name_Click" />
-			<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 			<MenuItem Header="Open Url" Click="Open_url_Click" />
+			<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
 		<Storyboard x:Key="sb_show_logs">
