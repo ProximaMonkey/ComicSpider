@@ -8,6 +8,11 @@ namespace ComicSpider
 {
 	public class Web_client : WebClient
 	{
+		public Web_client()
+		{
+			Headers["User-Agent"] = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)";
+		}
+
 		public static Web_client Post(
 			string url,
 			Dictionary<string, string> info)
@@ -43,9 +48,6 @@ namespace ComicSpider
 
 			request.Timeout = Timeout;
 			request.AllowAutoRedirect = AllowAutoRedirect;
-
-			request.Headers.Add("Cookie", Cookie_pool.Instance.Get(address.Host));
-			request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2";
 
 			return request;
 		}

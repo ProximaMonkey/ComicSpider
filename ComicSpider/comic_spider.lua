@@ -109,7 +109,7 @@ comic_spider = {
 
 		indexed_file_name = true,
 
-		login = function()
+		init = function()
 		end,
 
 		get_volumes = function()
@@ -211,7 +211,8 @@ comic_spider = {
 		is_create_view_page = false,
 		indexed_file_name = false,
 
-		login = function()
+		init = function()
+			-- Login first
 			lc:web_post(
 				'http://www.pixiv.net/login.php',
 				{
@@ -236,10 +237,12 @@ comic_spider = {
 		-- Example for usage of XPath. Slower but easier than regex.
 		get_files = function()
 			lc:xfill_list(
-				"//div[@class='works_display']/a/img",
+				"//div[@class='works_display']/a",
 				function(i, node)
-					name = node.Attributes["alt"].Value
-					url = node.Attributes["src"].Value.Replace('_m.', '.')
+					if node.Attributes['href'].Value:find('mode=manga') then return end
+					img_node = node:SelectSingleNode('//img')
+					name = img_node.Attributes["alt"].Value
+					url = img_node.Attributes["src"].Value:gsub('_m%.', '%.')
 				end
 			)
 		end,

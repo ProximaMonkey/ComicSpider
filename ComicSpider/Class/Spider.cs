@@ -208,8 +208,7 @@ namespace ys
 				{
 					lua_script = File.ReadAllText(@"comic_spider.lua");
 
-					Lua lua = new Lua();
-					lua.DoString(lua_script);
+					Lua_controller lua = new Lua_controller(false);
 
 					foreach (string item in lua.GetTable("settings.file_types").Values)
 					{
@@ -290,7 +289,7 @@ namespace ys
 					{
 						lua.DoString(
 							string.Format(
-								"if comic_spider['{0}'].login then comic_spider['{0}'].login() end",
+								"if comic_spider['{0}'].init then comic_spider['{0}'].init() end",
 								site_name
 							)
 						);
@@ -312,7 +311,6 @@ namespace ys
 
 			thread.Name = "ScriptLoader";
 			thread.Start();
-			thread_pool.Add(thread);
 		}
 		private string Load_remote_script(string url)
 		{
@@ -712,7 +710,7 @@ namespace ys
 						request.Referer = Uri.EscapeUriString(file_info.Parent.Url);
 					string cookie = Cookie_pool.Instance.Get(host);
 					if (!string.IsNullOrEmpty(cookie))
-						request.Headers.Add("Cookie", cookie);
+						request.Headers["Cookie"] = cookie;
 
 					#endregion
 
@@ -899,12 +897,13 @@ namespace ys
 
 			Web_client wc = new Web_client();
 
-			if (src_info.Parent != null)
-				wc.Headers.Add("Referer", Uri.EscapeUriString(src_info.Parent.Url));
-
-			string cookie = Cookie_pool.Instance.Get(ys.Web.Get_host_name(src_info.Url));
+			if (src_info.Parent == null)
+				wc.Headers["Referer"] = "http://www.pixiv.net/";
+			else
+				wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Parent.Url);
+			string cookie = Cookie_pool.Instance.Get(host);
 			if (!string.IsNullOrEmpty(cookie))
-				wc.Headers.Add("Cookie", cookie);
+				wc.Headers["Cookie"] = cookie;
 
 			try
 			{
@@ -964,9 +963,9 @@ namespace ys
 
 		private class Lua_controller : Lua
 		{
-			public Lua_controller()
+			public Lua_controller(bool wait_script_loading = true)
 			{
-				while (!Comic_spider.script_loaded)
+				while (wait_script_loading && !Comic_spider.script_loaded)
 				{
 					Thread.Sleep(100);
 				}
