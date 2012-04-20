@@ -240,7 +240,7 @@ comic_spider = {
 				"//div[@class='works_display']/a",
 				function(i, node)
 					if node.Attributes['href'].Value:find('mode=manga') then return end
-					img_node = node:SelectSingleNode('//img')
+					img_node = node.FirstChild
 					name = img_node.Attributes["alt"].Value
 					url = img_node.Attributes["src"].Value:gsub('_m%.', '%.')
 				end
