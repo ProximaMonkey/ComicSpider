@@ -197,6 +197,35 @@ comic_spider = {
 		end,
 	},
 
+	['* Pixiv'] = {
+		home = 'http://www.pixiv.net',
+
+		hosts = { 'pixiv.net' },
+
+		is_create_view_page = false,
+		indexed_file_name = false,
+
+		get_volumes = function()
+			src_info.Name = 'Pixiv'
+			lc:fill_list(
+				[[member_illust.php\?mode=medium&illust_id=\d+]],
+				function(i, gs, mc)
+					url = 'http://www.pixiv.net/' .. gs[0].Value
+				end
+			)
+		end,
+
+		get_files = function()
+			lc:xfill_list(
+				"//div[@class=works_display]/a/img",
+				function(i, node, nodes)
+					name = node.Attributes["alt"].Value
+					url = node.Attributes["src"].Value.Replace('_m.', '.')
+				end
+			)
+		end,
+	},
+
 	-- Example for Danbooru like none comic websites.
 	['* Moe imouto'] = {
 		home = 'https://yande.re/post?tags=rating%3Asafe',

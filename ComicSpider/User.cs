@@ -20,6 +20,10 @@ create table if not exists [Error_log] (
 	[Title] nvarchar(300) NOT NULL,
 	[Detail] text
 );
+create table if not exists [Cookie] (
+	[Host] nvarchar(300) PRIMARY KEY NOT NULL,
+	[Value] nvarchar(1000)
+);
 create table if not exists [Volume_list] (
 	[Url] nvarchar(300) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(300),
@@ -27,7 +31,6 @@ create table if not exists [Volume_list] (
 	[State] nvarchar(50),
 	[Parent_url] nvarchar(300),
 	[Parent_name] nvarchar(300),
-	[Parent_cookie] text,
 	[Path] nvarchar(300),
 	[Data_time] datetime NOT NULL
 );
@@ -39,7 +42,6 @@ create table if not exists [Page_list] (
 	[Size] float,
 	[Parent_url] nvarchar(300),
 	[Parent_name] nvarchar(300),
-	[Parent_cookie] text,
 	[Path] nvarchar(300),
 	[Data_time] datetime NOT NULL
 );";
