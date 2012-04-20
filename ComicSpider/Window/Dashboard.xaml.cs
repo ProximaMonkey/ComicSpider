@@ -56,10 +56,7 @@ namespace ComicSpider
 				int count = downloaded_files_count;
 				int all = all_files_count;
 
-				if (count == all)
-					MainWindow.Main.Taskbar.SetProgressState(ys.Win7.TbpFlag.Normal);
-				else
-					MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
+				MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
 
 				return string.Format("{0} / {1}", count, all);
 			}

@@ -209,15 +209,19 @@ comic_spider = {
 		-- Example for usage of XPath. Slower but easier than regex.
 		get_volumes = function(self)
 			src_info.Name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'
+			one_page = src_info.Url:find('/post/show')
 			lc:fill_list(
-				[[Post\.register\(.+?\)]],
+				[[\{[^\}]+?file_url[^}]+?\}]],
 				function(i, gs, mc)
+					if one_page and info_list.Count > 0 then return end
 					url = gs[0].Value:match([["file_url":"(.-)"]])
-					name = gs[0].Value:match([["rating":"(.)"]])
-					if name == 's' then
-						name = 'safe'
+					r = gs[0].Value:match([["rating":"(.)"]])
+					if r == 's' then
+						name = 'Safe'
+					elseif r == 'q' then
+						name = 'Questionable'
 					else
-						name = 'not safe'
+						name = 'Explicit'
 					end
 				end
 			)

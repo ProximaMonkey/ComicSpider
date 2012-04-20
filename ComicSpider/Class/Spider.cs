@@ -265,7 +265,7 @@ namespace ys.Web
 							Report(app_info["url"] as string);
 						}
 
-						Report("Remote script '{0}' loaded.", url);
+						Report("Remote script loaded: '{0}'", url);
 					}
 
 					foreach (string site_name in (lua.GetTable("comic_spider") as LuaTable).Keys)
@@ -698,13 +698,13 @@ namespace ys.Web
 					#endregion
 
 					#region Download Stream
-					
+
 					WebResponse response = request.GetResponse();
 					Stream remote_stream = response.GetResponseStream();
 					remote_stream.ReadTimeout = time_out;
 					if (response.Headers["Content-Type"].Contains("html"))
 						throw new Exception("Remote sever error: download file failed.");
-					
+
 					file_info.Parent.Size = (double)response.ContentLength / 1024.0 / 1024.0;
 
 					MemoryStream cache = new MemoryStream();
@@ -855,7 +855,7 @@ namespace ys.Web
 				}
 				catch (LuaException ex)
 				{
-					Report("Lua exception, " + ex.Message);
+					Report("Lua exception: " + ex.Message);
 				}
 				catch (Exception ex)
 				{
@@ -931,7 +931,7 @@ namespace ys.Web
 			}
 			catch (LuaException ex)
 			{
-				Report("Lua exception, " + ex.Message);
+				Report("Lua exception: " + ex.Message);
 			}
 			catch (Exception ex)
 			{
@@ -992,7 +992,7 @@ namespace ys.Web
 
 					if (string.IsNullOrEmpty(this.GetString("url")))
 						continue;
-
+					
 					list.Add(
 						new Web_src_info(
 							this.GetString("url"),

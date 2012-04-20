@@ -132,7 +132,7 @@
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
 				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" />
-				<TextBlock x:Name="txt_title" Text="Comic Spider" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" HorizontalAlignment="Right" d:LayoutOverrides="GridBox" IsHitTestVisible="False" FontFamily="/Comic Spider;component/Fonts/#Segoe UI"/>
+				<TextBlock x:Name="txt_title" Text="Comic Spider" ToolTip="{Binding Path=Text, ElementName=txt_title}" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" d:LayoutOverrides="GridBox" FontFamily="/Comic Spider;component/Fonts/#Segoe UI" TextTrimming="CharacterEllipsis"/>
 				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
