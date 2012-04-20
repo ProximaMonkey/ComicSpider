@@ -24,7 +24,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using ComicSpider.UserTableAdapters;
-using ys.Web;
+using ys;
 using System.Windows.Controls;
 using System.Linq;
 using System.Windows.Threading;
@@ -119,7 +119,7 @@ namespace ComicSpider
 		{
 			Key_valueTableAdapter kv_adapter = new Key_valueTableAdapter();
 			kv_adapter.Adapter.UpdateCommand = kv_adapter.Connection.CreateCommand();
-			kv_adapter.Adapter.UpdateCommand.CommandText = "update Key_value set [Value] = @value where [Key] = 'Settings'";
+			kv_adapter.Adapter.UpdateCommand.CommandText = "insert or replace into Key_value ([Key], [Value]) values ('Settings', @value)";
 			kv_adapter.Adapter.UpdateCommand.Parameters.AddWithValue("@value", ys.Common.ObjectToByteArray(Main_settings.Main));
 
 			kv_adapter.Connection.Open();

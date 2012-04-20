@@ -42,8 +42,7 @@ create table if not exists [Page_list] (
 	[Parent_cookie] text,
 	[Path] nvarchar(300),
 	[Data_time] datetime NOT NULL
-);
-insert or ignore into [Key_value] ([Key], [Value]) values ('Settings', NULL);";
+);";
 			da.Connection.Open();
 			da.Adapter.SelectCommand.ExecuteNonQuery();
 			da.Connection.Close();

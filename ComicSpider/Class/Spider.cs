@@ -12,7 +12,7 @@ using ComicSpider.UserTableAdapters;
 using LuaInterface;
 using System.Text;
 
-namespace ys.Web
+namespace ys
 {
 	class Comic_spider
 	{
@@ -248,8 +248,15 @@ namespace ys.Web
 						// Get remote script
 						string loaded_script = Load_remote_script(url);
 						lua_script += '\n' + loaded_script;
-						
-						lua.DoString(loaded_script);
+
+						if (loaded_script == null)
+							Report("Failed to load remote script: " + url);
+						else
+						{
+							Report("Remote script loaded: " + url);
+
+							lua.DoString(loaded_script);
+						}
 
 						// Check version
 						LuaTable app_info = lua.GetTable("app_info");
@@ -264,8 +271,6 @@ namespace ys.Web
 							Report(app_info["notice"] as string);
 							Report(app_info["url"] as string);
 						}
-
-						Report("Remote script loaded: '{0}'", url);
 					}
 
 					foreach (string site_name in (lua.GetTable("comic_spider") as LuaTable).Keys)
@@ -301,11 +306,7 @@ namespace ys.Web
 
 				script_loaded = true;
 
-				// App usage analytics
-				var app_analytics_info = new Dictionary<string, string>();
-				app_analytics_info.Add("version", Main_settings.Main.App_version);
-				app_analytics_info.Add("os", Environment.OSVersion.ToString());
-				ys.Web.App_usage_analytics.Post(app_analytics_info);
+				App_analyse();
 			}));
 
 			thread.Name = "ScriptLoader";
@@ -314,8 +315,7 @@ namespace ys.Web
 		}
 		private string Load_remote_script(string url)
 		{
-			Lua_script lua_script;
-			string hash = string.Empty;
+			Lua_script lua_script = null;
 			WebClientEx wc = new WebClientEx();
 			wc.Encoding = System.Text.Encoding.UTF8;
 
@@ -330,12 +330,19 @@ namespace ys.Web
 
 			if (data_reader.Read())
 			{
-				lua_script = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Lua_script;
-
-				// Chech if has been modified.
-				wc.Headers.Add("If-None-Match", lua_script.ETag);
 				try
 				{
+					try
+					{
+						lua_script = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Lua_script;
+						// Chech if has been modified.
+						wc.Headers.Add("If-None-Match", lua_script.ETag);
+					}
+					catch
+					{
+						lua_script = new Lua_script("", "");
+					}
+
 					string loaded_script = wc.DownloadString(url);
 
 					lua_script.ETag = wc.ResponseHeaders["ETag"];
@@ -347,7 +354,10 @@ namespace ys.Web
 						data_reader["Value"] as byte[]
 					);
 				}
-				catch{ }
+				catch(Exception ex)
+				{
+					Report(ex.Message);
+				}
 			}
 			else
 			{
@@ -355,7 +365,7 @@ namespace ys.Web
 
 				lua_script = new Lua_script(
 					loaded_script,
-					hash
+					wc.ResponseHeaders["ETag"]
 				);
 
 				kv_adpter.Insert(
@@ -366,7 +376,10 @@ namespace ys.Web
 
 			kv_adpter.Connection.Close();
 
-			return lua_script.Script;
+			if (lua_script == null)
+				return null;
+			else
+				return lua_script.Script;
 		}
 		private void Init_lua_script_watcher()
 		{
@@ -387,6 +400,13 @@ namespace ys.Web
 			{
 				Message_box.Show(ex.Message);
 			}
+		}
+		private void App_analyse()
+		{
+			var info = new Dictionary<string, string>();
+			info.Add("version", Main_settings.Main.App_version);
+			info.Add("os", Environment.OSVersion.ToString());
+			ys.Web.Post("http://comicspider.sinaapp.com/analytics/?r=a", info);
 		}
 
 		private void Log_error(Exception ex, string url = "")
@@ -913,6 +933,7 @@ namespace ys.Web
 					lua_c["html"] = wc.DownloadString(src_info.Url);
 
 					src_info.Cookie = wc.ResponseHeaders["Set-Cookie"] + "";
+					src_info.Cookie = src_info.Cookie.Substring(0, src_info.Cookie.IndexOf(';'));
 
 					foreach (var func in func_list)
 					{
@@ -1144,6 +1165,16 @@ namespace ys.Web
 			public object json_decode(string input)
 			{
 				return Newtonsoft.Json.JsonConvert.DeserializeObject(input);
+			}
+
+			public string web_post(string url, LuaTable dict)
+			{
+				Dictionary<string, string> info = new Dictionary<string, string>();
+				foreach (string key in dict.Keys)
+				{
+					info.Add(key, dict[key] as string);
+				}
+				return ys.Web.Post(url, info);
 			}
 		}
 

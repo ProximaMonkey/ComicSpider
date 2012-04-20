@@ -28,9 +28,12 @@ namespace ComicSpider
 
 		private Main_settings()
 		{
+			Main_url = string.Empty;
+			Root_dir = string.Empty;
 			Thread_count = "5";
 			Is_auto_begin = true;
-
+			Is_silent = false;
+			Max_console_line = 500;
 			clear_cache_date = DateTime.Now;
 		}
 

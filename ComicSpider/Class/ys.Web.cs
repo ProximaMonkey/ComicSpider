@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 
-namespace ys.Web
+namespace ys
 {
 	public class WebClientEx : WebClient
 	{
@@ -21,21 +21,23 @@ namespace ys.Web
 		private int timeout = 30 * 1000;
 	}
 
-	public static class App_usage_analytics
+	public class Web
 	{
-		public static void Post(Dictionary<string, string> addition_infos)
+		public static string Post(
+			string url,
+			Dictionary<string, string> info)
 		{
 			string data = "";
 
-			foreach (var info in addition_infos)
+			foreach (var item in info)
 			{
-				data += System.Web.HttpUtility.UrlEncode(info.Key) + "=" 
-					+ System.Web.HttpUtility.UrlEncode(info.Value) + "&";
+				data += System.Web.HttpUtility.UrlEncode(item.Key) + "="
+					+ System.Web.HttpUtility.UrlEncode(item.Value) + "&";
 			}
 
 			WebClient wc = new WebClient();
 			wc.Headers["Content-type"] = "application/x-www-form-urlencoded";
-			string ret = wc.UploadString("http://comicspider.sinaapp.com/analytics/?r=a", data);
+			return wc.UploadString(url, data);
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Linq;
 
-namespace ys.Web
+namespace ys
 {
 	public enum Web_src_state
 	{
