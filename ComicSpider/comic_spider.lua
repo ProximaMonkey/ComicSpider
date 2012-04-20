@@ -19,24 +19,27 @@ External functions:
 	object json_decode(string s):
 		Decode json string.
 
+	Web_client lc:web_post(string url, LuaTable dict):
+		Send data to server via POST method.
+
 	string lc:find(string regex_pattern):
 		CSharp Regex.fill_list method. Param pattern will be automatically convert to string.
 		Return the match group which is named 'find'.
 
-	void lc:fill_list(string regex_pattern, function step(int index, GroupCollection gs, MatchCollection mc) = null):
-	void lc:fill_list(LuaTable regex_patterns, function step(int index, GroupCollection gs, MatchCollection mc) = null):
+	void lc:fill_list(string regex_pattern, function step(int index, GroupCollection gs) = null):
+	void lc:fill_list(LuaTable regex_patterns, function step(int index, GroupCollection gs) = null):
 		Matches all, fill info_list with matched url and name, and loop with a callback function.
 		Except the last pattern in the table, others are all use to select contents.
 		Url match group should named with 'url'.
 		Name match group should named with 'name'.
 		Variable url and name are visible in step function.
 
-	void lc:fill_list(JsonArray arr, function step(int index, string str, JsonArray arr)):
+	void lc:fill_list(JsonArray arr, function step(int index, string str)):
 		No default value for step function.
 		Fill info_list with an array, and loop with a callback function.
 		Variable url and name are visible in step function.
 
-	void lc:xfill_list(selector, function step(int index, HtmlNode node, HtmlNodeCollection nodes)):
+	void lc:xfill_list(selector, function step(int index, HtmlNode node)):
 		No default value for step function.
 		Fill info_list via XPath selector. For more information, search HtmlAgilityPack.
 		Should manually set the url of src_info.
@@ -85,13 +88,12 @@ settings = {
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.zip' },
 
-	-- Http request User-Agent header list. Fake your info here. It will randomly choose one of them.
-	user_agents = { 'Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2' },
-
 	proxy = '',
 
 	-- Default script editor for this lua script.
 	script_editor = [[notepad.exe]],
+
+	raw_file_folder = 'Raw file',
 }
 
 comic_spider = {
@@ -106,6 +108,9 @@ comic_spider = {
 		is_create_view_page = true,
 
 		indexed_file_name = true,
+
+		login = function()
+		end,
 
 		get_volumes = function()
 			src_info.Name = ''
@@ -189,7 +194,7 @@ comic_spider = {
 			lc:fill_list(
 				lc:json_decode(list),
 				-- 这里演示了step的应用，类似jQuery中animate的step函数。注意变量url和name是引用。
-				function(i, str, arr)
+				function(i, str)
 					n = math.random(#img_hosts)
 					url = 'http://' .. img_hosts[n] .. '.manhua.178.com/' .. str
 				end
@@ -197,6 +202,7 @@ comic_spider = {
 		end,
 	},
 
+	-- Example: login a site to get resources.
 	['* Pixiv'] = {
 		home = 'http://www.pixiv.net',
 
@@ -205,20 +211,33 @@ comic_spider = {
 		is_create_view_page = false,
 		indexed_file_name = false,
 
+		login = function()
+			lc:web_post(
+				'http://www.pixiv.net/login.php',
+				{
+					mode = 'login',
+					pixiv_id = 'waistcoat01@gmail.com',
+					pass = '123456',
+					skip = '1',
+				}
+			)
+		end,
+
 		get_volumes = function()
 			src_info.Name = 'Pixiv'
 			lc:fill_list(
 				[[member_illust.php\?mode=medium&illust_id=\d+]],
-				function(i, gs, mc)
+				function(i, gs)
 					url = 'http://www.pixiv.net/' .. gs[0].Value
 				end
 			)
 		end,
 
+		-- Example for usage of XPath. Slower but easier than regex.
 		get_files = function()
 			lc:xfill_list(
-				"//div[@class=works_display]/a/img",
-				function(i, node, nodes)
+				"//div[@class='works_display']/a/img",
+				function(i, node)
 					name = node.Attributes["alt"].Value
 					url = node.Attributes["src"].Value.Replace('_m.', '.')
 				end
@@ -235,13 +254,12 @@ comic_spider = {
 		is_create_view_page  = false,
 		is_indexed_file_name = false,
 
-		-- Example for usage of XPath. Slower but easier than regex.
 		get_volumes = function(self)
 			src_info.Name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'
 			one_page = src_info.Url:find('/post/show')
 			lc:fill_list(
-				[[\{[^\}]+?file_url[^}]+?\}]],
-				function(i, gs, mc)
+				[[("rating".+?"file_url":".+?")|("file_url".+?"rating")]],
+				function(i, gs)
 					if one_page and info_list.Count > 0 then return end
 					url = gs[0].Value:match([["file_url":"(.-)"]])
 					r = gs[0].Value:match([["rating":"(.)"]])
@@ -254,6 +272,15 @@ comic_spider = {
 					end
 				end
 			)
+			if info_list.Count == 0 then
+				lc:xfill_list(
+					"//a[@id='highres']",
+					function(i, node)
+						url = node.Attributes['href'].Value
+						name = html:match('Rating: (.-)<')
+					end
+				)
+			end
 		end,
 	},
 }
@@ -264,8 +291,8 @@ for n, h in pairs {
 	['Donmai']                 = 'http://donmai.us'              ,
 	['Behoimi']                = 'http://behoimi.org'            ,
 	['Nekobooru']              = 'http://nekobooru.net'          ,
-	['Sankakucomplex Idol']    = 'http://idol.sankakucomplex.com',
 	['Sankakucomplex Channel'] = 'http://chan.sankakucomplex.com',
+	['Sankakucomplex Idol']    = 'http://idol.sankakucomplex.com',
 } do
 	comic_spider[n] = { home = h .. '/post?tags=rating%3Asafe' }
 end

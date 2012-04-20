@@ -4,8 +4,7 @@
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
         <Connections>
-          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
-          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="userConnectionString" IsAppSettingsProperty="true" Modifier="Assembly" Name="userConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.ComicSpider.Properties.Settings.GlobalReference.Default.userConnectionString" Provider="System.Data.SQLite" />
         </Connections>
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="CookieTableAdapter" GeneratorDataComponentClassName="CookieTableAdapter" Name="Cookie" UserDataComponentName="CookieTableAdapter">
@@ -366,7 +365,7 @@
               <xs:element name="Value" msprop:Generator_ColumnVarNameInTable="columnValue" msprop:Generator_ColumnPropNameInRow="Value" msprop:Generator_ColumnPropNameInTable="ValueColumn" msprop:Generator_UserColumnName="Value" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
-                    <xs:maxLength value="1000" />
+                    <xs:maxLength value="10000" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>

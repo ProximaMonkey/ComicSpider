@@ -96,7 +96,7 @@
 
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">
 				<TextBlock Margin="3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F"/>
-				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="5" Background="#BFFFFFFF"/>
+				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="3" Background="#BFFFFFFF"/>
 			</StackPanel>
 			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
 				<ComboBoxItem Content="open supported website" IsEnabled="False" IsSelected="True"></ComboBoxItem>

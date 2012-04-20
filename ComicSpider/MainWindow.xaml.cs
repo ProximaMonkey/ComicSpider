@@ -47,7 +47,7 @@ namespace ComicSpider
 			Main = this;
 
 			this.Title = "Comic Spider "
-				+ Main_settings.Main.App_version
+				+ Main_settings.Instance.App_version
 				+ " April 2012 y.s.";
 			img_logo.ToolTip = this.Title;
 
@@ -100,27 +100,27 @@ namespace ComicSpider
 			SQLiteDataReader data_reader = kv_adpter.Adapter.SelectCommand.ExecuteReader();
 			if (data_reader.Read())
 			{
-				Main_settings.Main = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
+				Main_settings.Instance = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Main_settings;
 			}
 
-			cb_auto_begin.IsChecked = Main_settings.Main.Is_auto_begin;
+			cb_auto_begin.IsChecked = Main_settings.Instance.Is_auto_begin;
 			foreach (MenuItem item in this.ContextMenu.Items)
 			{
 				if (item.Name == "cb_is_slient")
-					item.IsChecked = Main_settings.Main.Is_silent;
+					item.IsChecked = Main_settings.Instance.Is_silent;
 			}
 
 			kv_adpter.Connection.Close();
 
-			Main_settings.Main.Max_console_line = 500;
-			Main_settings.Main.App_version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			Main_settings.Instance.Max_console_line = 500;
+			Main_settings.Instance.App_version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 		}
 		public void Save_settings()
 		{
 			Key_valueTableAdapter kv_adapter = new Key_valueTableAdapter();
 			kv_adapter.Adapter.UpdateCommand = kv_adapter.Connection.CreateCommand();
 			kv_adapter.Adapter.UpdateCommand.CommandText = "insert or replace into Key_value ([Key], [Value]) values ('Settings', @value)";
-			kv_adapter.Adapter.UpdateCommand.Parameters.AddWithValue("@value", ys.Common.ObjectToByteArray(Main_settings.Main));
+			kv_adapter.Adapter.UpdateCommand.Parameters.AddWithValue("@value", ys.Common.ObjectToByteArray(Main_settings.Instance));
 
 			kv_adapter.Connection.Open();
 
@@ -143,7 +143,7 @@ namespace ComicSpider
 
 		public void Show_balloon(string info, MouseButtonEventHandler click_event = null, bool play_sound = false)
 		{
-			if (Main_settings.Main.Is_silent) return;
+			if (Main_settings.Instance.Is_silent) return;
 
 			tray_balloon = new Tray_balloon();
 
@@ -272,7 +272,7 @@ namespace ComicSpider
 					{
 						path = Path.Combine(parent.Name, path);
 					}
-					path = Path.Combine(Main_settings.Main.Root_dir, path);
+					path = Path.Combine(Main_settings.Instance.Root_dir, path);
 
 					string file_path = Path.Combine(Path.Combine(path, list_item.Name), "index.html");
 					if (File.Exists(file_path))
@@ -295,7 +295,7 @@ namespace ComicSpider
 		private void cb_is_slient_Click(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = sender as MenuItem;
-			Main_settings.Main.Is_silent = item.IsChecked;
+			Main_settings.Instance.Is_silent = item.IsChecked;
 		}
 		private void btn_close_Click(object sender, RoutedEventArgs e)
 		{
@@ -320,7 +320,7 @@ namespace ComicSpider
 
 		private void cb_auto_begin_Click(object sender, RoutedEventArgs e)
 		{
-			Main_settings.Main.Is_auto_begin = cb_auto_begin.IsChecked == true;
+			Main_settings.Instance.Is_auto_begin = cb_auto_begin.IsChecked == true;
 		}
 		private void cb_topmost_Click(object sender, RoutedEventArgs e)
 		{
@@ -384,7 +384,7 @@ namespace ComicSpider
 			{
 				case System.Windows.Input.Key.A:
 					cb_auto_begin.IsChecked = !cb_auto_begin.IsChecked;
-					Main_settings.Main.Is_auto_begin = cb_auto_begin.IsChecked == true;
+					Main_settings.Instance.Is_auto_begin = cb_auto_begin.IsChecked == true;
 					break;
 
 				case System.Windows.Input.Key.D:
@@ -402,7 +402,7 @@ namespace ComicSpider
 
 				case System.Windows.Input.Key.S:
 					cb_is_slient.IsChecked = !cb_is_slient.IsChecked;
-					Main_settings.Main.Is_silent = cb_is_slient.IsChecked;
+					Main_settings.Instance.Is_silent = cb_is_slient.IsChecked;
 					break;
 
 				case System.Windows.Input.Key.V:

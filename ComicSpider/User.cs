@@ -22,7 +22,7 @@ create table if not exists [Error_log] (
 );
 create table if not exists [Cookie] (
 	[Host] nvarchar(300) PRIMARY KEY NOT NULL,
-	[Value] nvarchar(1000)
+	[Value] nvarchar(10000)
 );
 create table if not exists [Volume_list] (
 	[Url] nvarchar(300) PRIMARY KEY NOT NULL,

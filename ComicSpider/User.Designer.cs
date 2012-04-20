@@ -559,7 +559,7 @@ namespace ComicSpider {
                 this.columnHost.AllowDBNull = false;
                 this.columnHost.Unique = true;
                 this.columnHost.MaxLength = 300;
-                this.columnValue.MaxLength = 1000;
+                this.columnValue.MaxLength = 10000;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3005,7 +3005,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3625,7 +3625,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4231,7 +4231,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4658,7 +4658,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5321,7 +5321,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

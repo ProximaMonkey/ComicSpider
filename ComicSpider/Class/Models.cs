@@ -16,30 +16,21 @@ namespace ys
 
 	public class Web_src_info : System.ComponentModel.INotifyPropertyChanged
 	{
-		public Web_src_info()
-		{
-			Url = string.Empty;
-			Index = 0;
-			Name = string.Empty;
-			state = Web_src_state.Wait;
-			Cookie = string.Empty;
-		}
 		public Web_src_info(
 			string url,
 			int index,
 			string name,
 			string path,
-			Web_src_info parent,
-			string cookie = "")
+			Web_src_info parent)
 		{
 			Url = url;
+			uri = null;
 			Index = index;
 			Name = name;
 			state = Web_src_state.Wait;
 			state_text = string.Empty;
 			Path = path;
 			Parent = parent;
-			Cookie = cookie;
 		}
 
 		public Web_src_state State
@@ -109,6 +100,21 @@ namespace ys
 				NotifyPropertyChanged("Url");
 			}
 		}
+		public Uri Uri
+		{
+			get
+			{
+				if (uri == null)
+				{
+					if (string.IsNullOrEmpty(url))
+						return new Uri(url);
+					else
+						return null;
+				}
+				else
+					return uri;
+			}
+		}
 		public string Name
 		{
 			get { return name; }
@@ -131,7 +137,6 @@ namespace ys
 			}
 		}
 		public int Index { get; set; }
-		public string Cookie { get; set; }
 		public string Path { get; set; }
 
 		public int Count
@@ -185,6 +190,7 @@ namespace ys
 		}
 
 		private string url;
+		private Uri uri;
 		private string name;
 		private Web_src_state state;
 		private string state_text;

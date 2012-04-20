@@ -8,7 +8,7 @@ namespace ComicSpider
 	[Serializable]
 	public class Main_settings
 	{
-		public static Main_settings Main
+		public static Main_settings Instance
 		{
 			get
 			{
@@ -30,7 +30,7 @@ namespace ComicSpider
 		{
 			Main_url = string.Empty;
 			Root_dir = string.Empty;
-			Thread_count = "5";
+			Thread_count = "3";
 			Is_auto_begin = true;
 			Is_silent = false;
 			Max_console_line = 500;

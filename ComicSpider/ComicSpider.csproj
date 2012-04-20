@@ -101,6 +101,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Class\Cookie_pool.cs" />
     <Compile Include="Class\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -108,10 +109,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\Main_settings.cs" />
-    <Compile Include="Class\ys.Win7.cs" />
-    <Compile Include="Class\ys.Web.cs">
+    <Compile Include="Class\Web_client.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Class\ys.Win7.cs" />
+    <Compile Include="Class\ys.Web.cs" />
     <Compile Include="Class\ys.Common.cs" />
     <Compile Include="Contorl\WorkingIcon.xaml.cs">
       <DependentUpon>WorkingIcon.xaml</DependentUpon>

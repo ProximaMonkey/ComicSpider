@@ -37,11 +37,11 @@ namespace ComicSpider
 				base.Title = value;
 				MainWindow.Main.Title = value;
 
-				if (txt_console.LineCount >= Main_settings.Main.Max_console_line)
+				if (txt_console.LineCount >= Main_settings.Instance.Max_console_line)
 				{
 					txt_console.Text = txt_console.Text.Substring(
 												txt_console.GetCharacterIndexFromLineIndex(
-													Main_settings.Main.Max_console_line / 2
+													Main_settings.Instance.Max_console_line / 2
 												)
 											);
 				}
@@ -92,9 +92,9 @@ namespace ComicSpider
 
 		public void Update_settings()
 		{
-			Main_settings.Main.Main_url = txt_main_url.Text;
-			Main_settings.Main.Root_dir = txt_dir.Text;
-			Main_settings.Main.Thread_count = txt_thread.Text;
+			Main_settings.Instance.Main_url = txt_main_url.Text;
+			Main_settings.Instance.Root_dir = txt_dir.Text;
+			Main_settings.Instance.Thread_count = txt_thread.Text;
 		}
 		public void Save_all()
 		{
@@ -104,6 +104,7 @@ namespace ComicSpider
 			{
 				Save_vol_info_list();
 				Save_page_info_list();
+				Cookie_pool.Instance.Save();
 			}
 			catch (Exception ex)
 			{
@@ -153,10 +154,10 @@ namespace ComicSpider
 
 					if (comic_spider.Stopped)
 					{
-						if (Main_settings.Main.Is_auto_begin)
+						if (Main_settings.Instance.Is_auto_begin)
 							btn_start_Click(null, null);
 					}
-					else if (Main_settings.Main.Is_auto_begin)
+					else if (Main_settings.Instance.Is_auto_begin)
 						comic_spider.Add_volume_list(added_list);
 				}
 				else if (list.Count > 0)
@@ -215,7 +216,7 @@ namespace ComicSpider
 				{
 					try
 					{
-						System.Diagnostics.Process.Start(Main_settings.Main.Root_dir);
+						System.Diagnostics.Process.Start(Main_settings.Instance.Root_dir);
 					}
 					catch (Exception ex)
 					{
@@ -341,7 +342,7 @@ namespace ComicSpider
 		{
 			InitializeComponent();
 
-			if (Main_settings.Main.Is_need_clear_cache)
+			if (Main_settings.Instance.Is_need_clear_cache)
 				Clear_cache();
 
 			comic_spider = new Comic_spider();
@@ -355,9 +356,9 @@ namespace ComicSpider
 				Message_box.Show(ex.Message + '\n' + ex.StackTrace);
 			}
 
-			txt_main_url.Text = Main_settings.Main.Main_url;
-			txt_dir.Text = Main_settings.Main.Root_dir;
-			txt_thread.Text = Main_settings.Main.Thread_count;
+			txt_main_url.Text = Main_settings.Instance.Main_url;
+			txt_dir.Text = Main_settings.Instance.Root_dir;
+			txt_thread.Text = Main_settings.Instance.Thread_count;
 		}
 
 		private static Dashboard instance;
@@ -466,14 +467,6 @@ namespace ComicSpider
 								Size = row.Size,
 							}
 						);
-						try
-						{
-							volume.Cookie = row.Parent_cookie;
-						}
-						catch
-						{
-							volume.Cookie = "";
-						}
 
 						if (row.State == "X")
 							volume.State = Web_src_state.Failed;
@@ -514,7 +507,6 @@ namespace ComicSpider
 					item.State_text,
 					item.Parent.Url,
 					item.Parent.Name,
-					item.Parent.Cookie,
 					item.Path,
 					DateTime.Now
 				);
@@ -549,7 +541,6 @@ namespace ComicSpider
 											item.Size,
 											vol.Url,
 											vol.Name,
-											item.Parent.Cookie,
 											item.Path,
 											DateTime.Now
 										);
@@ -566,7 +557,10 @@ namespace ComicSpider
 			kv_adpter.Connection.Open();
 
 			kv_adpter.Adapter.DeleteCommand = kv_adpter.Connection.CreateCommand();
-			kv_adpter.Adapter.DeleteCommand.CommandText = @"delete from [Key_value] where [Key] != 'Settings'; delete from [Error_log] where 1;";
+			kv_adpter.Adapter.DeleteCommand.CommandText =
+@"delete from [Key_value] where [Key] != 'Settings';
+delete from [Error_log] where 1;
+delete from [Cookie] where 1;";
 
 			kv_adpter.Adapter.DeleteCommand.ExecuteNonQuery();
 
@@ -703,7 +697,7 @@ namespace ComicSpider
 					{
 						path = Path.Combine(parent.Name, path);
 					}
-					path = Path.Combine(Main_settings.Main.Root_dir, path);
+					path = Path.Combine(Main_settings.Instance.Root_dir, path);
 
 					string item_dir = Path.Combine(path, list_item.Name);
 					if (Directory.Exists(item_dir))
