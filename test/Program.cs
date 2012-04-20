@@ -18,7 +18,15 @@ namespace test
 			//{
 			//    Console.WriteLine(item.Attributes["href"].Value);
 			//}
-			Console.WriteLine(string.Format("{0:000.0}", 45.123));
+
+			Lua lua = new Lua();
+			Regex reg = new Regex(@".+");
+			lua["s"] =  reg.Match("asdfasdf").Groups;
+			lua.DoString(@"
+print(s[0].Value:match('a(.)d'))
+");
+
+			Console.WriteLine();
 			Console.ReadLine();
 		}
 	}

@@ -55,7 +55,12 @@ namespace ComicSpider
 			{
 				int count = downloaded_files_count;
 				int all = all_files_count;
-				MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
+
+				if (count == all)
+					MainWindow.Main.Taskbar.SetProgressState(ys.Win7.TbpFlag.Normal);
+				else
+					MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
+
 				return string.Format("{0} / {1}", count, all);
 			}
 		}
@@ -772,12 +777,9 @@ namespace ComicSpider
 				Message_box.Show("Only downloaded item(s) have been deleted.");
 			if (delete_count > 0)
 				this.Title = "Item(s) deleted.";
-			else
+			if (downloaded_files_count == all_files_count)
 			{
-				if (downloaded_files_count == all_files_count)
-				{
-					btn_start.IsEnabled = false;
-				}
+				btn_start.IsEnabled = false;
 			}
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}

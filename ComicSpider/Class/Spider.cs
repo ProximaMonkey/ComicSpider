@@ -452,7 +452,7 @@ namespace ys.Web
 			Web_src_info src_info = new Web_src_info(url, 0, "", "", null);
 			Lua_controller lua_c = new Lua_controller();
 
-			if (file_types.Contains(Path.GetExtension(url)))
+			if (file_types.Contains(ys.Common.Get_web_src_extension(url)))
 			{
 				src_info.Name = Comic_spider.Raw_folder_name;
 				src_info.Children = new List<Web_src_info>();
@@ -460,7 +460,7 @@ namespace ys.Web
 			}
 			else
 			{
-				src_info.Children = Get_info_list_from_html(lua_c, src_info, "get_volume_list");
+				src_info.Children = Get_info_list_from_html(lua_c, src_info, "get_volumes");
 			}
 
 			if (src_info.Children.Count > 0)
@@ -508,16 +508,15 @@ namespace ys.Web
 				{
 					try
 					{
-						if (file_types.Contains(Path.GetExtension(vol_info.Url)))
+						if (file_types.Contains(ys.Common.Get_web_src_extension(vol_info.Url)))
 						{
-							vol_info.Name = "";
 							vol_info.Cookie = vol_info.Parent.Cookie;
 							vol_info.Children = new List<Web_src_info>();
 							vol_info.Children.Add(new Web_src_info(vol_info.Url, 0, "", "", vol_info));
 						}
 						else
 						{
-							vol_info.Children = Get_info_list_from_html(lua_c, vol_info, "get_page_list");
+							vol_info.Children = Get_info_list_from_html(lua_c, vol_info, "get_pages");
 						}
 					}
 					catch (ThreadAbortException)
@@ -624,7 +623,7 @@ namespace ys.Web
 				try
 				{
 					List<Web_src_info> file_info_list;
-					if (file_types.Contains(Path.GetExtension(page_info.Url)))
+					if (file_types.Contains(ys.Common.Get_web_src_extension(page_info.Url)))
 					{
 						file_info_list = new List<Web_src_info>();
 						page_info.Cookie = page_info.Parent.Cookie;
@@ -632,7 +631,7 @@ namespace ys.Web
 					}
 					else
 					{
-						file_info_list = Get_info_list_from_html(lua_c, page_info, "get_file_list");
+						file_info_list = Get_info_list_from_html(lua_c, page_info, "get_files");
 					}
 
 					if (file_info_list.Count == 0 ||
@@ -699,13 +698,13 @@ namespace ys.Web
 					#endregion
 
 					#region Download Stream
-
+					
 					WebResponse response = request.GetResponse();
 					Stream remote_stream = response.GetResponseStream();
 					remote_stream.ReadTimeout = time_out;
 					if (response.Headers["Content-Type"].Contains("html"))
 						throw new Exception("Remote sever error: download file failed.");
-
+					
 					file_info.Parent.Size = (double)response.ContentLength / 1024.0 / 1024.0;
 
 					MemoryStream cache = new MemoryStream();
@@ -781,7 +780,7 @@ namespace ys.Web
 						{
 							lua_c["name"] = file_info.Name;
 						}
-						lua_c["ext"] = Path.GetExtension(file_info.Url);
+						lua_c["ext"] = ys.Common.Get_web_src_extension(file_info.Url);
 
 						lua_c["src_info"] = file_info;
 
@@ -1088,8 +1087,7 @@ namespace ys.Web
 
 				HtmlAgilityPack.HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes(selector);
 
-				if (nodes == null)
-					throw new Exception("XPath: nothing selected.");
+				if (nodes == null) return;
 
 				this["name"] = string.Empty;
 

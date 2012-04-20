@@ -183,5 +183,13 @@ namespace ys
 
 			return root;
 		}
+		public static string Get_web_src_extension(string url)
+		{
+			int i = url.LastIndexOf('?');
+			if (i >= 0)
+				return Path.GetExtension(url.Remove(i));
+			else
+				return Path.GetExtension(url);
+		}
 	}
 }

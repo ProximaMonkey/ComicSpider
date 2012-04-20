@@ -59,7 +59,7 @@ External objects:
 	Main_settings lc.settings:
 		Main settings of Comic Spider.
 
-	Only visible in 'get_volume_list', 'get_page_list', 'get_file_list'.
+	Only visible in 'get_volumes', 'get_pages', 'get_files'.
 		string html:
 			Html context of current page. 
 
@@ -83,7 +83,7 @@ settings = {
 	requires = { 'https://raw.github.com/ysmood/ComicSpider/master/comic_spider.lua' },
 
 	-- File type to be downloaded.
-	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp' },
+	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.zip' },
 
 	-- Http request User-Agent header list. Fake your info here. It will randomly choose one of them.
 	user_agents = { 'Mozilla/5.0 (Windows NT 6.1; rv:10.0.2) Gecko/20100101 Firefox/10.0.2' },
@@ -107,14 +107,14 @@ comic_spider = {
 
 		indexed_file_name = true,
 
-		get_volume_list = function()
+		get_volumes = function()
 			src_info.Name = ''
 		end,
 
-		get_page_list = function()
+		get_pages = function()
 		end,
 
-		get_file_list = function()
+		get_files = function()
 		end,
 
 		handle_file = function()
@@ -133,7 +133,7 @@ comic_spider = {
 
 		hosts = { 'mangahere.com', 'mhcdn.net' },
 
-		get_volume_list = function()
+		get_volumes = function()
 			-- First get comic's main name.
 			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
 			-- Get volume list.
@@ -150,17 +150,13 @@ comic_spider = {
 			info_list:Reverse()
 		end,
 
-		get_page_list = function()
+		get_pages = function()
 			html = lc:find([[change_page(?<find>[\s\S]+?)/select>]])
 			lc:fill_list([[value="(?<url>.+?)"]])
 		end,
 
-		get_file_list = function()
+		get_files = function()
 			lc:fill_list([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]])
-		end,
-
-		set_file_path = function()
-
 		end,
 	},
 
@@ -170,7 +166,7 @@ comic_spider = {
 
 		hosts = { '178.com' },
 
-		get_volume_list = function()
+		get_volumes = function()
 			-- 首先获取漫画名
 			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
 			-- 获取卷列表
@@ -185,7 +181,7 @@ comic_spider = {
 			end
 		end,
 
-		get_page_list = function()
+		get_pages = function()
 			-- 站点显式使用了负载均衡，利用这点。
 			img_hosts = { 'imgd', 'img', 'imgfast' }
 			-- 此站点使用了ajax，利用这点可以直接在第一页获取所有文件地址。
@@ -211,14 +207,18 @@ comic_spider = {
 		is_indexed_file_name = false,
 
 		-- Example for usage of XPath. Slower but easier than regex.
-		get_volume_list = function(self)
-			name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'
-			name = name .. (html:find('Rating: Safe') and '' or '[unsafe]')
-			src_info.Name = name
-			lc:xfill_list(
-				"//a[@id='highres']",
-				function(i, node, nodes)
-					url = node.Attributes["href"].Value
+		get_volumes = function(self)
+			src_info.Name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'
+			lc:fill_list(
+				[[Post\.register\(.+?\)]],
+				function(i, gs, mc)
+					url = gs[0].Value:match([["file_url":"(.-)"]])
+					name = gs[0].Value:match([["rating":"(.)"]])
+					if name == 's' then
+						name = 'safe'
+					else
+						name = 'not safe'
+					end
 				end
 			)
 		end,

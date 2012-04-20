@@ -8,12 +8,17 @@ namespace ys.Web
 {
 	public class WebClientEx : WebClient
 	{
+		public int Timeout { get; set; }
+
 		protected override WebRequest GetWebRequest(Uri address)
 		{
 			HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
 			request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+			request.Timeout = timeout;
 			return request;
 		}
+
+		private int timeout = 30 * 1000;
 	}
 
 	public static class App_usage_analytics
