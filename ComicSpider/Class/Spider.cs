@@ -898,7 +898,7 @@ namespace ys
 			Web_client wc = new Web_client();
 
 			if (src_info.Parent == null)
-				wc.Headers["Referer"] = "http://www.pixiv.net/";
+				wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Url);
 			else
 				wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Parent.Url);
 			string cookie = Cookie_pool.Instance.Get(host);
