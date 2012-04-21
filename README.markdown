@@ -30,6 +30,19 @@ April 2012 y.s.
 
 ### [Download latest Comic Spider bin](https://github.com/downloads/ysmood/ComicSpider/Comic_Spider.zip)
 
+# Features
+
+* Open source, no ads and free forever. 
+* Simple drag and drop is all it needs to download. 
+* Online auto login service. 
+* A better way to browse manga via auto created view pages. 
+* Multithread and fast. 
+* Has an easy to use Lua programmable interface. 
+* Not only comic images, it can be easily modified into a complex downloader. 
+* Support remote script controller which means you can always get the latest parser without updating the program. 
+
+# For developer
+
 Maybe use mono will make the project more open, but now windows only.
 I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).
 VC++ runtime is required for Lua, I put it in the ComicSpider/Asset/vcredist_x86.exe
@@ -41,7 +54,8 @@ Techniques required
 * html5, css3, js, jQuery
 * Lua
 
-# Spider main work flow
+### Spider main work flow
+
 There are three main task queues:
 
 1. Volume info queue
@@ -68,10 +82,11 @@ Regular expression is a more efficient way to ignore all of these unexceptions.
 For example if you want select the javascript fragment in the html, it could be embarrassed to use a xml parser.
 And it really simple for testing regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
 But still you can use XPath to get info, I implemented a lua api for [HtmlAgilityPack](http://htmlagilitypack.codeplex.com/).
+Because some sites need login to download resource, so I implemented a online login service for some common sites.
 
 ### Detail work flow of producer
 
-1. Load lua controller
+1. Load lua controller (login some sites if needed)
 1. Get comic name (create comic folder)
 2. Get volume list (create volume folder)
 3. Get page list

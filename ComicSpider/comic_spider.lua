@@ -22,6 +22,9 @@ External functions:
 	Web_client lc:web_post(string url, LuaTable dict):
 		Send data to server via POST method.
 
+	void lc:login(string host):
+		Comic Spider login service.
+
 	string lc:find(string regex_pattern):
 		CSharp Regex.fill_list method. Param pattern will be automatically convert to string.
 		Return the match group which is named 'find'.
@@ -213,15 +216,7 @@ comic_spider = {
 
 		init = function()
 			-- Login first
-			lc:web_post(
-				'http://www.pixiv.net/login.php',
-				{
-					mode = 'login',
-					pixiv_id = 'waistcoat01@gmail.com',
-					pass = '123456',
-					skip = '1',
-				}
-			)
+			lc:login('pixiv.net');
 		end,
 
 		get_volumes = function()

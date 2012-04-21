@@ -1175,6 +1175,15 @@ namespace ys
 				}
 				return Web_client.Post(url, info);
 			}
+
+			public void login(string host)
+			{
+				Web_client wc = new Web_client();
+				string cookie = wc.DownloadString(
+					"http://comicspider.sinaapp.com/service/?login=" + Uri.EscapeUriString(host)
+				);
+				Cookie_pool.Instance.Update(host, cookie);
+			}
 		}
 
 		[Serializable]

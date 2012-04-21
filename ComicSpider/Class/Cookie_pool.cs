@@ -28,7 +28,9 @@ namespace ComicSpider
 		{
 			if (!string.IsNullOrEmpty(cookie))
 			{
-				cookie = cookie.Substring(0, cookie.IndexOf(';'));
+				int i = cookie.IndexOf(';');
+				if (i >= 0) cookie = cookie.Remove(i);
+
 				var row = table.FindByHost(host);
 				if (row == null)
 					table.AddCookieRow(host, cookie);
