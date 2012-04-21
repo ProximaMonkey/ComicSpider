@@ -110,7 +110,7 @@ comic_spider = {
 
 		is_create_view_page = true,
 
-		indexed_file_name = true,
+		is_indexed_file_name = true,
 
 		init = function()
 		end,
@@ -212,7 +212,7 @@ comic_spider = {
 		hosts = { 'pixiv.net' },
 
 		is_create_view_page = false,
-		indexed_file_name = false,
+		is_indexed_file_name = false,
 
 		init = function()
 			-- Login first
