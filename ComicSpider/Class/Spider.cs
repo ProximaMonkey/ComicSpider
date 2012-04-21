@@ -309,6 +309,7 @@ namespace ys
 				App_analyse();
 			}));
 
+			thread.SetApartmentState(ApartmentState.STA);
 			thread.Name = "ScriptLoader";
 			thread.Start();
 		}
@@ -405,7 +406,8 @@ namespace ys
 		{
 			var info = new Dictionary<string, string>();
 			info.Add("version", Main_settings.Instance.App_version);
-			info.Add("os", Environment.OSVersion.ToString());
+			info.Add("os", ys.Web.Get_user_agent());
+
 			try
 			{
 				Web_client.Post("http://comicspider.sinaapp.com/analytics/?r=a", info);
