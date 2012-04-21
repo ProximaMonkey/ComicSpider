@@ -56,22 +56,23 @@ namespace ys
 					volume_queue.Enqueue(vol_info);
 			}
 
+			Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
+			page_list_getter.Name = thread_type_Page_list_getter;
+			page_list_getter.Start();
+			thread_pool.Add(page_list_getter);
+
 			for (int i = 0; i < int.Parse(Main_settings.Instance.Thread_count); i++)
 			{
-				Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
-				page_list_getter.Name = thread_type_Page_list_getter + i;
-				page_list_getter.Start();
-				thread_pool.Add(page_list_getter);
-
-				Thread downloader = new Thread(new ThreadStart(Download_file));
-				downloader.Name = thread_type_File_downloader + i;
-				downloader.Start();
-				thread_pool.Add(downloader);
 
 				Thread file_list_getter = new Thread(new ThreadStart(Get_file_list));
 				file_list_getter.Name = thread_type_File_list_getter + i;
 				file_list_getter.Start();
 				thread_pool.Add(file_list_getter);
+
+				Thread downloader = new Thread(new ThreadStart(Download_file));
+				downloader.Name = thread_type_File_downloader + i;
+				downloader.Start();
+				thread_pool.Add(downloader);
 			}
 		}
 
@@ -284,16 +285,6 @@ namespace ys
 						new Dashboard.Show_supported_sites_delegate(Dashboard.Instance.Show_supported_sites),
 						supported_websites
 					);
-
-					foreach (string site_name in (lua.GetTable("comic_spider") as LuaTable).Keys)
-					{
-						lua.DoString(
-							string.Format(
-								"if comic_spider['{0}'].init then comic_spider['{0}'].init() end",
-								site_name
-							)
-						);
-					}
 				}
 				catch (LuaException ex)
 				{
@@ -453,15 +444,16 @@ namespace ys
 			}
 		}
 
-		private string get_controller_name(string host)
+		private Website_info get_website(string host)
 		{
-			string controller_name = string.Empty;
 			foreach (var site in supported_websites)
 			{
 				if (site.Hosts.Contains(host))
-					return site.Name;
+				{
+					return site;
+				}
 			}
-			return controller_name;
+			return null;
 		}
 
 		private void Get_volume_list(object arg)
@@ -481,7 +473,7 @@ namespace ys
 				src_info.Children = Get_info_list_from_html(lua_c, src_info, "get_volumes");
 			}
 
-			if (src_info.Children.Count > 0)
+			if (src_info.Count > 0)
 			{
 				Report("Get volume list: {0}, Count: {1}", src_info.Name, src_info.Children.Count);
 			}
@@ -505,12 +497,6 @@ namespace ys
 
 			while (!stopped)
 			{
-				if (page_queue.Count > thread_pool.Count * 2)
-				{
-					Thread.Sleep(100);
-					continue;
-				}
-
 				lock (volume_queue_lock)
 				{
 					if (volume_queue.Count == 0)
@@ -547,8 +533,10 @@ namespace ys
 					}
 				}
 
-				if (vol_info.Children.Count > 0)
+				if (vol_info.Count > 0)
 				{
+					vol_info.State_text = string.Format("0 / {0}", vol_info.Count);
+
 					lock (page_queue_lock)
 					{
 						foreach (var page_list in vol_info.Children)
@@ -756,7 +744,7 @@ namespace ys
 
 					#region Create file name
 
-					string controller_name = get_controller_name(host);
+					Website_info website = get_website(host);
 
 					string file_path = string.Empty;
 					bool? is_indexed_file_name = true;
@@ -774,15 +762,15 @@ namespace ys
 					if (file_info.Parent.Parent.Name != Raw_file_folder)
 					{
 						if (lua_c.DoString(
-							string.Format("return comic_spider['{0}']", controller_name)
+							string.Format("return comic_spider['{0}']", website.Name)
 						)[0] == null)
 							throw new Exception("No contorller found for " + file_info.Url);
 
 						is_create_view_page = lua_c.DoString(
-							string.Format("return comic_spider['{0}']['is_create_view_page']", controller_name)
+							string.Format("return comic_spider['{0}']['is_create_view_page']", website.Name)
 						)[0] as bool?;
 						is_indexed_file_name = lua_c.DoString(
-							string.Format("return comic_spider['{0}']['is_indexed_file_name']", controller_name)
+							string.Format("return comic_spider['{0}']['is_indexed_file_name']", website.Name)
 						)[0] as bool?;
 						is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
 						is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
@@ -806,7 +794,7 @@ namespace ys
 						lua_c.DoString(
 							string.Format(
 								"if comic_spider['{0}']['handle_file'] then comic_spider['{0}']['handle_file']() end",
-								controller_name
+								website.Name
 							)
 						);
 						name = lua_c.GetString("name") + lua_c.GetString("ext");
@@ -895,7 +883,7 @@ namespace ys
 		{
 			List<Web_src_info> info_list = new List<Web_src_info>();
 			string host = ys.Web.Get_host_name(src_info.Url);
-			string controller_name = get_controller_name(host);
+			Website_info website = get_website(host);
 
 			Web_client wc = new Web_client();
 
@@ -913,22 +901,28 @@ namespace ys
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
 
-				if (lua_c.DoString(string.Format("return comic_spider['{0}']", controller_name))[0] == null)
-					throw new Exception("No controller found for " + controller_name);
+				if (lua_c.DoString(string.Format("return comic_spider['{0}']", website.Name))[0] == null)
+					throw new Exception("No controller found for " + website.Name);
 
 				bool exists_method = false;
 				foreach (var func in func_list)
 				{
 					exists_method = lua_c.DoString(
-						string.Format("return comic_spider['{0}']['{1}']", controller_name, func)
+						string.Format("return comic_spider['{0}']['{1}']", website.Name, func)
 					)[0] != null;
 				}
 				if (exists_method)
 				{
-					string encoding = lua_c.DoString(
-						string.Format("return comic_spider['{0}']['charset']", controller_name)
-					)[0] as string;
+					// Init controller
+					if (!website.Is_inited)
+					{
+						lua_c.DoString(string.Format("if comic_spider['{0}'].init then comic_spider['{0}']:init() end", website.Name));
+						website.Is_inited = true;
+					}
 
+					string encoding = lua_c.DoString(
+						string.Format("return comic_spider['{0}']['charset']", website.Name)
+					)[0] as string;
 					wc.Encoding = System.Text.Encoding.GetEncoding(
 						string.IsNullOrEmpty(encoding) ? "utf-8" : encoding);
 
@@ -938,7 +932,7 @@ namespace ys
 
 					foreach (var func in func_list)
 					{
-						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", controller_name, func));
+						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", website.Name, func));
 					}
 				}
 				else
@@ -949,6 +943,7 @@ namespace ys
 			}
 			catch (ThreadAbortException)
 			{
+				wc.Dispose();
 			}
 			catch (LuaException ex)
 			{
@@ -985,6 +980,26 @@ namespace ys
 			public Dashboard dashboard;
 			public Main_settings settings;
 
+			public void echo(string info)
+			{
+				try
+				{
+					Console.WriteLine(info);
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress),
+						info
+					);
+				}
+				catch
+				{
+				}
+			}
+
+			public string format_for_number_sort(string str, int length = 3)
+			{
+				return ys.Common.Format_for_number_sort(str, length);
+			}
+
 			public string find(string pattern)
 			{
 				Match m = Regex.Match(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
@@ -1006,9 +1021,6 @@ namespace ys
 					this["url"] = mc[i].Groups["url"].Value;
 					this["name"] = mc[i].Groups["name"].Value.Trim();
 
-					if (!string.IsNullOrEmpty(src_info.Name))
-						this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
-
 					if (step != null)
 						(step as LuaFunction).Call(i, mc[i].Groups);
 
@@ -1019,7 +1031,7 @@ namespace ys
 						new Web_src_info(
 							this.GetString("url"),
 							i,
-							ys.Common.Format_for_number_sort(this.GetString("name")),
+							this.GetString("name"),
 							"",
 							src_info
 						)
@@ -1050,9 +1062,6 @@ namespace ys
 					this["url"] = mc[i].Groups["url"].Value;
 					this["name"] = mc[i].Groups["name"].Value.Trim();
 
-					if (!string.IsNullOrEmpty(src_info.Name))
-						this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
-
 					if (step != null)
 						(step as LuaFunction).Call(i, mc[i].Groups);
 
@@ -1063,7 +1072,7 @@ namespace ys
 						new Web_src_info(
 							this.GetString("url"),
 							i,
-							ys.Common.Format_for_number_sort(this.GetString("name")),
+							this.GetString("name"),
 							"",
 							src_info
 						)
@@ -1079,9 +1088,6 @@ namespace ys
 					this["url"] = arr[i].ToString();
 					this["name"] = Path.GetFileName(this.GetString("url")).Trim();
 
-					if (!string.IsNullOrEmpty(src_info.Name))
-						this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
-
 					if (step != null)
 						(step as LuaFunction).Call(i, arr[i].ToString());
 
@@ -1092,7 +1098,7 @@ namespace ys
 						new Web_src_info(
 							this.GetString("url"),
 							i,
-							ys.Common.Format_for_number_sort(this.GetString("name")),
+							this.GetString("name"),
 							"",
 							src_info
 						)
@@ -1130,7 +1136,7 @@ namespace ys
 						new Web_src_info(
 							this.GetString("url"),
 							i,
-							ys.Common.Format_for_number_sort(this.GetString("name")),
+							this.GetString("name"),
 							"",
 							src_info
 						)
@@ -1145,14 +1151,10 @@ namespace ys
 
 				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
 
-				if (parent != null &&
-					!string.IsNullOrEmpty(parent.Name))
-					name = name.Replace(parent.Name, "").Trim();
-
 				list.Add(new Web_src_info(
 					url,
 					index,
-					ys.Common.Format_for_number_sort(name),
+					name,
 					"",
 					parent)
 				);

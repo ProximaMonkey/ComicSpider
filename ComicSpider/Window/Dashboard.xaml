@@ -129,9 +129,9 @@
 			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="State" Width="50" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
-						<GridViewColumn Header="Main" Width="150" DisplayMemberBinding="{Binding Parent.Name}"/>
-						<GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding Name}"/>
+						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
+						<GridViewColumn Header="Main" Width="130" DisplayMemberBinding="{Binding Parent.Name}"/>
+						<GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding Name}"/>
 					</GridView>
 				</ListView.View>
 			</ListView>

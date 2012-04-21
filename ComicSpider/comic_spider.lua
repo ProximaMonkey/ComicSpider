@@ -13,10 +13,16 @@ it will be hard to debug without the Visual Studio :)
 ******************************************************************************************
 
 External functions:
-	int levenshtein_distance(string s, string t):
+	void void lc:echo(string info):
+		Report informatioin to GUI.
+
+	string lc:format_for_number_sort(string str, int length = 3):
+		As its name.
+
+	int lc:levenshtein_distance(string s, string t):
 		Get the levenshtein distance between two strings.
 
-	object json_decode(string s):
+	object lc:json_decode(string s):
 		Decode json string.
 
 	Web_client lc:web_post(string url, LuaTable dict):
@@ -145,10 +151,16 @@ comic_spider = {
 			-- First get comic's main name.
 			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
 			-- Get volume list.
-			lc:fill_list({
-				[[class="detail_list"[\s\S]+?/ul]],
-				[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
-			})
+			lc:fill_list(
+				{
+					[[class="detail_list"[\s\S]+?/ul]],
+					[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
+				},
+				function()
+					name = name:gsub(src_info.Name:gsub('%p', '%%%1'), '')
+					name = lc:format_for_number_sort(name)
+				end
+			)
 			-- If can't find volume list, then treat it as a volume page, not the index of the comic.
 			if info_list.Count == 0 then
 				src_info.Name = lc:find([[class="readpage_top"[\s\S]+?>(?<find>[^>]+) Manga</a>]])
@@ -178,10 +190,13 @@ comic_spider = {
 			-- 首先获取漫画名
 			src_info.Name = lc:find([[var g_comic_name = "(?<find>.+?)"]])
 			-- 获取卷列表
-			lc:fill_list({
-				[[<div class="cartoon_online_border"[\s\S]+?<div]],
-				[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
-			})
+			lc:fill_list(
+				{
+					[[<div class="cartoon_online_border"[\s\S]+?<div]],
+					[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
+				},
+				function() name = lc:format_for_number_sort(name) end
+			)
 			-- 如果没有发现列表，则认为这个url指向的是卷地址，而不是主目录地址。
 			if info_list.Count == 0 then
 				vol_name = lc:find([[var g_chapter_name = "(?<find>.+?)"]])
@@ -206,6 +221,7 @@ comic_spider = {
 	},
 
 	-- Example: login a site to get resources.
+	-- Collection not supported.
 	['* Pixiv'] = {
 		home = 'http://www.pixiv.net',
 
@@ -229,15 +245,15 @@ comic_spider = {
 			)
 		end,
 
-		-- Example for usage of XPath. Slower but easier than regex.
 		get_files = function()
 			lc:xfill_list(
 				"//div[@class='works_display']/a",
 				function(i, node)
 					if node.Attributes['href'].Value:find('mode=manga') then return end
 					img_node = node.FirstChild
-					name = img_node.Attributes["alt"].Value
-					url = img_node.Attributes["src"].Value:gsub('_m%.', '%.')
+					url = img_node.Attributes['src'].Value:gsub('_m%.', '%.')
+					-- Author name and illust name
+					name = url:match('http://img.-/img/(.-)/.+') .. ' ' .. img_node:GetAttributeValue("alt", "")
 				end
 			)
 		end,
@@ -271,6 +287,7 @@ comic_spider = {
 				end
 			)
 			if info_list.Count == 0 then
+				-- Example for usage of XPath. Slower but easier than regex.
 				lc:xfill_list(
 					"//a[@id='highres']",
 					function(i, node)

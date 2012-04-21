@@ -70,7 +70,10 @@ namespace ys
 			Regex reg = new Regex(@"(?<int>\d+)(?<float>\.?\d*)");
 			str = reg.Replace(str, (m) =>
 				{
-					string int_part = string.Format("{0:D3}", int.Parse(m.Groups["int"].Value));
+					int num;
+					string int_part = string.Empty;
+					if(int.TryParse(m.Groups["int"].Value, out num))
+						int_part = string.Format("{0:D3}", num);
 					string float_part = m.Groups["float"].Value;
 					return int_part + float_part;
 				}

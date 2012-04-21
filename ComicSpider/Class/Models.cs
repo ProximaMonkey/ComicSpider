@@ -207,6 +207,8 @@ namespace ys
 			Hosts = hosts;
 		}
 
+		public bool Is_inited = false;
+
 		public string Name { get; set; }
 		public string Home { get; set; }
 		public List<string> Hosts { get; set; }
