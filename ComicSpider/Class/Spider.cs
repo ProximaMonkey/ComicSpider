@@ -535,7 +535,7 @@ namespace ys
 
 				if (vol_info.Count > 0)
 				{
-					vol_info.State_text = string.Format("0 / {0}", vol_info.Count);
+					vol_info.State_text = string.Format("{0} / {1}", vol_info.Downloaded, vol_info.Count);
 
 					lock (page_queue_lock)
 					{
