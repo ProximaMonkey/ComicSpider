@@ -261,11 +261,11 @@ comic_spider = {
 			src_info.Name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'
 			one_page = src_info.Url:find('/post/show')
 			lc:fill_list(
-				[[("rating".+?"file_url":".+?")|("file_url".+?"rating")]],
+				[[("rating":"(?<r>.)".*?"file_url":"(?<u>.+?)")|("file_url":"(?<u>.+?)".*?"rating":"(?<r>.)")]],
 				function(i, gs)
 					if one_page and info_list.Count > 0 then return end
-					url = gs[0].Value:match([["file_url":"(.-)"]])
-					r = gs[0].Value:match([["rating":"(.)"]])
+					url = gs['u'].Value
+					r = gs['r'].Value
 					if r == 's' then
 						name = 'Safe'
 					elseif r == 'q' then
