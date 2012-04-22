@@ -20,17 +20,33 @@ namespace ys
 		{
 			stopped = true;
 
-			file_queue = new Queue<Web_src_info>();
-			page_queue = new Queue<Web_src_info>();
-			volume_queue = new Queue<Web_src_info>();
-			file_queue_lock = new object();
-			page_queue_lock = new object();
-			volume_queue_lock = new object();
 			thread_pool = new List<Thread>();
 
 			Async_load_lua_script();
 			Init_lua_script_watcher();
 		}
+
+		public readonly Task_manager Manager = new Task_manager();
+
+		public void Stop(bool completed = false)
+		{
+			stopped = true;
+
+			if (!completed)
+			{
+				foreach (Thread thread in thread_pool)
+				{
+					thread.Abort();
+				}
+			}
+			thread_pool.Clear();
+
+			Report("Downloading stopped.");
+		}
+		public bool Stopped { get { return stopped; } }
+
+		public string Default_script_editor = "notepad.exe";
+		public string Raw_file_folder = "Raw file";
 
 		public void Async_get_volume_list()
 		{
@@ -40,21 +56,11 @@ namespace ys
 			
 			Report("Downloading volume list...");
 		}
-		public void Async_start(System.Collections.IEnumerable vol_info_list)
+		public void Async_start()
 		{
 			Report("Begin downloading...");
 
 			stopped = false;
-
-			volume_queue.Clear();
-			page_queue.Clear();
-			file_queue.Clear();
-
-			foreach (Web_src_info vol_info in vol_info_list)
-			{
-				if (vol_info.State != Web_src_state.Downloaded)
-					volume_queue.Enqueue(vol_info);
-			}
 
 			Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
 			page_list_getter.Name = thread_type_Page_list_getter;
@@ -73,14 +79,6 @@ namespace ys
 				downloader.Name = thread_type_File_downloader + i;
 				downloader.Start();
 				thread_pool.Add(downloader);
-			}
-		}
-
-		public void Add_volume_list(List<Web_src_info> list)
-		{
-			foreach (var vol_info in list)
-			{
-				volume_queue.Enqueue(vol_info);
 			}
 		}
 
@@ -152,36 +150,10 @@ namespace ys
 			sw.Close();
 		}
 
-		public void Stop(bool completed = false)
-		{
-			stopped = true;
-
-			if (!completed)
-			{
-				foreach (Thread thread in thread_pool)
-				{
-					thread.Abort();
-				}
-			}
-			thread_pool.Clear();
-
-			Report("Downloading stopped.");
-		}
-		public bool Stopped { get { return stopped; } }
-
-		public string Default_script_editor = "notepad.exe";
-		public string Raw_file_folder = "Raw file";
-
 		/***************************** Private ********************************/
 
 		private bool stopped;
 
-		private Queue<Web_src_info> file_queue;
-		private Queue<Web_src_info> page_queue;
-		private Queue<Web_src_info> volume_queue;
-		private object file_queue_lock;
-		private object page_queue_lock;
-		private object volume_queue_lock;
 		private List<Thread> thread_pool;
 
 		private const string thread_type_Page_list_getter = "Page_list_getter";
@@ -444,38 +416,30 @@ namespace ys
 			}
 		}
 
-		private Website_info get_website(string host)
-		{
-			foreach (var site in supported_websites)
-			{
-				if (site.Hosts.Contains(host))
-				{
-					return site;
-				}
-			}
-			return null;
-		}
-
 		private void Get_volume_list(object arg)
 		{
 			string url = arg as string;
-			Web_src_info src_info = new Web_src_info(url, 0, "", "", null);
 			Lua_controller lua_c = new Lua_controller();
+			Web_resource_info root = new Web_resource_info(url, 0, "", "", null);
 
 			if (file_types.Contains(ys.Common.Get_web_src_extension(url)))
 			{
-				src_info.Name = Raw_file_folder;
-				src_info.Children = new List<Web_src_info>();
-				src_info.Children.Add(new Web_src_info(url, 0, "", "", src_info));
+				root.Name = Raw_file_folder;
+				root.Children = new List<Web_resource_info>();
+				root.Children.Add(new Web_resource_info(url, 0, "", "", root));
 			}
 			else
 			{
-				src_info.Children = Get_info_list_from_html(lua_c, src_info, "get_volumes");
+				root.Children = Get_info_list_from_html(lua_c, root, "get_volumes");
 			}
 
-			if (src_info.Count > 0)
+			if (root.Count > 0)
 			{
-				Report("Get volume list: {0}, Count: {1}", src_info.Name, src_info.Children.Count);
+				Manager.Volumes.AddRange(root.Children);
+				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
+				Dashboard.Instance.Dispatcher.Invoke(
+					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list)
+				);
 			}
 			else
 			{
@@ -484,27 +448,19 @@ namespace ys
 					"No volume found in " + url
 				);
 			}
-
-			Dashboard.Instance.Dispatcher.Invoke(
-				new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
-				src_info.Children
-			);
 		}
 		private void Get_page_list()
 		{
-			Web_src_info vol_info;
+			Web_resource_info vol_info;
 			Lua_controller lua_c = new Lua_controller();
 
 			while (!stopped)
 			{
-				lock (volume_queue_lock)
+				vol_info = Manager.Volumes_dequeue();
+				if (vol_info == null)
 				{
-					if (volume_queue.Count == 0)
-					{
-						Thread.Sleep(100);
-						continue;
-					}
-					vol_info = volume_queue.Dequeue();
+					Thread.Sleep(100);
+					continue;
 				}
 
 				if (vol_info.Children == null ||
@@ -514,8 +470,8 @@ namespace ys
 					{
 						if (file_types.Contains(ys.Common.Get_web_src_extension(vol_info.Url)))
 						{
-							vol_info.Children = new List<Web_src_info>();
-							vol_info.Children.Add(new Web_src_info(vol_info.Url, 0, "", "", vol_info));
+							vol_info.Children = new List<Web_resource_info>();
+							vol_info.Children.Add(new Web_resource_info(vol_info.Url, 0, "", "", vol_info));
 						}
 						else
 						{
@@ -536,14 +492,6 @@ namespace ys
 				if (vol_info.Count > 0)
 				{
 					vol_info.State_text = string.Format("{0} / {1}", vol_info.Downloaded, vol_info.Count);
-
-					lock (page_queue_lock)
-					{
-						foreach (var page_list in vol_info.Children)
-						{
-							page_queue.Enqueue(page_list);
-						}
-					}
 
 					Dashboard.Instance.Dispatcher.Invoke(
 						new Dashboard.Report_main_progress_delegate(
@@ -588,78 +536,54 @@ namespace ys
 				}
 				else
 				{
-					vol_info.State = Web_src_state.Failed;
+					vol_info.State = Web_resource_state.Failed;
 					Report("No page found in " + vol_info.Url);
-
-					lock (volume_queue_lock)
-					{
-						volume_queue.Enqueue(vol_info);
-					}
 				}
 			}
 		}
 		private void Get_file_list()
 		{
-			Web_src_info page_info;
+			Web_resource_info page_info;
 			Lua_controller lua_c = new Lua_controller();
 
 			while (!stopped)
 			{
-				if (file_queue.Count > thread_pool.Count * 2)
+				page_info = Manager.Pages_dequeue();
+				if (page_info == null)
 				{
 					Thread.Sleep(100);
 					continue;
 				}
 
-				lock (page_queue_lock)
-				{
-					if (page_queue.Count == 0)
-					{
-						Thread.Sleep(100);
-						continue;
-					}
-					page_info = page_queue.Dequeue();
-				}
-
 				if (stopped)
 					return;
-				if (page_info.State == Web_src_state.Downloaded)
+				if (page_info.State == Web_resource_state.Downloaded)
 					continue;
 
 				try
 				{
-					List<Web_src_info> file_info_list;
 					if (file_types.Contains(ys.Common.Get_web_src_extension(page_info.Url)))
 					{
-						file_info_list = new List<Web_src_info>();
-						file_info_list.Add(new Web_src_info(page_info.Url, 0, "", "", page_info));
+						page_info.Children = new List<Web_resource_info>();
+						page_info.Children.Add(new Web_resource_info(page_info.Url, 0, "", "", page_info));
 					}
 					else
 					{
-						file_info_list = Get_info_list_from_html(lua_c, page_info, "get_files");
+						page_info.Children = Get_info_list_from_html(lua_c, page_info, "get_files");
 					}
 
-					if (file_info_list.Count == 0 ||
-						file_info_list[0] == null)
+					if (page_info.Count == 0 ||
+						page_info.Children[0] == null)
 						throw new Exception("No file info found in " + page_info.Url);
 
-					lock (file_queue_lock)
-					{
-						file_queue.Enqueue(file_info_list[0]); 
-					}
-
-					Report("Get file info: {0}", file_info_list[0].Url);
+					Report("Get file info: {0}", page_info.Children[0].Url);
 				}
 				catch (ThreadAbortException)
 				{
 				}
 				catch (Exception ex)
 				{
-					page_info.State = Web_src_state.Failed;
-					lock (page_queue_lock)
-					{
-						page_queue.Enqueue(page_info);
-					}
+					page_info.State = Web_resource_state.Failed;
 					Log_error(ex, page_info.Url);
 					Thread.Sleep(300);
 				}
@@ -667,7 +591,7 @@ namespace ys
 		}
 		private void Download_file()
 		{
-			Web_src_info file_info;
+			Web_resource_info file_info;
 			Lua_controller lua_c = new Lua_controller();
 			int time_out = 30 * 1000;
 			byte[] buffer = new byte[1024 * 10];
@@ -675,15 +599,12 @@ namespace ys
 
 			while (!stopped)
 			{
-				lock (file_queue_lock)
-				{
-					if (file_queue.Count == 0)
-					{
-						Thread.Sleep(100);
-						continue;
-					}
+				file_info = Manager.Files_dequeue();
 
-					file_info = file_queue.Dequeue();
+				if (file_info == null)
+				{
+					Thread.Sleep(100);
+					continue;
 				}
 
 				try
@@ -752,7 +673,7 @@ namespace ys
 
 					string name;
 					string dir = "";
-					Web_src_info parent = file_info.Parent;
+					Web_resource_info parent = file_info.Parent;
 					while ((parent = parent.Parent) != null)
 					{
 						dir = Path.Combine(parent.Name, dir);
@@ -761,11 +682,6 @@ namespace ys
 
 					if (file_info.Parent.Parent.Name != Raw_file_folder)
 					{
-						if (lua_c.DoString(
-							string.Format("return comic_spider['{0}']", website.Name)
-						)[0] == null)
-							throw new Exception("No contorller found for " + file_info.Url);
-
 						is_create_view_page = lua_c.DoString(
 							string.Format("return comic_spider['{0}']['is_create_view_page']", website.Name)
 						)[0] as bool?;
@@ -819,7 +735,7 @@ namespace ys
 					fs.Close();
 					
 					file_info.Parent.Path = file_path;
-					file_info.Parent.State = Web_src_state.Downloaded;
+					file_info.Parent.State = Web_resource_state.Downloaded;
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
 
@@ -832,7 +748,7 @@ namespace ys
 
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
-						file_info.Parent.Parent.State = Web_src_state.Downloaded;
+						file_info.Parent.Parent.State = Web_resource_state.Downloaded;
 
 						if (is_create_view_page == true)
 						{
@@ -866,12 +782,7 @@ namespace ys
 				}
 				catch (Exception ex)
 				{
-					file_info.Parent.State = Web_src_state.Failed;
-
-					lock (file_queue_lock)
-					{
-						file_queue.Enqueue(file_info);
-					}
+					file_info.Parent.State = Web_resource_state.Failed;
 
 					Log_error(ex, file_info.Url);
 					Thread.Sleep(300);
@@ -879,11 +790,21 @@ namespace ys
 			}
 		}
 
-		private List<Web_src_info> Get_info_list_from_html(Lua_controller lua_c, Web_src_info src_info, params string[] func_list)
+		private Website_info get_website(string host)
 		{
-			List<Web_src_info> info_list = new List<Web_src_info>();
+			foreach (var site in supported_websites)
+			{
+				if (site.Hosts.Contains(host))
+				{
+					return site;
+				}
+			}
+			throw new Exception("No controller found for " + host);
+		}
+		private List<Web_resource_info> Get_info_list_from_html(Lua_controller lua_c, Web_resource_info src_info, params string[] func_list)
+		{
+			List<Web_resource_info> info_list = new List<Web_resource_info>();
 			string host = ys.Web.Get_host_name(src_info.Url);
-			Website_info website = get_website(host);
 
 			Web_client wc = new Web_client();
 
@@ -898,11 +819,11 @@ namespace ys
 			try
 			{
 				#region Lua lua_script controller
+
+				Website_info website = get_website(host);
+
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
-
-				if (lua_c.DoString(string.Format("return comic_spider['{0}']", website.Name))[0] == null)
-					throw new Exception("No controller found for " + website.Name);
 
 				bool exists_method = false;
 				foreach (var func in func_list)
@@ -937,7 +858,7 @@ namespace ys
 				}
 				else
 				{
-					info_list.Add(new Web_src_info(src_info.Url, src_info.Index, src_info.Name, "", src_info));
+					info_list.Add(new Web_resource_info(src_info.Url, src_info.Index, src_info.Name, "", src_info));
 				}
 				#endregion
 			}
@@ -1013,8 +934,8 @@ namespace ys
 
 			public void fill_list(string pattern, LuaFunction step = null)
 			{
-				Web_src_info src_info = this["src_info"] as Web_src_info;
-				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				Web_resource_info src_info = this["src_info"] as Web_resource_info;
+				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
 				MatchCollection mc = Regex.Matches(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
 				for (var i = 0; i < mc.Count; i++)
 				{
@@ -1028,7 +949,7 @@ namespace ys
 						continue;
 					
 					list.Add(
-						new Web_src_info(
+						new Web_resource_info(
 							this.GetString("url"),
 							i,
 							this.GetString("name"),
@@ -1040,8 +961,8 @@ namespace ys
 			}
 			public void fill_list(LuaTable patterns, LuaFunction step = null)
 			{
-				Web_src_info src_info = this["src_info"] as Web_src_info;
-				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				Web_resource_info src_info = this["src_info"] as Web_resource_info;
+				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
 				MatchCollection mc;
 				string all_sections = this.GetString("html");
 
@@ -1069,7 +990,7 @@ namespace ys
 						continue;
 					
 					list.Add(
-						new Web_src_info(
+						new Web_resource_info(
 							this.GetString("url"),
 							i,
 							this.GetString("name"),
@@ -1081,8 +1002,8 @@ namespace ys
 			}
 			public void fill_list(Newtonsoft.Json.Linq.JArray arr, LuaFunction step = null)
 			{
-				Web_src_info src_info = this["src_info"] as Web_src_info;
-				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				Web_resource_info src_info = this["src_info"] as Web_resource_info;
+				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
 				for (int i = 0; i < arr.Count; i++)
 				{
 					this["url"] = arr[i].ToString();
@@ -1095,7 +1016,7 @@ namespace ys
 						continue;
 					
 					list.Add(
-						new Web_src_info(
+						new Web_resource_info(
 							this.GetString("url"),
 							i,
 							this.GetString("name"),
@@ -1107,8 +1028,8 @@ namespace ys
 			}
 			public void xfill_list(string selector, LuaFunction step)
 			{
-				Web_src_info src_info = this["src_info"] as Web_src_info;
-				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				Web_resource_info src_info = this["src_info"] as Web_resource_info;
+				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
 
 				HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 				doc.LoadHtml(this.GetString("html"));
@@ -1133,7 +1054,7 @@ namespace ys
 					}
 
 					list.Add(
-						new Web_src_info(
+						new Web_resource_info(
 							this.GetString("url"),
 							i,
 							this.GetString("name"),
@@ -1144,14 +1065,14 @@ namespace ys
 				}
 			}
 
-			public void add(string url, int index, string name, Web_src_info parent = null)
+			public void add(string url, int index, string name, Web_resource_info parent = null)
 			{
 				if (string.IsNullOrEmpty(url))
 					return;
 
-				List<Web_src_info> list = this["info_list"] as List<Web_src_info>;
+				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
 
-				list.Add(new Web_src_info(
+				list.Add(new Web_resource_info(
 					url,
 					index,
 					name,

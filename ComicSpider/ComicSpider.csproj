@@ -109,6 +109,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\Main_settings.cs" />
+    <Compile Include="Class\Task_manager.cs" />
     <Compile Include="Class\Web_client.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -166,7 +167,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class\Models.cs" />
+    <Compile Include="Class\Web_info_models.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

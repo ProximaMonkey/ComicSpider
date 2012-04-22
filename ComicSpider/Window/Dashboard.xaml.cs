@@ -55,6 +55,8 @@ namespace ComicSpider
 				int count = downloaded_files_count;
 				int all = all_files_count;
 
+				btn_start.IsEnabled = all != count;
+
 				MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
 
 				return string.Format("{0} / {1}", count, all);
@@ -119,56 +121,26 @@ namespace ComicSpider
 
 		/**************** Delegate ****************/
 
-		public delegate void Show_volume_list_delegate(List<Web_src_info> list);
-		public void Show_volume_list(List<Web_src_info> list)
+		public delegate void Show_volume_list_delegate();
+		public void Show_volume_list()
 		{
-			List<Web_src_info> added_list = new List<Web_src_info>();
-			foreach (Web_src_info item in list.Distinct(new Web_src_info.Comparer()))
-			{
-				foreach (Web_src_info vol in volume_list.Items)
-				{
-					if (vol.Url == item.Url)
-						goto skip;
-				}
-				volume_list.Items.Add(item);
-				added_list.Add(item);
-			skip: ;
-			}
-
-			if (downloaded_files_count < all_files_count)
-				btn_start.IsEnabled = true;
-
 			if(comic_spider.Stopped)
 				working_icon.Hide_working();
 
 			MainWindow.Main.Task_done();
 
-			if (Is_initialized)
-			{
-				if (added_list.Count > 0)
-				{
-					MainWindow.Main.Show_balloon(this.Title, (o, e) =>
-					{
-						this.Show();
-					});
+			Update_volume_list();
 
-					if (comic_spider.Stopped)
-					{
-						if (Main_settings.Instance.Is_auto_begin)
-							btn_start_Click(null, null);
-					}
-					else if (Main_settings.Instance.Is_auto_begin)
-						comic_spider.Add_volume_list(added_list);
-				}
-				else if (list.Count > 0)
-				{
-					this.Title = "No newer volume added to task list.";
-					MainWindow.Main.Show_balloon(this.Title, (o, e) =>
-					{
-						this.Show();
-					}, true);
-				}
+			if (comic_spider.Stopped)
+			{
+				if (Main_settings.Instance.Is_auto_begin)
+					btn_start_Click(null, null);
 			}
+
+			MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+			{
+				this.Show();
+			});
 
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
@@ -208,7 +180,6 @@ namespace ComicSpider
 
 				comic_spider.Stop(true);
 				btn_start.Content = "Start";
-				btn_start.IsEnabled = false;
 				working_icon.Hide_working();
 
 				this.Title = "All completed.";
@@ -359,6 +330,8 @@ namespace ComicSpider
 			txt_main_url.Text = Main_settings.Instance.Main_url;
 			txt_dir.Text = Main_settings.Instance.Root_dir;
 			txt_thread.Text = Main_settings.Instance.Thread_count;
+
+			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
 		private static Dashboard instance;
@@ -368,17 +341,17 @@ namespace ComicSpider
 			get
 			{
 				int count = 0;
-				foreach (Web_src_info vol in volume_list.Items)
+				foreach (Web_resource_info vol in volume_list.Items)
 				{
 					switch(vol.State)
 					{
-						case Web_src_state.Loading:
-						case Web_src_state.Downloaded:
+						case Web_resource_state.Downloading:
+						case Web_resource_state.Downloaded:
 							count += vol.Count;
 							break;
 
-						case Web_src_state.Wait:
-						case Web_src_state.Failed:
+						case Web_resource_state.Wait:
+						case Web_resource_state.Failed:
 							count++;
 							break;
 					}
@@ -391,7 +364,7 @@ namespace ComicSpider
 			get
 			{
 				int count = 0;
-				foreach (Web_src_info vol in volume_list.Items)
+				foreach (Web_resource_info vol in volume_list.Items)
 				{
 					count += vol.Downloaded;
 				}
@@ -401,26 +374,31 @@ namespace ComicSpider
 
 		/**************** Data ****************/
 
+		private void Update_volume_list()
+		{
+			volume_list.ItemsSource = null;
+			volume_list.ItemsSource = comic_spider.Manager.Volumes;
+		}
 		private void Init_info_list()
 		{
 			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
 			User.Volume_listDataTable vol_info_table = vol_adpter.GetData();
-			List<Web_src_info> vol_list = new List<Web_src_info>();
+			List<Web_resource_info> vol_list = new List<Web_resource_info>();
 
 			if (vol_info_table.Count > 0)
 			{
 				var groups = vol_info_table.GroupBy(v => v.Parent_url);
 				foreach (var group in groups)
 				{
-					Web_src_info comic = null;
+					Web_resource_info comic = null;
 					foreach (User.Volume_listRow row in group)
 					{
 						if (comic == null)
 						{
-							comic = new Web_src_info(row.Parent_url, 0, row.Parent_name, "", null);
-							comic.Children = new List<Web_src_info>();
+							comic = new Web_resource_info(row.Parent_url, 0, row.Parent_name, "", null);
+							comic.Children = new List<Web_resource_info>();
 						}
-						Web_src_info src_info = new Web_src_info(
+						Web_resource_info src_info = new Web_resource_info(
 							row.Url,
 							row.Index,
 							row.Name,
@@ -434,7 +412,7 @@ namespace ComicSpider
 				Init_page_info_list(vol_list);
 			}
 		}
-		private void Init_page_info_list(List<Web_src_info> vol_list)
+		private void Init_page_info_list(List<Web_resource_info> vol_list)
 		{
 			Page_listTableAdapter page_adpter = new Page_listTableAdapter();
 			User.Page_listDataTable page_info_table = page_adpter.GetData();
@@ -443,20 +421,20 @@ namespace ComicSpider
 				var groups = page_info_table.GroupBy(p => p.Parent_url);
 				foreach (var group in groups)
 				{
-					Web_src_info volume = null;
+					Web_resource_info volume = null;
 					foreach (User.Page_listRow row in group)
 					{
 						if (volume == null)
 						{
-							foreach (Web_src_info vol in vol_list)
+							foreach (Web_resource_info vol in vol_list)
 							{
 								if (vol.Url == row.Parent_url)
 									volume = vol;
 							}
-							volume.Children = new List<Web_src_info>();
+							volume.Children = new List<Web_resource_info>();
 						}
 
-						volume.Children.Add(new Web_src_info(
+						volume.Children.Add(new Web_resource_info(
 							row.Url,
 							row.Index,
 							row.Name,
@@ -469,10 +447,10 @@ namespace ComicSpider
 						);
 
 						if (row.State == "X")
-							volume.State = Web_src_state.Failed;
+							volume.State = Web_resource_state.Failed;
 						else if (volume.Downloaded == volume.Count)
 						{
-							volume.State = Web_src_state.Downloaded;
+							volume.State = Web_resource_state.Downloaded;
 						}
 						else
 						{
@@ -482,7 +460,8 @@ namespace ComicSpider
 				}
 			}
 
-			Show_volume_list(vol_list);
+			comic_spider.Manager.Volumes.AddRange(vol_list);
+			Update_volume_list();
 		}
 		private void Save_vol_info_list()
 		{
@@ -496,7 +475,7 @@ namespace ComicSpider
 
 			vol_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
 
-			foreach (Web_src_info item in volume_list.Items)
+			foreach (Web_resource_info item in volume_list.Items)
 			{
 				if (item.Parent == null) continue;
 
@@ -528,10 +507,10 @@ namespace ComicSpider
 
 			page_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
 
-			foreach (Web_src_info vol in volume_list.Items)
+			foreach (Web_resource_info vol in volume_list.Items)
 			{
 				if (vol.Children == null) continue;
-				foreach (Web_src_info item in vol.Children.Distinct(new Web_src_info.Comparer()))
+				foreach (Web_resource_info item in vol.Children.Distinct(new Web_resource_info.Comparer()))
 				{
 					page_adapter.Insert(
 											item.Url,
@@ -581,7 +560,7 @@ delete from [Cookie] where 1;";
 				All_downloaded = false;
 				btn_start.Content = "Stop";
 				working_icon.Show_working();
-				comic_spider.Async_start(volume_list.Items);
+				comic_spider.Async_start();
 			}
 			else
 			{
@@ -666,7 +645,7 @@ delete from [Cookie] where 1;";
 				MenuItem menu_item = sender as MenuItem;
 				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			}
-			Web_src_info item = list_view.SelectedItem as Web_src_info;
+			Web_resource_info item = list_view.SelectedItem as Web_resource_info;
 
 			if(item == null) return;
 
@@ -689,10 +668,10 @@ delete from [Cookie] where 1;";
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			try
 			{
-				foreach (Web_src_info list_item in list_view.SelectedItems)
+				foreach (Web_resource_info list_item in list_view.SelectedItems)
 				{
 					string path = "";
-					Web_src_info parent = list_item;
+					Web_resource_info parent = list_item;
 					while ((parent = parent.Parent) != null)
 					{
 						path = Path.Combine(parent.Name, path);
@@ -716,7 +695,7 @@ delete from [Cookie] where 1;";
 		{
 			MenuItem menu_item = sender as MenuItem;
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			foreach (Web_src_info list_item in list_view.SelectedItems)
+			foreach (Web_resource_info list_item in list_view.SelectedItems)
 			{
 				System.Diagnostics.Process.Start(list_item.Parent.Url);
 			}
@@ -725,7 +704,7 @@ delete from [Cookie] where 1;";
 		{
 			MenuItem menu_item = sender as MenuItem;
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			foreach (Web_src_info list_item in list_view.SelectedItems)
+			foreach (Web_resource_info list_item in list_view.SelectedItems)
 			{
 				Clipboard.SetText(list_item.Url);
 				break;
@@ -744,33 +723,28 @@ delete from [Cookie] where 1;";
 				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			}
 
-			int failed_count = 0;
-			int delete_count = 0;
-			int all = list_view.SelectedItems.Count;
-			while (list_view.SelectedItems.Count > 0 &&
-				all > (failed_count + delete_count))
+			if (list_view.SelectedItems.Count == 0)
+				return;
+
+			if (list_view == volume_list)
 			{
-				if (comic_spider.Stopped ||
-					(list_view.SelectedItem as Web_src_info).State == Web_src_state.Downloaded)
+				foreach (Web_resource_info item in list_view.SelectedItems)
 				{
-					int index = list_view.SelectedIndex;
-					list_view.Items.RemoveAt(index);
-					delete_count++;
+					comic_spider.Manager.Volumes.Remove(item);
 				}
-				else
+				Update_volume_list();
+			}
+			else
+			{
+				foreach (Web_resource_info item in list_view.SelectedItems)
 				{
-					failed_count++;
+					item.Parent.Children.Remove(item);
 				}
+				volume_list_SelectionChanged(null, null);
 			}
 
-			if (failed_count > 0)
-				Message_box.Show("Only downloaded item(s) have been deleted.");
-			if (delete_count > 0)
-				this.Title = "Item(s) deleted.";
-			if (downloaded_files_count == all_files_count)
-			{
-				btn_start.IsEnabled = false;
-			}
+			this.Title = "Item(s) deleted.";
+
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
@@ -799,7 +773,7 @@ delete from [Cookie] where 1;";
 		private void volume_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			page_list.Items.Clear();
-			foreach (Web_src_info vol in volume_list.SelectedItems)
+			foreach (Web_resource_info vol in volume_list.SelectedItems)
 			{
 				if (vol.Children == null) continue;
 				foreach (var page in vol.Children)
@@ -814,7 +788,7 @@ delete from [Cookie] where 1;";
 		}
 		private void volume_list_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			Web_src_info item = (sender as ListView).SelectedItem as Web_src_info;
+			Web_resource_info item = (sender as ListView).SelectedItem as Web_resource_info;
 
 			View_Click(sender, null);
 		}
@@ -823,9 +797,9 @@ delete from [Cookie] where 1;";
 		{
 			volume_list.Focus();
 			volume_list.SelectedIndex = -1;
-			foreach (Web_src_info item in volume_list.Items)
+			foreach (Web_resource_info item in volume_list.Items)
 			{
-				if (item.State == Web_src_state.Downloaded)
+				if (item.State == Web_resource_state.Downloaded)
 				{
 					volume_list.SelectedItems.Add(item);
 				}
@@ -853,17 +827,17 @@ delete from [Cookie] where 1;";
 
 			GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
 			ListView clicked_view = sender as ListView;
-			List<Web_src_info> list = new List<Web_src_info>();
+			List<Web_resource_info> list = new List<Web_resource_info>();
 
-			if (header == null) return;
+			if (header == null || header.Column == null) return;
 
-			foreach (Web_src_info item in clicked_view.Items)
+			foreach (Web_resource_info item in clicked_view.Items)
 			{
 				list.Add(item);
 			}
 
 			string col_name = header.Column.Header as string;
-			IOrderedEnumerable<Web_src_info> temp_list;
+			IOrderedEnumerable<Web_resource_info> temp_list;
 
 			foreach (var col in (header.Parent as GridViewHeaderRowPresenter).Columns)
 			{
@@ -896,7 +870,7 @@ delete from [Cookie] where 1;";
 				});
 			}
 
-			List<Web_src_info> new_list = new List<Web_src_info>();
+			List<Web_resource_info> new_list = new List<Web_resource_info>();
 			foreach (var item in temp_list)
 			{
 				new_list.Add(item);

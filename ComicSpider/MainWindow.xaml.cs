@@ -260,14 +260,14 @@ namespace ComicSpider
 		private void View_volume(object sender, RoutedEventArgs e)
 		{
 			var list = Dashboard.Instance.volume_list.Items;
-			Web_src_info list_item = null;
+			Web_resource_info list_item = null;
 			for (int i = list.Count - 1; i > -1; i--)
 			{
-				if ((list[i] as Web_src_info).State == Web_src_state.Downloaded)
+				if ((list[i] as Web_resource_info).State == Web_resource_state.Downloaded)
 				{
-					list_item = list[i] as Web_src_info;
+					list_item = list[i] as Web_resource_info;
 					string path = "";
-					Web_src_info parent = list_item;
+					Web_resource_info parent = list_item;
 					while ((parent = parent.Parent) != null)
 					{
 						path = Path.Combine(parent.Name, path);

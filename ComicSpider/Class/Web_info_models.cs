@@ -6,35 +6,35 @@ using System.Linq;
 
 namespace ys
 {
-	public enum Web_src_state
+	public enum Web_resource_state
 	{
 		Wait,
-		Loading,
+		Downloading,
 		Downloaded,
 		Failed,
 		Paused
 	};
 
-	public class Web_src_info : System.ComponentModel.INotifyPropertyChanged
+	public class Web_resource_info : System.ComponentModel.INotifyPropertyChanged
 	{
-		public Web_src_info(
+		public Web_resource_info(
 			string url,
 			int index,
 			string name,
 			string path,
-			Web_src_info parent)
+			Web_resource_info parent)
 		{
 			Url = url;
 			uri = null;
 			Index = index;
 			Name = name;
-			state = Web_src_state.Wait;
+			state = Web_resource_state.Wait;
 			state_text = string.Empty;
 			Path = path;
 			Parent = parent;
 		}
 
-		public Web_src_state State
+		public Web_resource_state State
 		{
 			get
 			{
@@ -54,16 +54,16 @@ namespace ys
 				switch(value)
 				{
 					case "OK":
-						state = Web_src_state.Downloaded;
+						state = Web_resource_state.Downloaded;
 						break;
 					case "X":
-						state = Web_src_state.Failed;
+						state = Web_resource_state.Failed;
 						break;
 					case "-":
-						state = Web_src_state.Paused;
+						state = Web_resource_state.Paused;
 						break;
 					default:
-						state = Web_src_state.Loading;
+						state = Web_resource_state.Downloading;
 						break;
 				}
 				NotifyPropertyChanged("State_text");
@@ -72,13 +72,13 @@ namespace ys
 			{
 				switch (state)
 				{
-					case Web_src_state.Wait:
+					case Web_resource_state.Wait:
 						return "";
-					case Web_src_state.Downloaded:
+					case Web_resource_state.Downloaded:
 						return "OK";
-					case Web_src_state.Failed:
+					case Web_resource_state.Failed:
 						return "X";
-					case Web_src_state.Paused:
+					case Web_resource_state.Paused:
 						return "-";
 					default:
 						return state_text;
@@ -86,7 +86,7 @@ namespace ys
 			}
 		}
 
-		public List<Web_src_info> Children
+		public List<Web_resource_info> Children
 		{
 			get { return children; }
 			set
@@ -95,7 +95,7 @@ namespace ys
 				NotifyPropertyChanged("Children");
 			}
 		}
-		public Web_src_info Parent { get; protected set; }
+		public Web_resource_info Parent { get; protected set; }
 
 		public string Url
 		{
@@ -161,15 +161,15 @@ namespace ys
 			{
 				if (children == null) return 0;
 
-				return children.Count(c => c.State == Web_src_state.Downloaded);
+				return children.Count(c => c.State == Web_resource_state.Downloaded);
 			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public class Comparer : IEqualityComparer<Web_src_info>
+		public class Comparer : IEqualityComparer<Web_resource_info>
 		{
-			public bool Equals(Web_src_info x, Web_src_info y)
+			public bool Equals(Web_resource_info x, Web_resource_info y)
 			{
 				if (x.Name == y.Name)
 				{
@@ -177,7 +177,7 @@ namespace ys
 				}
 				return x.Url == y.Url;
 			}
-			public int GetHashCode(Web_src_info src_info)
+			public int GetHashCode(Web_resource_info src_info)
 			{
 				if (Object.ReferenceEquals(src_info, null)) return 0;
 
@@ -198,10 +198,10 @@ namespace ys
 		private string url;
 		private Uri uri;
 		private string name;
-		private Web_src_state state;
+		private Web_resource_state state;
 		private string state_text;
 		private double size;
-		private List<Web_src_info> children;
+		private List<Web_resource_info> children;
 	}
 
 	public class Website_info
