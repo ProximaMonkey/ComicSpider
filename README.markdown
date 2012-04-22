@@ -41,7 +41,7 @@ April 2012 y.s.
 * Not only comic images, it can be easily modified into a complex downloader. 
 * Support remote script controller which means you can always get the latest parser without updating the program. 
 
-# For developer
+# For developers
 
 Maybe use mono will make the project more open, but now windows only.
 I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).

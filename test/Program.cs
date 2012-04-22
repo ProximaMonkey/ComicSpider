@@ -18,12 +18,13 @@ namespace test
 			//{
 			//    Console.WriteLine(item.Attributes["href"].Value);
 			//}
-
+			
 			Lua lua = new Lua();
 			Regex reg = new Regex(@".+");
-			lua["s"] =  reg.Match("asdfasdf").Groups;
+			lua["s"] =  "";
 			lua.DoString(@"
-print(s[0].Value:match('a(.)d'))
+c = luanet.load_assembly('System.Console')
+c:WriteLine('test')
 ");
 
 			Console.WriteLine();

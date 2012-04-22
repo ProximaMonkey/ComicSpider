@@ -11,7 +11,8 @@ namespace ys
 		Wait,
 		Loading,
 		Downloaded,
-		Failed
+		Failed,
+		Paused
 	};
 
 	public class Web_src_info : System.ComponentModel.INotifyPropertyChanged
@@ -58,6 +59,9 @@ namespace ys
 					case "X":
 						state = Web_src_state.Failed;
 						break;
+					case "-":
+						state = Web_src_state.Paused;
+						break;
 					default:
 						state = Web_src_state.Loading;
 						break;
@@ -74,6 +78,8 @@ namespace ys
 						return "OK";
 					case Web_src_state.Failed:
 						return "X";
+					case Web_src_state.Paused:
+						return "-";
 					default:
 						return state_text;
 				}

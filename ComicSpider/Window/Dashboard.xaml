@@ -164,7 +164,7 @@
 			</Border.RenderTransform>
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="28*" />
+					<RowDefinition Height="28" />
 					<RowDefinition Height="257*" />
 				</Grid.RowDefinitions>
 				<Grid Margin="3">

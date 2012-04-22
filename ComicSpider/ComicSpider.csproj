@@ -238,7 +238,6 @@
       <AutoFill>True</AutoFill>
     </BlendEmbeddedFont>
     <Resource Include="Images\ys_16.png" />
-    <Resource Include="Images\start.png" />
     <Content Include="Lib\HtmlAgilityPack.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

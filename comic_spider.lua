@@ -2,6 +2,7 @@
 Comic Spider server side controller
 April 2012 y.s.
 ]]
+
 app_info =
 {
 	version = '1.0.0.0',
