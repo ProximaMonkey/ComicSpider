@@ -740,6 +740,7 @@ namespace ys
 					fs.Close();
 					
 					file_info.Parent.Path = file_path;
+					file_info.State = Web_resource_state.Downloaded;
 					file_info.Parent.State = Web_resource_state.Downloaded;
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
