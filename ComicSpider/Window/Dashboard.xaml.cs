@@ -129,8 +129,6 @@ namespace ComicSpider
 
 			MainWindow.Main.Task_done();
 
-			Update_volume_list();
-
 			if (comic_spider.Stopped)
 			{
 				if (Main_settings.Instance.Is_auto_begin)
@@ -333,7 +331,8 @@ namespace ComicSpider
 
 			comic_spider.Manager.Stop();
 
-			Update_volume_list();
+			volume_list.ItemsSource = comic_spider.Manager.Volumes;
+			new WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info>(volume_list);
 
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
@@ -379,17 +378,10 @@ namespace ComicSpider
 
 		/**************** Data ****************/
 
-		private void Update_volume_list()
-		{
-			// Better not using binding here. Or it will take up a lot of resources.
-			volume_list.ItemsSource = null;
-			volume_list.ItemsSource = comic_spider.Manager.Volumes;
-		}
 		private void Init_info_list()
 		{
 			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
 			User.Volume_listDataTable vol_info_table = vol_adpter.GetData();
-			List<Web_resource_info> vol_list = new List<Web_resource_info>();
 
 			if (vol_info_table.Count > 0)
 			{
@@ -412,13 +404,13 @@ namespace ComicSpider
 							comic);
 
 						comic.Children.Add(src_info);
-						vol_list.Add(src_info);
+						comic_spider.Manager.Volumes.Add(src_info);
 					}
 				}
-				Init_page_info_list(vol_list);
+				Init_page_info_list(comic_spider.Manager.Volumes);
 			}
 		}
-		private void Init_page_info_list(List<Web_resource_info> vol_list)
+		private void Init_page_info_list(System.Collections.ObjectModel.ObservableCollection<Web_resource_info> vol_list)
 		{
 			Page_listTableAdapter page_adpter = new Page_listTableAdapter();
 			User.Page_listDataTable page_info_table = page_adpter.GetData();
@@ -465,8 +457,6 @@ namespace ComicSpider
 					}
 				}
 			}
-
-			comic_spider.Manager.Volumes.AddRange(vol_list);
 		}
 		private void Save_vol_info_list()
 		{
@@ -736,11 +726,10 @@ delete from [Cookie] where 1;";
 
 			if (list_view == volume_list)
 			{
-				foreach (Web_resource_info item in list_view.SelectedItems)
+				while (list_view.SelectedItems.Count > 0)
 				{
-					comic_spider.Manager.Volumes.Remove(item);
+					comic_spider.Manager.Volumes.RemoveAt(list_view.SelectedIndex);
 				}
-				Update_volume_list();
 			}
 			else
 			{
@@ -896,8 +885,10 @@ delete from [Cookie] where 1;";
 			else
 			{
 				comic_spider.Manager.Volumes.Clear();
-				comic_spider.Manager.Volumes.AddRange(list);
-				Update_volume_list();
+				foreach (var item in list)
+				{
+					comic_spider.Manager.Volumes.Add(item);
+				}
 			}
 		}
 

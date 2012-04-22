@@ -441,7 +441,10 @@ namespace ys
 
 			if (root.Count > 0)
 			{
-				Manager.Volumes.AddRange(root.Children);
+				foreach (var item in root.Children)
+				{
+					Manager.Volumes.Add(item);
+				}
 				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
 				Dashboard.Instance.Dispatcher.Invoke(
 					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list)

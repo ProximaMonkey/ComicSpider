@@ -12,9 +12,7 @@ namespace ComicSpider
 	{
 		public Task_manager()
 		{
-			Root = new Web_resource_info("web", 0, "web", "", null);
-			Volumes = new List<Web_resource_info>();
-			Root.Children = Volumes;
+			Volumes = new ObservableCollection<Web_resource_info>();
 		}
 
 		public void Stop()
@@ -38,22 +36,20 @@ namespace ComicSpider
 			}
 		}
 
-		public Web_resource_info Root { get; private set; }
-
-		public List<Web_resource_info> Volumes { get; private set; }
+		public ObservableCollection<Web_resource_info> Volumes { get; private set; }
 
 		public Web_resource_info Volumes_dequeue()
 		{
 			lock (volume_lock)
 			{
-				return Dequeue(Root);
+				return Dequeue(Volumes);
 			}
 		}
 		public Web_resource_info Pages_dequeue()
 		{
 			lock (page_lock)
 			{
-				var volume = Peek_downloading(Root);
+				var volume = Peek_downloading(Volumes);
 				return Dequeue(volume);
 			}
 		}
@@ -61,7 +57,7 @@ namespace ComicSpider
 		{
 			lock (file_lock)
 			{
-				var volume = Peek_downloading(Root);
+				var volume = Peek_downloading(Volumes);
 				var page = Peek_downloading(volume);
 				return Dequeue(page);
 			}
@@ -82,6 +78,15 @@ namespace ComicSpider
 			item.State = Web_resource_state.Downloading;
 			return item;
 		}
+		private Web_resource_info Dequeue(ObservableCollection<Web_resource_info> volumes)
+		{
+			var item = Peek(volumes);
+
+			if (item == null) return null;
+
+			item.State = Web_resource_state.Downloading;
+			return item;
+		}
 
 		private Web_resource_info Peek(Web_resource_info parent)
 		{
@@ -93,12 +98,28 @@ namespace ComicSpider
 					(v.State != Web_resource_state.Downloaded);
 			});
 		}
+		private Web_resource_info Peek(ObservableCollection<Web_resource_info> volumes)
+		{
+			if (volumes == null || volumes.Count == 0) return null;
+
+			return volumes.FirstOrDefault(v =>
+			{
+				return (v.State != Web_resource_state.Downloading) &&
+					(v.State != Web_resource_state.Downloaded);
+			});
+		}
 
 		private Web_resource_info Peek_downloading(Web_resource_info parent)
 		{
 			if (parent == null || parent.Count == 0) return null;
 
 			return parent.Children.FirstOrDefault(v => v.State == Web_resource_state.Downloading);
+		}
+		private Web_resource_info Peek_downloading(ObservableCollection<Web_resource_info> volumes)
+		{
+			if (volumes == null || volumes.Count == 0) return null;
+
+			return volumes.FirstOrDefault(v => v.State == Web_resource_state.Downloading);
 		}
 	}
 }
