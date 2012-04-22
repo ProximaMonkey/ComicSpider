@@ -4,11 +4,16 @@ namespace ComicSpider
 {
 	public partial class Message_box : Window
 	{
-		public static bool? Show(string msg, string title = "Comic Spider")
+		public static bool Show(string msg, string title = "Comic Spider")
 		{
 			Message_box msg_box = new Message_box(msg, title);
-			return msg_box.ShowDialog();
+			
+			msg_box.ShowDialog();
+
+			return ok;
 		}
+
+		private static bool ok = false;
 
 		private Message_box(string msg, string title = "")
 		{
@@ -27,7 +32,13 @@ namespace ComicSpider
 				System.Media.SystemSounds.Hand.Play();
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void btn_ok_Click(object sender, RoutedEventArgs e)
+		{
+			ok = true;
+			this.Close();
+		}
+
+		private void btn_cancel_Click(object sender, RoutedEventArgs e)
 		{
 			this.Close();
 		}

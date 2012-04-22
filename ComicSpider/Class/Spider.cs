@@ -20,7 +20,7 @@ namespace ys
 		{
 			stopped = true;
 
-			thread_pool = new List<Thread>();
+			worker_thread_pool = new List<Thread>();
 
 			Async_load_lua_script();
 			Init_lua_script_watcher();
@@ -32,14 +32,16 @@ namespace ys
 		{
 			stopped = true;
 
+			Manager.Stop();
+
 			if (!completed)
 			{
-				foreach (Thread thread in thread_pool)
+				foreach (Thread thread in worker_thread_pool)
 				{
 					thread.Abort();
 				}
 			}
-			thread_pool.Clear();
+			worker_thread_pool.Clear();
 
 			Report("Downloading stopped.");
 		}
@@ -62,23 +64,18 @@ namespace ys
 
 			stopped = false;
 
-			Thread page_list_getter = new Thread(new ThreadStart(Get_page_list));
-			page_list_getter.Name = thread_type_Page_list_getter;
-			page_list_getter.Start();
-			thread_pool.Add(page_list_getter);
+			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
 
-			for (int i = 0; i < int.Parse(Main_settings.Instance.Thread_count); i++)
+			int worker_num = int.Parse(Main_settings.Instance.Thread_count);
+
+			for (int i = 0; i < worker_num / 3 + 1; i++)
 			{
+				Add_worker(new ThreadStart(Get_file_list), thread_type_File_list_getter + i);
+			}
 
-				Thread file_list_getter = new Thread(new ThreadStart(Get_file_list));
-				file_list_getter.Name = thread_type_File_list_getter + i;
-				file_list_getter.Start();
-				thread_pool.Add(file_list_getter);
-
-				Thread downloader = new Thread(new ThreadStart(Download_file));
-				downloader.Name = thread_type_File_downloader + i;
-				downloader.Start();
-				thread_pool.Add(downloader);
+			for (int i = 0; i < worker_num; i++)
+			{
+				Add_worker(new ThreadStart(Download_file), thread_type_File_downloader + i);
 			}
 		}
 
@@ -154,11 +151,12 @@ namespace ys
 
 		private bool stopped;
 
-		private List<Thread> thread_pool;
+		private List<Thread> worker_thread_pool;
+		private int worker_cooldown_span = 100;		// millisecond
 
 		private const string thread_type_Page_list_getter = "Page_list_getter";
-		private const string thread_type_File_downloader = "File_downloader";
 		private const string thread_type_File_list_getter = "File_list_getter";
+		private const string thread_type_File_downloader = "File_downloader";
 
 		private List<Website_info> supported_websites;
 
@@ -416,6 +414,14 @@ namespace ys
 			}
 		}
 
+		private void Add_worker(ThreadStart work, string name = "comic_spider_worker")
+		{
+			Thread worker = new Thread(work);
+			worker.Name = name;
+			worker.Start();
+			worker_thread_pool.Add(worker);
+		}
+
 		private void Get_volume_list(object arg)
 		{
 			string url = arg as string;
@@ -459,12 +465,11 @@ namespace ys
 				vol_info = Manager.Volumes_dequeue();
 				if (vol_info == null)
 				{
-					Thread.Sleep(100);
+					Thread.Sleep(worker_cooldown_span);
 					continue;
 				}
 
-				if (vol_info.Children == null ||
-					vol_info.Children.Count == 0)
+				if (vol_info.Count == 0)
 				{
 					try
 					{
@@ -484,7 +489,7 @@ namespace ys
 					catch (Exception ex)
 					{
 						Log_error(ex, vol_info.Url);
-						Thread.Sleep(300);
+						Thread.Sleep(worker_cooldown_span);
 						continue;
 					}
 				}
@@ -551,7 +556,7 @@ namespace ys
 				page_info = Manager.Pages_dequeue();
 				if (page_info == null)
 				{
-					Thread.Sleep(100);
+					Thread.Sleep(worker_cooldown_span);
 					continue;
 				}
 
@@ -585,7 +590,7 @@ namespace ys
 				{
 					page_info.State = Web_resource_state.Failed;
 					Log_error(ex, page_info.Url);
-					Thread.Sleep(300);
+					Thread.Sleep(worker_cooldown_span);
 				}
 			}
 		}
@@ -603,7 +608,7 @@ namespace ys
 
 				if (file_info == null)
 				{
-					Thread.Sleep(100);
+					Thread.Sleep(worker_cooldown_span);
 					continue;
 				}
 
@@ -785,7 +790,7 @@ namespace ys
 					file_info.Parent.State = Web_resource_state.Failed;
 
 					Log_error(ex, file_info.Url);
-					Thread.Sleep(300);
+					Thread.Sleep(worker_cooldown_span);
 				}
 			}
 		}
@@ -873,7 +878,7 @@ namespace ys
 			catch (Exception ex)
 			{
 				Log_error(ex, src_info.Url);
-				Thread.Sleep(300);
+				Thread.Sleep(worker_cooldown_span);
 			}
 
 			return info_list;
@@ -885,7 +890,7 @@ namespace ys
 			{
 				while (wait_script_loading && !Comic_spider.script_loaded)
 				{
-					Thread.Sleep(100);
+					Thread.Sleep(300);
 				}
 
 				this["lc"] = this;

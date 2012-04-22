@@ -12,7 +12,7 @@ namespace ys
 		Downloading,
 		Downloaded,
 		Failed,
-		Paused
+		Stopped
 	};
 
 	public class Web_resource_info : System.ComponentModel.INotifyPropertyChanged
@@ -51,16 +51,20 @@ namespace ys
 			set
 			{
 				state_text = value;
-				switch(value)
+				switch (string.IsNullOrEmpty(value) ? ' ' : value[0])
 				{
-					case "OK":
+					case ' ':
+						state = Web_resource_state.Wait;
+						break;
+					case '√':
 						state = Web_resource_state.Downloaded;
 						break;
-					case "X":
-						state = Web_resource_state.Failed;
+					case '#':
+						state = Web_resource_state.Stopped;
+						state_text = state_text.TrimStart('#').TrimStart();
 						break;
-					case "-":
-						state = Web_resource_state.Paused;
+					case '×':
+						state = Web_resource_state.Failed;
 						break;
 					default:
 						state = Web_resource_state.Downloading;
@@ -75,11 +79,11 @@ namespace ys
 					case Web_resource_state.Wait:
 						return "";
 					case Web_resource_state.Downloaded:
-						return "OK";
+						return "√";
+					case Web_resource_state.Stopped:
+						return "# " + state_text;
 					case Web_resource_state.Failed:
-						return "X";
-					case Web_resource_state.Paused:
-						return "-";
+						return "×";
 					default:
 						return state_text;
 				}

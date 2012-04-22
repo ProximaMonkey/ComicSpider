@@ -331,6 +331,10 @@ namespace ComicSpider
 			txt_dir.Text = Main_settings.Instance.Root_dir;
 			txt_thread.Text = Main_settings.Instance.Thread_count;
 
+			comic_spider.Manager.Stop();
+
+			Update_volume_list();
+
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
@@ -345,6 +349,7 @@ namespace ComicSpider
 				{
 					switch(vol.State)
 					{
+						case Web_resource_state.Stopped:
 						case Web_resource_state.Downloading:
 						case Web_resource_state.Downloaded:
 							count += vol.Count;
@@ -376,6 +381,7 @@ namespace ComicSpider
 
 		private void Update_volume_list()
 		{
+			// Better not using binding here. Or it will take up a lot of resources.
 			volume_list.ItemsSource = null;
 			volume_list.ItemsSource = comic_spider.Manager.Volumes;
 		}
@@ -461,7 +467,6 @@ namespace ComicSpider
 			}
 
 			comic_spider.Manager.Volumes.AddRange(vol_list);
-			Update_volume_list();
 		}
 		private void Save_vol_info_list()
 		{
@@ -509,7 +514,7 @@ namespace ComicSpider
 
 			foreach (Web_resource_info vol in volume_list.Items)
 			{
-				if (vol.Children == null) continue;
+				if (vol.Count == 0) continue;
 				foreach (Web_resource_info item in vol.Children.Distinct(new Web_resource_info.Comparer()))
 				{
 					page_adapter.Insert(
@@ -726,6 +731,9 @@ delete from [Cookie] where 1;";
 			if (list_view.SelectedItems.Count == 0)
 				return;
 
+			if (!Message_box.Show("Are you sure to delete?"))
+				return;
+
 			if (list_view == volume_list)
 			{
 				foreach (Web_resource_info item in list_view.SelectedItems)
@@ -775,7 +783,7 @@ delete from [Cookie] where 1;";
 			page_list.Items.Clear();
 			foreach (Web_resource_info vol in volume_list.SelectedItems)
 			{
-				if (vol.Children == null) continue;
+				if (vol.Count == 0) continue;
 				foreach (var page in vol.Children)
 				{
 					page_list.Items.Add(page);
@@ -826,12 +834,12 @@ delete from [Cookie] where 1;";
 		{
 
 			GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
-			ListView clicked_view = sender as ListView;
+			ListView list_view = sender as ListView;
 			List<Web_resource_info> list = new List<Web_resource_info>();
 
 			if (header == null || header.Column == null) return;
 
-			foreach (Web_resource_info item in clicked_view.Items)
+			foreach (Web_resource_info item in list_view.Items)
 			{
 				list.Add(item);
 			}
@@ -877,10 +885,19 @@ delete from [Cookie] where 1;";
 			}
 			list = new_list;
 
-			clicked_view.Items.Clear();
-			foreach (var item in list)
+			if (list_view.ItemsSource == null)
 			{
-				clicked_view.Items.Add(item);
+				list_view.Items.Clear();
+				foreach (var item in list)
+				{
+					list_view.Items.Add(item);
+				}
+			}
+			else
+			{
+				comic_spider.Manager.Volumes.Clear();
+				comic_spider.Manager.Volumes.AddRange(list);
+				Update_volume_list();
 			}
 		}
 

@@ -12,12 +12,35 @@ namespace ComicSpider
 	{
 		public Task_manager()
 		{
+			Root = new Web_resource_info("web", 0, "web", "", null);
+			Volumes = new List<Web_resource_info>();
 			Root.Children = Volumes;
 		}
 
-		public readonly Web_resource_info Root = new Web_resource_info("web", 0, "web", "", null);
+		public void Stop()
+		{
+			foreach (var vol in Volumes)
+			{
+				if (vol.State == Web_resource_state.Downloading)
+					vol.State = Web_resource_state.Stopped;
 
-		public readonly List<Web_resource_info> Volumes = new List<Web_resource_info>();
+				if (vol.Count == 0) continue;
+
+				foreach (var page in vol.Children)
+				{
+					if (page.Count > 0 &&
+						page.Children[0].State == Web_resource_state.Downloading)
+					{
+						page.State = Web_resource_state.Stopped;
+						page.Children[0].State = Web_resource_state.Stopped;
+					}
+				}
+			}
+		}
+
+		public Web_resource_info Root { get; private set; }
+
+		public List<Web_resource_info> Volumes { get; private set; }
 
 		public Web_resource_info Volumes_dequeue()
 		{
@@ -64,32 +87,18 @@ namespace ComicSpider
 		{
 			if (parent == null || parent.Count == 0) return null;
 
-			try
+			return parent.Children.FirstOrDefault(v =>
 			{
-				return parent.Children.First(v =>
-				{
-					return (v.State == Web_resource_state.Wait) ||
-						(v.State == Web_resource_state.Failed);
-				});
-			}
-			catch (InvalidOperationException)
-			{
-				return null;
-			}
+				return (v.State != Web_resource_state.Downloading) &&
+					(v.State != Web_resource_state.Downloaded);
+			});
 		}
 
 		private Web_resource_info Peek_downloading(Web_resource_info parent)
 		{
 			if (parent == null || parent.Count == 0) return null;
 
-			try
-			{
-				return parent.Children.First(v => v.State == Web_resource_state.Downloading);
-			}
-			catch (InvalidOperationException)
-			{
-				return null;
-			}
+			return parent.Children.FirstOrDefault(v => v.State == Web_resource_state.Downloading);
 		}
 	}
 }
