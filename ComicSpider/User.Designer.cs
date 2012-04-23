@@ -843,7 +843,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Volume_listRow AddVolume_listRow(string Url, string Name, int Index, string State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+            public Volume_listRow AddVolume_listRow(string Url, string Name, int Index, int State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
                 Volume_listRow rowVolume_listRow = ((Volume_listRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Url,
@@ -902,7 +902,7 @@ namespace ComicSpider {
                 base.Columns.Add(this.columnName);
                 this.columnIndex = new global::System.Data.DataColumn("Index", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnIndex);
-                this.columnState = new global::System.Data.DataColumn("State", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnState = new global::System.Data.DataColumn("State", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnState);
                 this.columnParent_url = new global::System.Data.DataColumn("Parent_url", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnParent_url);
@@ -918,7 +918,6 @@ namespace ComicSpider {
                 this.columnUrl.Unique = true;
                 this.columnUrl.MaxLength = 300;
                 this.columnName.MaxLength = 300;
-                this.columnState.MaxLength = 50;
                 this.columnParent_url.MaxLength = 300;
                 this.columnParent_name.MaxLength = 300;
                 this.columnPath.MaxLength = 300;
@@ -1642,6 +1641,10 @@ namespace ComicSpider {
             
             private global::System.Data.DataColumn columnState;
             
+            private global::System.Data.DataColumn columnProgress;
+            
+            private global::System.Data.DataColumn columnSpeed;
+            
             private global::System.Data.DataColumn columnSize;
             
             private global::System.Data.DataColumn columnParent_url;
@@ -1714,6 +1717,22 @@ namespace ComicSpider {
             public global::System.Data.DataColumn StateColumn {
                 get {
                     return this.columnState;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn ProgressColumn {
+                get {
+                    return this.columnProgress;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn SpeedColumn {
+                get {
+                    return this.columnSpeed;
                 }
             }
             
@@ -1794,13 +1813,15 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_listRow AddPage_listRow(string Url, string Name, int Index, string State, double Size, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+            public Page_listRow AddPage_listRow(string Url, string Name, int Index, int State, double Progress, double Speed, double Size, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
                 Page_listRow rowPage_listRow = ((Page_listRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Url,
                         Name,
                         Index,
                         State,
+                        Progress,
+                        Speed,
                         Size,
                         Parent_url,
                         Parent_name,
@@ -1839,6 +1860,8 @@ namespace ComicSpider {
                 this.columnName = base.Columns["Name"];
                 this.columnIndex = base.Columns["Index"];
                 this.columnState = base.Columns["State"];
+                this.columnProgress = base.Columns["Progress"];
+                this.columnSpeed = base.Columns["Speed"];
                 this.columnSize = base.Columns["Size"];
                 this.columnParent_url = base.Columns["Parent_url"];
                 this.columnParent_name = base.Columns["Parent_name"];
@@ -1855,8 +1878,12 @@ namespace ComicSpider {
                 base.Columns.Add(this.columnName);
                 this.columnIndex = new global::System.Data.DataColumn("Index", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnIndex);
-                this.columnState = new global::System.Data.DataColumn("State", typeof(string), null, global::System.Data.MappingType.Element);
+                this.columnState = new global::System.Data.DataColumn("State", typeof(int), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnState);
+                this.columnProgress = new global::System.Data.DataColumn("Progress", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnProgress);
+                this.columnSpeed = new global::System.Data.DataColumn("Speed", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSpeed);
                 this.columnSize = new global::System.Data.DataColumn("Size", typeof(double), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSize);
                 this.columnParent_url = new global::System.Data.DataColumn("Parent_url", typeof(string), null, global::System.Data.MappingType.Element);
@@ -1873,7 +1900,6 @@ namespace ComicSpider {
                 this.columnUrl.Unique = true;
                 this.columnUrl.MaxLength = 300;
                 this.columnName.MaxLength = 300;
-                this.columnState.MaxLength = 50;
                 this.columnParent_url.MaxLength = 300;
                 this.columnParent_name.MaxLength = 300;
                 this.columnPath.MaxLength = 300;
@@ -2117,10 +2143,10 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string State {
+            public int State {
                 get {
                     try {
-                        return ((string)(this[this.tableVolume_list.StateColumn]));
+                        return ((int)(this[this.tableVolume_list.StateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
                         throw new global::System.Data.StrongTypingException("The value for column \'State\' in table \'Volume_list\' is DBNull.", e);
@@ -2452,10 +2478,10 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string State {
+            public int State {
                 get {
                     try {
-                        return ((string)(this[this.tablePage_list.StateColumn]));
+                        return ((int)(this[this.tablePage_list.StateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
                         throw new global::System.Data.StrongTypingException("The value for column \'State\' in table \'Page_list\' is DBNull.", e);
@@ -2463,6 +2489,38 @@ namespace ComicSpider {
                 }
                 set {
                     this[this.tablePage_list.StateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public double Progress {
+                get {
+                    try {
+                        return ((double)(this[this.tablePage_list.ProgressColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Progress\' in table \'Page_list\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePage_list.ProgressColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public double Speed {
+                get {
+                    try {
+                        return ((double)(this[this.tablePage_list.SpeedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Speed\' in table \'Page_list\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePage_list.SpeedColumn] = value;
                 }
             }
             
@@ -2575,6 +2633,30 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetStateNull() {
                 this[this.tablePage_list.StateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsProgressNull() {
+                return this.IsNull(this.tablePage_list.ProgressColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetProgressNull() {
+                this[this.tablePage_list.ProgressColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsSpeedNull() {
+                return this.IsNull(this.tablePage_list.SpeedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetSpeedNull() {
+                this[this.tablePage_list.SpeedColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3005,7 +3087,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3374,7 +3456,8 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.DeleteCommand.Parameters.Add(param);
@@ -3451,7 +3534,8 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
             this._adapter.InsertCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
@@ -3497,7 +3581,8 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
@@ -3566,7 +3651,8 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.UpdateCommand.Parameters.Add(param);
@@ -3625,7 +3711,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3696,7 +3782,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, string Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
+        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
@@ -3719,13 +3805,13 @@ namespace ComicSpider.UserTableAdapters {
                 this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
-            if ((Original_State == null)) {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[6].Value = global::System.DBNull.Value;
+            if ((Original_State.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[6].Value = ((int)(Original_State.Value));
             }
             else {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((string)(Original_State));
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
             if ((Original_Parent_url == null)) {
                 this.Adapter.DeleteCommand.Parameters[7].Value = ((object)(1));
@@ -3772,7 +3858,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, string State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
             if ((Url == null)) {
                 throw new global::System.ArgumentNullException("Url");
             }
@@ -3791,11 +3877,11 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
             }
-            if ((State == null)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+            if ((State.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[3].Value = ((int)(State.Value));
             }
             else {
-                this.Adapter.InsertCommand.Parameters[3].Value = ((string)(State));
+                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
             }
             if ((Parent_url == null)) {
                 this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
@@ -3840,7 +3926,7 @@ namespace ComicSpider.UserTableAdapters {
                     string Url, 
                     string Name, 
                     global::System.Nullable<int> Index, 
-                    string State, 
+                    global::System.Nullable<int> State, 
                     string Parent_url, 
                     string Parent_name, 
                     string Path, 
@@ -3848,7 +3934,7 @@ namespace ComicSpider.UserTableAdapters {
                     string Original_Url, 
                     string Original_Name, 
                     global::System.Nullable<int> Original_Index, 
-                    string Original_State, 
+                    global::System.Nullable<int> Original_State, 
                     string Original_Parent_url, 
                     string Original_Parent_name, 
                     string Original_Path, 
@@ -3871,11 +3957,11 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
             }
-            if ((State == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+            if ((State.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(State.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(State));
+                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
             }
             if ((Parent_url == null)) {
                 this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
@@ -3918,13 +4004,13 @@ namespace ComicSpider.UserTableAdapters {
                 this.Adapter.UpdateCommand.Parameters[11].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[12].Value = global::System.DBNull.Value;
             }
-            if ((Original_State == null)) {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
+            if ((Original_State.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((int)(Original_State.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((string)(Original_State));
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
             }
             if ((Original_Parent_url == null)) {
                 this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(1));
@@ -3971,7 +4057,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string Name, global::System.Nullable<int> Index, string State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, string Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
+        public virtual int Update(string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
             return this.Update(Original_Url, Name, Index, State, Parent_url, Parent_name, Path, Data_time, Original_Url, Original_Name, Original_Index, Original_State, Original_Parent_url, Original_Parent_name, Original_Path, Original_Data_time);
         }
     }
@@ -4231,7 +4317,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4658,7 +4744,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4973,6 +5059,8 @@ namespace ComicSpider.UserTableAdapters {
             tableMapping.ColumnMappings.Add("Name", "Name");
             tableMapping.ColumnMappings.Add("Index", "Index");
             tableMapping.ColumnMappings.Add("State", "State");
+            tableMapping.ColumnMappings.Add("Progress", "Progress");
+            tableMapping.ColumnMappings.Add("Speed", "Speed");
             tableMapping.ColumnMappings.Add("Size", "Size");
             tableMapping.ColumnMappings.Add("Parent_url", "Parent_url");
             tableMapping.ColumnMappings.Add("Parent_name", "Parent_name");
@@ -4981,7 +5069,7 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Page_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Page_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Progress = 1 AND [Progress] IS NULL) OR ([Progress] = @Original_Progress)) AND ((@IsNull_Speed = 1 AND [Speed] IS NULL) OR ([Speed] = @Original_Speed)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             global::System.Data.SQLite.SQLiteParameter param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -5028,8 +5116,39 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Progress";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Progress";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Progress";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Progress";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Speed";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Speed";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Speed";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Speed";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.DeleteCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
@@ -5098,9 +5217,10 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.DeleteCommand.Parameters.Add(param);
             this._adapter.InsertCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
-            this._adapter.InsertCommand.CommandText = "INSERT INTO [Page_list] ([Url], [Name], [Index], [State], [Size], [Parent_url], [" +
-                "Parent_name], [Path], [Data_time]) VALUES (@Url, @Name, @Index, @State, @Size, @" +
-                "Parent_url, @Parent_name, @Path, @Data_time)";
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [Page_list] ([Url], [Name], [Index], [State], [Progress], [Speed], [S" +
+                "ize], [Parent_url], [Parent_name], [Path], [Data_time]) VALUES (@Url, @Name, @In" +
+                "dex, @State, @Progress, @Speed, @Size, @Parent_url, @Parent_name, @Path, @Data_t" +
+                "ime)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -5120,8 +5240,21 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
+            this._adapter.InsertCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Progress";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Progress";
+            this._adapter.InsertCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Speed";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Speed";
             this._adapter.InsertCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Size";
@@ -5152,7 +5285,7 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(param);
             this._adapter.UpdateCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Page_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [State] = @State, [Size] = @Size, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Path] = @Path, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Page_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [State] = @State, [Progress] = @Progress, [Speed] = @Speed, [Size] = @Size, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Path] = @Path, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Progress = 1 AND [Progress] IS NULL) OR ([Progress] = @Original_Progress)) AND ((@IsNull_Speed = 1 AND [Speed] IS NULL) OR ([Speed] = @Original_Speed)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -5172,8 +5305,21 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Progress";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Progress";
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Speed";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Speed";
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Size";
@@ -5247,8 +5393,39 @@ namespace ComicSpider.UserTableAdapters {
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_State";
-            param.DbType = global::System.Data.DbType.String;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
             param.SourceColumn = "State";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Progress";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Progress";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Progress";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Progress";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Speed";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Speed";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Speed";
+            param.DbType = global::System.Data.DbType.Double;
+            param.DbType = global::System.Data.DbType.Double;
+            param.SourceColumn = "Speed";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
@@ -5321,7 +5498,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitConnection() {
             this._connection = new global::System.Data.SQLite.SQLiteConnection();
-            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.UserDBConnectionString;
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5330,8 +5507,8 @@ namespace ComicSpider.UserTableAdapters {
             this._commandCollection = new global::System.Data.SQLite.SQLiteCommand[1];
             this._commandCollection[0] = new global::System.Data.SQLite.SQLiteCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT [Url], [Name], [Index], [State], [Size], [Parent_url], [Parent_name], [Pat" +
-                "h], [Data_time] FROM [Page_list]";
+            this._commandCollection[0].CommandText = "SELECT [Url], [Name], [Index], [State], [Progress], [Speed], [Size], [Parent_url]" +
+                ", [Parent_name], [Path], [Data_time] FROM [Page_list]";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -5392,7 +5569,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, string Original_State, global::System.Nullable<double> Original_Size, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
+        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, global::System.Nullable<double> Original_Progress, global::System.Nullable<double> Original_Speed, global::System.Nullable<double> Original_Size, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
@@ -5415,47 +5592,63 @@ namespace ComicSpider.UserTableAdapters {
                 this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
-            if ((Original_State == null)) {
+            if ((Original_State.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[6].Value = ((int)(Original_State.Value));
+            }
+            else {
                 this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[6].Value = ((string)(Original_State));
-            }
-            if ((Original_Size.HasValue == true)) {
+            if ((Original_Progress.HasValue == true)) {
                 this.Adapter.DeleteCommand.Parameters[7].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[8].Value = ((double)(Original_Size.Value));
+                this.Adapter.DeleteCommand.Parameters[8].Value = ((double)(Original_Progress.Value));
             }
             else {
                 this.Adapter.DeleteCommand.Parameters[7].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[8].Value = global::System.DBNull.Value;
             }
-            if ((Original_Parent_url == null)) {
+            if ((Original_Speed.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[9].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[10].Value = ((double)(Original_Speed.Value));
+            }
+            else {
                 this.Adapter.DeleteCommand.Parameters[9].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[10].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.DeleteCommand.Parameters[9].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[10].Value = ((string)(Original_Parent_url));
+            if ((Original_Size.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[12].Value = ((double)(Original_Size.Value));
             }
-            if ((Original_Parent_name == null)) {
+            else {
                 this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[12].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[12].Value = ((string)(Original_Parent_name));
-            }
-            if ((Original_Path == null)) {
+            if ((Original_Parent_url == null)) {
                 this.Adapter.DeleteCommand.Parameters[13].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[14].Value = global::System.DBNull.Value;
             }
             else {
                 this.Adapter.DeleteCommand.Parameters[13].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[14].Value = ((string)(Original_Path));
+                this.Adapter.DeleteCommand.Parameters[14].Value = ((string)(Original_Parent_url));
             }
-            this.Adapter.DeleteCommand.Parameters[15].Value = ((System.DateTime)(Original_Data_time));
+            if ((Original_Parent_name == null)) {
+                this.Adapter.DeleteCommand.Parameters[15].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[16].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[15].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[16].Value = ((string)(Original_Parent_name));
+            }
+            if ((Original_Path == null)) {
+                this.Adapter.DeleteCommand.Parameters[17].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[18].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[17].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[18].Value = ((string)(Original_Path));
+            }
+            this.Adapter.DeleteCommand.Parameters[19].Value = ((System.DateTime)(Original_Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5476,7 +5669,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, string State, global::System.Nullable<double> Size, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, global::System.Nullable<double> Progress, global::System.Nullable<double> Speed, global::System.Nullable<double> Size, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
             if ((Url == null)) {
                 throw new global::System.ArgumentNullException("Url");
             }
@@ -5495,37 +5688,49 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
             }
-            if ((State == null)) {
-                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+            if ((State.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[3].Value = ((int)(State.Value));
             }
             else {
-                this.Adapter.InsertCommand.Parameters[3].Value = ((string)(State));
+                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
             }
-            if ((Size.HasValue == true)) {
-                this.Adapter.InsertCommand.Parameters[4].Value = ((double)(Size.Value));
+            if ((Progress.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[4].Value = ((double)(Progress.Value));
             }
             else {
                 this.Adapter.InsertCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
-            if ((Parent_url == null)) {
+            if ((Speed.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[5].Value = ((double)(Speed.Value));
+            }
+            else {
                 this.Adapter.InsertCommand.Parameters[5].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.InsertCommand.Parameters[5].Value = ((string)(Parent_url));
+            if ((Size.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[6].Value = ((double)(Size.Value));
             }
-            if ((Parent_name == null)) {
+            else {
                 this.Adapter.InsertCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.InsertCommand.Parameters[6].Value = ((string)(Parent_name));
-            }
-            if ((Path == null)) {
+            if ((Parent_url == null)) {
                 this.Adapter.InsertCommand.Parameters[7].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[7].Value = ((string)(Path));
+                this.Adapter.InsertCommand.Parameters[7].Value = ((string)(Parent_url));
             }
-            this.Adapter.InsertCommand.Parameters[8].Value = ((System.DateTime)(Data_time));
+            if ((Parent_name == null)) {
+                this.Adapter.InsertCommand.Parameters[8].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(Parent_name));
+            }
+            if ((Path == null)) {
+                this.Adapter.InsertCommand.Parameters[9].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[9].Value = ((string)(Path));
+            }
+            this.Adapter.InsertCommand.Parameters[10].Value = ((System.DateTime)(Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5550,7 +5755,9 @@ namespace ComicSpider.UserTableAdapters {
                     string Url, 
                     string Name, 
                     global::System.Nullable<int> Index, 
-                    string State, 
+                    global::System.Nullable<int> State, 
+                    global::System.Nullable<double> Progress, 
+                    global::System.Nullable<double> Speed, 
                     global::System.Nullable<double> Size, 
                     string Parent_url, 
                     string Parent_name, 
@@ -5559,7 +5766,9 @@ namespace ComicSpider.UserTableAdapters {
                     string Original_Url, 
                     string Original_Name, 
                     global::System.Nullable<int> Original_Index, 
-                    string Original_State, 
+                    global::System.Nullable<int> Original_State, 
+                    global::System.Nullable<double> Original_Progress, 
+                    global::System.Nullable<double> Original_Speed, 
                     global::System.Nullable<double> Original_Size, 
                     string Original_Parent_url, 
                     string Original_Parent_name, 
@@ -5583,100 +5792,128 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
             }
-            if ((State == null)) {
-                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+            if ((State.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((int)(State.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(State));
+                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
             }
-            if ((Size.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[4].Value = ((double)(Size.Value));
+            if ((Progress.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((double)(Progress.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[4].Value = global::System.DBNull.Value;
             }
-            if ((Parent_url == null)) {
+            if ((Speed.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((double)(Speed.Value));
+            }
+            else {
                 this.Adapter.UpdateCommand.Parameters[5].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[5].Value = ((string)(Parent_url));
+            if ((Size.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[6].Value = ((double)(Size.Value));
             }
-            if ((Parent_name == null)) {
+            else {
                 this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(Parent_name));
-            }
-            if ((Path == null)) {
+            if ((Parent_url == null)) {
                 this.Adapter.UpdateCommand.Parameters[7].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(Path));
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(Parent_url));
             }
-            this.Adapter.UpdateCommand.Parameters[8].Value = ((System.DateTime)(Data_time));
+            if ((Parent_name == null)) {
+                this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(Parent_name));
+            }
+            if ((Path == null)) {
+                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Path));
+            }
+            this.Adapter.UpdateCommand.Parameters[10].Value = ((System.DateTime)(Data_time));
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Original_Url));
+                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Original_Url));
             }
             if ((Original_Name == null)) {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Original_Name));
-            }
-            if ((Original_Index.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((int)(Original_Index.Value));
-            }
-            else {
                 this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
             }
-            if ((Original_State == null)) {
+            else {
+                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(Original_Name));
+            }
+            if ((Original_Index.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[15].Value = ((int)(Original_Index.Value));
+            }
+            else {
                 this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[15].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((string)(Original_State));
-            }
-            if ((Original_Size.HasValue == true)) {
+            if ((Original_State.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((double)(Original_Size.Value));
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((int)(Original_State.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            if ((Original_Parent_url == null)) {
+            if ((Original_Progress.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[19].Value = ((double)(Original_Progress.Value));
+            }
+            else {
                 this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((string)(Original_Parent_url));
+            if ((Original_Speed.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[21].Value = ((double)(Original_Speed.Value));
             }
-            if ((Original_Parent_name == null)) {
+            else {
                 this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[21].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[21].Value = ((string)(Original_Parent_name));
+            if ((Original_Size.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[22].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[23].Value = ((double)(Original_Size.Value));
             }
-            if ((Original_Path == null)) {
+            else {
                 this.Adapter.UpdateCommand.Parameters[22].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[23].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[22].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[23].Value = ((string)(Original_Path));
+            if ((Original_Parent_url == null)) {
+                this.Adapter.UpdateCommand.Parameters[24].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[25].Value = global::System.DBNull.Value;
             }
-            this.Adapter.UpdateCommand.Parameters[24].Value = ((System.DateTime)(Original_Data_time));
+            else {
+                this.Adapter.UpdateCommand.Parameters[24].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[25].Value = ((string)(Original_Parent_url));
+            }
+            if ((Original_Parent_name == null)) {
+                this.Adapter.UpdateCommand.Parameters[26].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[27].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[26].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[27].Value = ((string)(Original_Parent_name));
+            }
+            if ((Original_Path == null)) {
+                this.Adapter.UpdateCommand.Parameters[28].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[29].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[28].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[29].Value = ((string)(Original_Path));
+            }
+            this.Adapter.UpdateCommand.Parameters[30].Value = ((System.DateTime)(Original_Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5700,7 +5937,9 @@ namespace ComicSpider.UserTableAdapters {
         public virtual int Update(
                     string Name, 
                     global::System.Nullable<int> Index, 
-                    string State, 
+                    global::System.Nullable<int> State, 
+                    global::System.Nullable<double> Progress, 
+                    global::System.Nullable<double> Speed, 
                     global::System.Nullable<double> Size, 
                     string Parent_url, 
                     string Parent_name, 
@@ -5709,13 +5948,15 @@ namespace ComicSpider.UserTableAdapters {
                     string Original_Url, 
                     string Original_Name, 
                     global::System.Nullable<int> Original_Index, 
-                    string Original_State, 
+                    global::System.Nullable<int> Original_State, 
+                    global::System.Nullable<double> Original_Progress, 
+                    global::System.Nullable<double> Original_Speed, 
                     global::System.Nullable<double> Original_Size, 
                     string Original_Parent_url, 
                     string Original_Parent_name, 
                     string Original_Path, 
                     System.DateTime Original_Data_time) {
-            return this.Update(Original_Url, Name, Index, State, Size, Parent_url, Parent_name, Path, Data_time, Original_Url, Original_Name, Original_Index, Original_State, Original_Size, Original_Parent_url, Original_Parent_name, Original_Path, Original_Data_time);
+            return this.Update(Original_Url, Name, Index, State, Progress, Speed, Size, Parent_url, Parent_name, Path, Data_time, Original_Url, Original_Name, Original_Index, Original_State, Original_Progress, Original_Speed, Original_Size, Original_Parent_url, Original_Parent_name, Original_Path, Original_Data_time);
         }
     }
     

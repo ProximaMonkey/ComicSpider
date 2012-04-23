@@ -121,10 +121,15 @@ namespace ComicSpider
 
 		/**************** Delegate ****************/
 
-		public delegate void Show_volume_list_delegate();
-		public void Show_volume_list()
+		public delegate void Show_volume_list_delegate(List<Web_resource_info> list);
+		public void Show_volume_list(List<Web_resource_info> list)
 		{
-			if(comic_spider.Stopped)
+			foreach (var item in list)
+			{
+				comic_spider.Manager.Volumes.Add(item);
+			}
+
+			if (comic_spider.Stopped)
 				working_icon.Hide_working();
 
 			MainWindow.Main.Task_done();
@@ -332,7 +337,7 @@ namespace ComicSpider
 			comic_spider.Manager.Stop();
 
 			volume_list.ItemsSource = comic_spider.Manager.Volumes;
-			new WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info>(volume_list);
+			volume_drag_drop_manager = new WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info>(volume_list);
 
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
@@ -346,19 +351,10 @@ namespace ComicSpider
 				int count = 0;
 				foreach (Web_resource_info vol in volume_list.Items)
 				{
-					switch(vol.State)
-					{
-						case Web_resource_state.Stopped:
-						case Web_resource_state.Downloading:
-						case Web_resource_state.Downloaded:
-							count += vol.Count;
-							break;
-
-						case Web_resource_state.Wait:
-						case Web_resource_state.Failed:
-							count++;
-							break;
-					}
+					if (vol.Count == 0)
+						count++;
+					else
+						count += vol.Count;
 				}
 				return count;
 			}
@@ -375,6 +371,8 @@ namespace ComicSpider
 				return count;
 			}
 		}
+
+		WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info> volume_drag_drop_manager;
 
 		/**************** Data ****************/
 
@@ -401,7 +399,10 @@ namespace ComicSpider
 							row.Index,
 							row.Name,
 							row.Path,
-							comic);
+							comic)
+							{
+								State = (Web_resource_state)row.State
+							};
 
 						comic.Children.Add(src_info);
 						comic_spider.Manager.Volumes.Add(src_info);
@@ -439,21 +440,12 @@ namespace ComicSpider
 							row.Path,
 							volume)
 							{
-								State_text = row.State,
+								State = (Web_resource_state)row.State,
+								Progress = row.Progress,
+								Speed = row.Speed,
 								Size = row.Size,
 							}
 						);
-
-						if (row.State == "X")
-							volume.State = Web_resource_state.Failed;
-						else if (volume.Downloaded == volume.Count)
-						{
-							volume.State = Web_resource_state.Downloaded;
-						}
-						else
-						{
-							volume.State_text = string.Format("{0} / {1}", volume.Downloaded, volume.Count);
-						}
 					}
 				}
 			}
@@ -478,7 +470,7 @@ namespace ComicSpider
 					item.Url,
 					item.Name,
 					item.Index,
-					item.State_text,
+					(int)item.State,
 					item.Parent.Url,
 					item.Parent.Name,
 					item.Path,
@@ -508,16 +500,18 @@ namespace ComicSpider
 				foreach (Web_resource_info item in vol.Children.Distinct(new Web_resource_info.Comparer()))
 				{
 					page_adapter.Insert(
-											item.Url,
-											item.Name,
-											item.Index,
-											item.State_text,
-											item.Size,
-											vol.Url,
-											vol.Name,
-											item.Path,
-											DateTime.Now
-										);
+						item.Url,
+						item.Name,
+						item.Index,
+						(int)item.State,
+						item.Progress,
+						item.Speed,
+						item.Size,
+						vol.Url,
+						vol.Name,
+						item.Path,
+						DateTime.Now
+					);
 				}
 			}
 
@@ -779,10 +773,6 @@ delete from [Cookie] where 1;";
 				}
 			}
 		}
-		private void volume_list_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			volume_list_SelectionChanged(null, null);
-		}
 		private void volume_list_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			Web_resource_info item = (sender as ListView).SelectedItem as Web_resource_info;
@@ -821,7 +811,6 @@ delete from [Cookie] where 1;";
 		}
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
 		{
-
 			GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;
 			ListView list_view = sender as ListView;
 			List<Web_resource_info> list = new List<Web_resource_info>();
@@ -834,7 +823,7 @@ delete from [Cookie] where 1;";
 			}
 
 			string col_name = header.Column.Header as string;
-			IOrderedEnumerable<Web_resource_info> temp_list;
+			IOrderedEnumerable<Web_resource_info> temp_list = null;
 
 			foreach (var col in (header.Parent as GridViewHeaderRowPresenter).Columns)
 			{
@@ -844,30 +833,74 @@ delete from [Cookie] where 1;";
 
 			DataTemplate arrow_up = Resources["HeaderTemplateArrowUp"] as DataTemplate;
 			DataTemplate arrow_down = Resources["HeaderTemplateArrowDown"] as DataTemplate;
-			if (header.Column.HeaderTemplate == arrow_up)
+
+			switch (col_name)
 			{
-				header.Column.HeaderTemplate = arrow_down;
-				temp_list = list.OrderByDescending(info =>
-				{
-					if (col_name == "Main")
-						return info.Parent.Name;
+				case "S":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.State);
 					else
-						return info.GetType().GetProperty(col_name).GetValue(info, null);
-				});
-			}
-			else
-			{
-				header.Column.HeaderTemplate = arrow_up;
-				temp_list = list.OrderBy(info =>
-				{
-					if (col_name == "Main")
-						return info.Parent.Name;
+						temp_list = list.OrderBy(info => info.State);
+					break;
+
+				case "Progress int":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Progress_int_text);
 					else
-						return info.GetType().GetProperty(col_name).GetValue(info, null);
-				});
+						temp_list = list.OrderBy(info => info.Progress_int_text);
+						break;
+
+				case "Progress":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Progress);
+					else
+						temp_list = list.OrderBy(info => info.Progress);
+						break;
+
+				case "Speed":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Speed);
+					else
+						temp_list = list.OrderBy(info => info.Speed);
+						break;
+
+				case "Size":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Size);
+					else
+						temp_list = list.OrderBy(info => info.Size);
+						break;
+
+				case "Main":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Parent.Name);
+					else
+						temp_list = list.OrderBy(info => info.Parent.Name);
+						break;
+
+				case "Name":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Name);
+					else
+						temp_list = list.OrderBy(info => info.Name);
+						break;
+
+				case "Url":
+					if (header.Column.HeaderTemplate == arrow_up)
+						temp_list = list.OrderByDescending(info => info.Url);
+					else
+						temp_list = list.OrderBy(info => info.Url);
+						break;
 			}
 
+			if (header.Column.HeaderTemplate == arrow_up)
+				header.Column.HeaderTemplate = arrow_down;
+			else
+				header.Column.HeaderTemplate = arrow_up;
+
 			List<Web_resource_info> new_list = new List<Web_resource_info>();
+
+			if (temp_list == null) return;
 			foreach (var item in temp_list)
 			{
 				new_list.Add(item);

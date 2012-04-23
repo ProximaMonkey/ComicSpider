@@ -441,13 +441,10 @@ namespace ys
 
 			if (root.Count > 0)
 			{
-				foreach (var item in root.Children)
-				{
-					Manager.Volumes.Add(item);
-				}
 				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
 				Dashboard.Instance.Dispatcher.Invoke(
-					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list)
+					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
+					root.Children
 				);
 			}
 			else
@@ -499,8 +496,6 @@ namespace ys
 
 				if (vol_info.Count > 0)
 				{
-					vol_info.State_text = string.Format("{0} / {1}", vol_info.Downloaded, vol_info.Count);
-
 					Dashboard.Instance.Dispatcher.Invoke(
 						new Dashboard.Report_main_progress_delegate(
 							Dashboard.Instance.Report_main_progress
@@ -659,11 +654,8 @@ namespace ys
 						if (time_span > 0.5)
 						{
 							timestamp = DateTime.Now;
-							file_info.Parent.State_text = string.Format(
-								"{0:00.0}%  {1:0}KB/s",
-								(double)total_recieved_bytes / (double)response.ContentLength * 100.0,
-								(double)speed_recorder / time_span / 1024.0
-							);
+							file_info.Parent.Speed = (double)speed_recorder / time_span / 1024.0;
+							file_info.Parent.Progress = (double)total_recieved_bytes / (double)response.ContentLength * 100.0;
 							speed_recorder = 0;
 						}
 					}
@@ -745,6 +737,8 @@ namespace ys
 					file_info.Parent.Path = file_path;
 					file_info.State = Web_resource_state.Downloaded;
 					file_info.Parent.State = Web_resource_state.Downloaded;
+					file_info.Parent.Progress = 100;
+					file_info.Parent.Speed = 0;
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
 
@@ -771,10 +765,8 @@ namespace ys
 							}
 						}
 					}
-					else
-					{
-						file_info.Parent.Parent.State_text = string.Format("{0} / {1}", downloaded, file_info.Parent.Parent.Count);
-					}
+
+					file_info.Parent.Parent.NotifyPropertyChanged("Progress_int_text");
 
 					Dashboard.Instance.Dispatcher.Invoke(
 						new Dashboard.Report_main_progress_delegate(

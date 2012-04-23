@@ -102,16 +102,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Class\Cookie_pool.cs" />
-    <Compile Include="Class\DragAdorner.cs" />
+    <Compile Include="Class\ListViewDragDropManager\DragAdorner.cs" />
     <Compile Include="Class\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\Hotkey.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Class\ListViewDragDropManager.cs" />
+    <Compile Include="Class\ListViewDragDropManager\ListViewDragDropManager.cs" />
     <Compile Include="Class\Main_settings.cs" />
-    <Compile Include="Class\MouseUtilities.cs" />
+    <Compile Include="Class\ListViewDragDropManager\MouseUtilities.cs" />
     <Compile Include="Class\Task_manager.cs" />
     <Compile Include="Class\Web_client.cs">
       <SubType>Component</SubType>

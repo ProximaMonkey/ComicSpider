@@ -27,9 +27,9 @@ namespace ComicSpider.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("data source=user.db")]
-        public string UserDBConnectionString {
+        public string userConnectionString {
             get {
-                return ((string)(this["UserDBConnectionString"]));
+                return ((string)(this["userConnectionString"]));
             }
         }
     }

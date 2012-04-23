@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ys
 {
-	public enum Web_resource_state
+	public enum Web_resource_state : int
 	{
 		Wait,
 		Downloading,
@@ -29,65 +29,8 @@ namespace ys
 			Index = index;
 			Name = name;
 			state = Web_resource_state.Wait;
-			state_text = string.Empty;
 			Path = path;
 			Parent = parent;
-		}
-
-		public Web_resource_state State
-		{
-			get
-			{
-				return state;
-			}
-			set
-			{
-				state = value;
-				NotifyPropertyChanged("State_text");
-			}
-		}
-		public string State_text
-		{
-			set
-			{
-				state_text = value;
-				switch (string.IsNullOrEmpty(value) ? ' ' : value[0])
-				{
-					case ' ':
-						state = Web_resource_state.Wait;
-						break;
-					case '√':
-						state = Web_resource_state.Downloaded;
-						break;
-					case '#':
-						state = Web_resource_state.Stopped;
-						state_text = state_text.TrimStart('#').TrimStart();
-						break;
-					case '×':
-						state = Web_resource_state.Failed;
-						break;
-					default:
-						state = Web_resource_state.Downloading;
-						break;
-				}
-				NotifyPropertyChanged("State_text");
-			}
-			get
-			{
-				switch (state)
-				{
-					case Web_resource_state.Wait:
-						return "";
-					case Web_resource_state.Downloaded:
-						return "√";
-					case Web_resource_state.Stopped:
-						return "# " + state_text;
-					case Web_resource_state.Failed:
-						return "×";
-					default:
-						return state_text;
-				}
-			}
 		}
 
 		public List<Web_resource_info> Children
@@ -125,6 +68,7 @@ namespace ys
 					return uri;
 			}
 		}
+
 		public string Name
 		{
 			get { return name; }
@@ -134,6 +78,101 @@ namespace ys
 				NotifyPropertyChanged("Name");
 			}
 		}
+
+		#region Status
+
+		public Web_resource_state State
+		{
+			get
+			{
+				return state;
+			}
+			set
+			{
+				state = value;
+				NotifyPropertyChanged("State_text");
+			}
+		}
+		public string State_text
+		{
+			get
+			{
+				switch (state)
+				{
+					case Web_resource_state.Wait:
+						return "-";
+					case Web_resource_state.Downloading:
+						return "*";
+					case Web_resource_state.Downloaded:
+						return "√";
+					case Web_resource_state.Stopped:
+						return "#";
+					case Web_resource_state.Failed:
+						return "X";
+					default:
+						return "";
+				}
+			}
+		}
+
+		public double Progress
+		{
+			get
+			{
+				return progress;
+			}
+			set
+			{
+				progress = value;
+				NotifyPropertyChanged("Progress_double_text");
+			}
+		}
+		public string Progress_int_text
+		{
+			get
+			{
+				int count = Count;
+				if (count == 0) return string.Empty;
+				return string.Format("{0} / {1}", Downloaded, count);
+			}
+		}
+		public string Progress_double_text
+		{
+			get
+			{
+				if (progress > 0)
+					return string.Format("{0:0}%", progress);
+				else
+					return string.Empty;
+			}
+		}
+
+		public double Speed
+		{
+			get
+			{
+				return speed;
+			}
+			set
+			{
+				speed = value;
+				NotifyPropertyChanged("Speed_text");
+			}
+		}
+		public string Speed_text
+		{
+			get
+			{
+				if (state == Web_resource_state.Downloaded)
+					return string.Empty;
+
+				if (speed > 0)
+					return string.Format("{0:0}KB/s", speed);
+				else
+					return string.Empty;
+			}
+		}
+
 		public double Size
 		{
 			get
@@ -143,11 +182,28 @@ namespace ys
 			set
 			{
 				size = value;
-				NotifyPropertyChanged("Size");
+				NotifyPropertyChanged("Size_text");
 			}
 		}
+		public string Size_text
+		{
+			get
+			{
+				if (size > 0)
+				{
+					return string.Format("{0:0.00}MB", size);
+				}
+				else
+				{
+					return string.Empty;
+				}
+			}
+		}
+
 		public int Index { get; set; }
 		public string Path { get; set; }
+
+		#endregion
 
 		public int Count
 		{
@@ -169,6 +225,14 @@ namespace ys
 			}
 		}
 
+
+		public void NotifyPropertyChanged(String prop_name)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(prop_name));
+			}
+		}
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public class Comparer : IEqualityComparer<Web_resource_info>
@@ -191,20 +255,15 @@ namespace ys
 
 		/***************************** Private ********************************/
 
-		private void NotifyPropertyChanged(String prop_name)
-		{
-			if (PropertyChanged != null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(prop_name));
-			}
-		}
-
 		private string url;
 		private Uri uri;
 		private string name;
+
 		private Web_resource_state state;
-		private string state_text;
+		private double progress;
 		private double size;
+		private double speed;
+
 		private List<Web_resource_info> children;
 	}
 

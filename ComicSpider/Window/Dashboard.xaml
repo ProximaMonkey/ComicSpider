@@ -2,8 +2,9 @@
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:ComicSpider="clr-namespace:ComicSpider"
+		xmlns:jas="clr-namespace:WPF.JoshSmith.ServiceProviders.UI"
 		x:Class="ComicSpider.Dashboard"
-		Title="Comic Spider Dashboard" MinHeight="500" MinWidth="750" Height="500" Width="650" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
+		Title="Comic Spider Dashboard" MinHeight="600" MinWidth="850" Height="600" Width="850" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
 	<Window.Resources>
 		<DataTemplate x:Key="HeaderTemplateArrowUp">
 			<DockPanel>
@@ -66,6 +67,23 @@
 				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0.9" KeySpline="0,0.72,1,1"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
+		<Style x:Key="list_item_container_style" TargetType="ListViewItem">
+			<Style.Resources>
+				<SolidColorBrush x:Key="list_item_mouse_over_brush" Color="#33478FB4"/>
+			</Style.Resources>
+			<!-- These triggers react to changes in the attached properties set
+		   during a managed drag-drop operation. -->
+			<Style.Triggers>
+				<Trigger Property="jas:ListViewItemDragState.IsBeingDragged" Value="True">
+					<Setter Property="FontWeight" Value="DemiBold" />
+				</Trigger>
+				<Trigger Property="jas:ListViewItemDragState.IsUnderDragCursor" Value="True">
+					<Setter Property="Background" Value="{StaticResource list_item_mouse_over_brush}" />
+					<Setter Property="BorderBrush" Value="#FF329CED"/>
+					<Setter Property="BorderThickness" Value="0,0,0,2"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 	</Window.Resources>
 	<Window.Background>
 		<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
@@ -126,12 +144,13 @@
 				<ColumnDefinition Width="1*" />
 				<ColumnDefinition Width="1*" />
 			</Grid.ColumnDefinitions>
-			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDown="volume_list_MouseDown" MouseDoubleClick="volume_list_MouseDoubleClick">
+			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick" ItemContainerStyle="{DynamicResource list_item_container_style}" SelectedIndex="0" >
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
-						<GridViewColumn Header="Main" Width="130" DisplayMemberBinding="{Binding Parent.Name}"/>
-						<GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding Name}"/>
+						<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
+						<GridViewColumn Header="PI" Width="70" DisplayMemberBinding="{Binding Progress_int_text}"></GridViewColumn>
+						<GridViewColumn Header="Main" Width="150" DisplayMemberBinding="{Binding Parent.Name}"/>
+						<GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding Name}"/>
 					</GridView>
 				</ListView.View>
 			</ListView>
@@ -140,9 +159,11 @@
 			<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="State" Width="100" DisplayMemberBinding="{Binding State_text}" />
-						<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size, StringFormat=0.00MB}" />
-						<GridViewColumn Header="Url" Width="170">
+						<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}" />
+						<GridViewColumn Header="P" Width="50" DisplayMemberBinding="{Binding Progress_double_text}" />
+						<GridViewColumn Header="Speed" Width="60" DisplayMemberBinding="{Binding Speed_text}" />
+						<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size_text}" />
+						<GridViewColumn Header="Url" Width="185">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"/>
