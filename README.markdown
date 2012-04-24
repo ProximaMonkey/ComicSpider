@@ -1,7 +1,7 @@
 
 # License
 
-Comic Spider - a tool to download and view online manga.
+[Comic Spider](https://github.com/ysmood/ComicSpider) - a tool to download and view online manga.
 The purposes of this software is sharing and learning which means it is for previewing purposes only.
 If you like the mangas/illustrations please support the author by purchasing them.
 
