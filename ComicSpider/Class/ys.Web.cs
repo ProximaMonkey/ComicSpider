@@ -21,28 +21,29 @@ namespace ys
 		{
 			try
 			{
-				string doc = @"<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv=""x-ua-compatible"" content=""ie=11"">
-<meta http-equiv=""x-ua-compatible"" content=""ie=10"">
-<meta http-equiv=""x-ua-compatible"" content=""ie=9"">
-<meta http-equiv=""x-ua-compatible"" content=""ie=8"">
-<meta charset=""utf-8"" />
-<title>Comic Spider</title>
-<script type='text/javascript'>function getUserAgent(){document.write(navigator.userAgent)}</script>
-</head>
-<body>
-</body>
-</html>";
+//                string doc = @"<!DOCTYPE html>
+//<html>
+//<head>
+//<meta http-equiv=""x-ua-compatible"" content=""ie=11"">
+//<meta http-equiv=""x-ua-compatible"" content=""ie=10"">
+//<meta http-equiv=""x-ua-compatible"" content=""ie=9"">
+//<meta http-equiv=""x-ua-compatible"" content=""ie=8"">
+//<meta charset=""utf-8"" />
+//<title>Comic Spider</title>
+//<script type='text/javascript'>function getUserAgent(){document.write(navigator.userAgent)}</script>
+//</head>
+//<body>
+//</body>
+//</html>";
 
-				System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
-				wb.Url = new System.Uri("about:blank");
-				wb.Document.Write(doc);
-				wb.Document.InvokeScript("getUserAgent");
+//                System.Windows.Forms.WebBrowser wb = new System.Windows.Forms.WebBrowser();
+//                wb.Url = new System.Uri("about:blank");
+//                wb.Document.Write(doc);
+//                wb.Document.InvokeScript("getUserAgent");
 
-				return System.Environment.OSVersion.ToString() + " " +
-					wb.DocumentText.Substring(doc.Length);
+//                return System.Environment.OSVersion.ToString() + " " +
+//                    wb.DocumentText.Substring(doc.Length);
+				return System.Environment.OSVersion.ToString();
 			}
 			catch
 			{
