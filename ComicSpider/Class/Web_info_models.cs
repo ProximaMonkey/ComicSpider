@@ -12,7 +12,7 @@ namespace ys
 		Downloading,
 		Downloaded,
 		Failed,
-		Stopped
+		Paused
 	};
 
 	public class Web_resource_info : System.ComponentModel.INotifyPropertyChanged
@@ -90,6 +90,7 @@ namespace ys
 			set
 			{
 				state = value;
+
 				NotifyPropertyChanged("State_text");
 			}
 		}
@@ -105,7 +106,7 @@ namespace ys
 						return "*";
 					case Web_resource_state.Downloaded:
 						return "√";
-					case Web_resource_state.Stopped:
+					case Web_resource_state.Paused:
 						return "#";
 					case Web_resource_state.Failed:
 						return "X";

@@ -728,6 +728,65 @@ delete from [Cookie] where 1;";
 				break;
 			}
 		}
+		private void Resume_items_Click(object sender, RoutedEventArgs e)
+		{
+			ListView list_view;
+			if (sender is ListView)
+			{
+				list_view = sender as ListView;
+			}
+			else
+			{
+				MenuItem menu_item = sender as MenuItem;
+				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			}
+
+			if (list_view.SelectedItems.Count == 0)
+				return;
+
+			foreach (Web_resource_info item in list_view.SelectedItems)
+			{
+				if (item.State == Web_resource_state.Failed ||
+					item.State == Web_resource_state.Paused)
+				{
+					item.State = Web_resource_state.Wait;
+
+					if (item.Parent.State == Web_resource_state.Failed ||
+						item.Parent.State == Web_resource_state.Paused)
+					{
+
+						item.Parent.State = Web_resource_state.Wait;
+					}
+				}
+			}
+
+			this.Title = "Item(s) resumed.";
+		}
+		private void Pause_items_Click(object sender, RoutedEventArgs e)
+		{
+			ListView list_view;
+			if (sender is ListView)
+			{
+				list_view = sender as ListView;
+			}
+			else
+			{
+				MenuItem menu_item = sender as MenuItem;
+				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			}
+
+			if (list_view.SelectedItems.Count == 0)
+				return;
+
+			foreach (Web_resource_info item in list_view.SelectedItems)
+			{
+				if (item.State != Web_resource_state.Downloaded &&
+					item.State != Web_resource_state.Failed)
+					item.State = Web_resource_state.Paused;
+			}
+
+			this.Title = "Item(s) paused.";
+		}
 		private void Delelte_list_item_Click(object sender, RoutedEventArgs e)
 		{
 			ListView list_view;
@@ -765,7 +824,7 @@ delete from [Cookie] where 1;";
 
 			this.Title = "Item(s) deleted.";
 
-			MainWindow.Main.Main_progress = this.Main_progress;
+			Report_main_progress();
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{

@@ -539,7 +539,11 @@ namespace ys
 				}
 				else
 				{
+					// If failed, move the item to the end of the queue.
 					vol_info.State = Web_resource_state.Failed;
+					Manager.Volumes.Remove(vol_info);
+					Manager.Volumes.Add(vol_info);
+
 					Report("No page found in " + vol_info.Url);
 				}
 			}
@@ -586,7 +590,11 @@ namespace ys
 				}
 				catch (Exception ex)
 				{
+					// If failed, move the item to the end of the queue.
 					page_info.State = Web_resource_state.Failed;
+					page_info.Parent.Children.Remove(page_info);
+					page_info.Parent.Children.Add(page_info);
+
 					Log_error(ex, page_info.Url);
 					Thread.Sleep(worker_cooldown_span);
 				}
@@ -644,6 +652,9 @@ namespace ys
 					int speed_recorder = 0;
 					do
 					{
+						if (file_info.Parent.State == Web_resource_state.Paused)
+							throw new Exception("Abort downloading: " + file_info.Url);
+
 						current_recieved_bytes = remote_stream.Read(buffer, 0, buffer.Length);
 						cache.Write(buffer, 0, current_recieved_bytes);
 
@@ -659,7 +670,8 @@ namespace ys
 							speed_recorder = 0;
 						}
 					}
-					while (!stopped && current_recieved_bytes > 0);
+					while (!stopped &&
+						current_recieved_bytes > 0);
 
 					#endregion
 
@@ -783,10 +795,20 @@ namespace ys
 				}
 				catch (Exception ex)
 				{
-					file_info.Parent.State = Web_resource_state.Failed;
+					if (!ex.Message.StartsWith("Abort"))
+					{
+						Report(ex.Message);
+					}
+					else
+					{
+						// If failed, move the item to the end of the queue.
+						file_info.Parent.State = Web_resource_state.Failed;
+						file_info.Parent.Parent.Children.Remove(file_info.Parent);
+						file_info.Parent.Parent.Children.Add(file_info.Parent);
 
-					Log_error(ex, file_info.Url);
-					Thread.Sleep(worker_cooldown_span);
+						Log_error(ex, file_info.Url);
+						Thread.Sleep(worker_cooldown_span);
+					}
 				}
 			}
 		}

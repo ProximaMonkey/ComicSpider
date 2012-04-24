@@ -21,7 +21,7 @@ namespace ComicSpider
 			foreach (var vol in Volumes)
 			{
 				if (vol.State == Web_resource_state.Downloading)
-					vol.State = Web_resource_state.Stopped;
+					vol.State = Web_resource_state.Wait;
 
 				if (vol.Count == 0) continue;
 
@@ -29,13 +29,13 @@ namespace ComicSpider
 				{
 					if (page.State == Web_resource_state.Downloading)
 					{
-						page.State = Web_resource_state.Stopped;
+						page.State = Web_resource_state.Wait;
 						page.Speed = 0;
 					}
 
 					if (page.Count > 0)
 					{
-						page.Children[0].State = Web_resource_state.Stopped;
+						page.Children[0].State = Web_resource_state.Wait;
 					}
 				}
 			}
@@ -63,8 +63,8 @@ namespace ComicSpider
 
 					foreach (var page in vol.Children)
 					{
-						if ((page.State != Web_resource_state.Downloading) &&
-							(page.State != Web_resource_state.Downloaded))
+						if ((page.State == Web_resource_state.Wait) ||
+							(page.State == Web_resource_state.Failed))
 						{
 							page.State = Web_resource_state.Downloading;
 							return page;
@@ -93,8 +93,8 @@ namespace ComicSpider
 
 						foreach (var file in page.Children)
 						{
-							if ((file.State != Web_resource_state.Downloading) &&
-								(file.State != Web_resource_state.Downloaded))
+							if ((file.State == Web_resource_state.Wait) ||
+								(file.State == Web_resource_state.Failed))
 							{
 								file.State = Web_resource_state.Downloading;
 								return file;
@@ -128,16 +128,9 @@ namespace ComicSpider
 
 			return volumes.FirstOrDefault(v =>
 			{
-				return (v.State != Web_resource_state.Downloading) &&
-					(v.State != Web_resource_state.Downloaded);
+				return (v.State == Web_resource_state.Wait) ||
+					(v.State == Web_resource_state.Failed);
 			});
-		}
-
-		private Web_resource_info Peek_downloading(Collection<Web_resource_info> volumes)
-		{
-			if (volumes == null || volumes.Count == 0) return null;
-
-			return volumes.FirstOrDefault(v => v.State == Web_resource_state.Downloading);
 		}
 	}
 }
