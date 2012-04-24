@@ -562,6 +562,8 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 
 		bool IsMouseOver( Visual target )
 		{
+			if (target == null)
+				return false;
 			// We need to use MouseUtilities to figure out the cursor
 			// coordinates because, during a drag-drop operation, the WPF
 			// mechanisms for getting the coordinates behave strangely.

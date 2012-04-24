@@ -58,7 +58,10 @@ namespace ComicSpider
 				btn_start.IsEnabled = all != count;
 				MainWindow.Main.Start_button.IsEnabled = btn_start.IsEnabled;
 
-				MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
+				if (count == all)
+					MainWindow.Main.Taskbar.SetProgressState(ys.Win7.TbpFlag.NoProgress);
+				else
+					MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
 
 				return string.Format("{0} / {1}", count, all);
 			}
