@@ -38,6 +38,7 @@ namespace ComicSpider
 			InitializeComponent();
 
 			App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
+			App.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
 
 			User.CheckAndFix();
 
@@ -54,6 +55,7 @@ namespace ComicSpider
 			sb_show_window = Resources["sb_show_window"] as Storyboard;
 			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
 
+			btn_start = Find_menu_item(this.Resources["main_menu"], "btn_start");
 			cb_is_slient = Find_menu_item(this.Resources["main_menu"], "cb_is_slient");
 			cb_topmost = Find_menu_item(this.Resources["main_menu"], "cb_topmost");
 
@@ -62,6 +64,7 @@ namespace ComicSpider
 
 		public static MainWindow Main;
 		public ys.Win7.TaskBar Taskbar;
+		public MenuItem Start_button { get { return btn_start; } }
 
 		public string Main_progress
 		{
@@ -192,6 +195,7 @@ namespace ComicSpider
 		private Storyboard sb_show_window;
 		private Storyboard sb_hide_window;
 
+		private MenuItem btn_start;
 		private MenuItem cb_topmost;
 		private MenuItem cb_is_slient;
 
@@ -292,6 +296,11 @@ namespace ComicSpider
 		{
 			Dashboard.Instance.Show();
 		}
+		private void btn_start_Click(object sender, RoutedEventArgs e)
+		{
+			if (btn_start.IsEnabled)
+				Dashboard.Instance.Start();
+		}
 		private void cb_is_slient_Click(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = sender as MenuItem;
@@ -391,6 +400,11 @@ namespace ComicSpider
 					btn_dashboard_Click(null, null);
 					break;
 
+				case System.Windows.Input.Key.I:
+					cb_is_slient.IsChecked = !cb_is_slient.IsChecked;
+					Main_settings.Instance.Is_silent = cb_is_slient.IsChecked;
+					break;
+
 				case System.Windows.Input.Key.O:
 					Open_folder(null, null);
 					break;
@@ -401,8 +415,7 @@ namespace ComicSpider
 					break;
 
 				case System.Windows.Input.Key.S:
-					cb_is_slient.IsChecked = !cb_is_slient.IsChecked;
-					Main_settings.Instance.Is_silent = cb_is_slient.IsChecked;
+					btn_start_Click(null, null);
 					break;
 
 				case System.Windows.Input.Key.V:
@@ -415,7 +428,7 @@ namespace ComicSpider
 			}
 		}
 
-		void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+		private void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
 			Exception ex = e.Exception;
 			Message_box.Show(ex.Message + '\n' + ex.StackTrace);
@@ -426,6 +439,10 @@ namespace ComicSpider
 					Dashboard.Instance.Save_all();
 			}
 			catch { }
+		}
+		private void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
+		{
+			this.Close();
 		}
 	}
 }

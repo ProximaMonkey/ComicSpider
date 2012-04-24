@@ -45,8 +45,9 @@
 			<MenuItem Header="_View volume" Click="View_volume" InputGestureText="V"></MenuItem>
 			<MenuItem Header="_Open folder" Click="Open_folder" InputGestureText="O"></MenuItem>
 			<MenuItem Header="_Dashboard" Click="btn_dashboard_Click" InputGestureText="D"></MenuItem>
+			<MenuItem Header="_Start" x:Name="btn_start" IsEnabled="False" Click="btn_start_Click" InputGestureText="S"></MenuItem>
 			<MenuItem Header="_Topmost" x:Name="cb_topmost" Click="cb_topmost_Click" IsCheckable="True" IsChecked="True" InputGestureText="T"></MenuItem>
-			<MenuItem Header="_Silent" x:Name="cb_is_slient" Click="cb_is_slient_Click" IsCheckable="True" InputGestureText="S"></MenuItem>
+			<MenuItem Header="S_ilent" x:Name="cb_is_slient" Click="cb_is_slient_Click" IsCheckable="True" InputGestureText="I"></MenuItem>
 			<MenuItem Header="_Help" Click="Help" InputGestureText="F1"></MenuItem>
 			<MenuItem Header="_Close" Click="Close"></MenuItem>
 		</ContextMenu>

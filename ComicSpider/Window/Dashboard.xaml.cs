@@ -56,6 +56,7 @@ namespace ComicSpider
 				int all = all_files_count;
 
 				btn_start.IsEnabled = all != count;
+				MainWindow.Main.Start_button.IsEnabled = btn_start.IsEnabled;
 
 				MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
 
@@ -92,6 +93,10 @@ namespace ComicSpider
 			}
 		}
 
+		public void Start()
+		{
+			btn_start_Click(null, null);
+		}
 		public void Update_settings()
 		{
 			Main_settings.Instance.Main_url = txt_main_url.Text;
@@ -118,6 +123,7 @@ namespace ComicSpider
 			this.Closing -= Window_Closing;
 			base.Close();
 		}
+
 
 		/**************** Delegate ****************/
 
@@ -197,6 +203,8 @@ namespace ComicSpider
 						Message_box.Show(ex.Message);
 					}
 				}, true);
+
+				Auto_shutdown();
 			}
 		}
 
@@ -310,6 +318,7 @@ namespace ComicSpider
 			bg_worker.RunWorkerAsync();
 		}
 
+
 		/***************************** Private ********************************/
 
 		private Dashboard()
@@ -373,6 +382,46 @@ namespace ComicSpider
 		}
 
 		WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info> volume_drag_drop_manager;
+
+		private string Get_direcotry(string info)
+		{
+			string path = null;
+
+			bool topmost_temp = MainWindow.Main.Topmost;
+			MainWindow.Main.Topmost = false;
+
+			var dialog = new Ionic.Utils.FolderBrowserDialogEx();
+			dialog.ShowFullPathInEditBox = true;
+			dialog.SelectedPath = txt_dir.Text;
+			dialog.Description = info;
+			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK &&
+				Directory.Exists(dialog.SelectedPath))
+			{
+				path = dialog.SelectedPath;
+			}
+
+			MainWindow.Main.Topmost = topmost_temp;
+
+			return path;
+		}
+
+		private void Auto_shutdown()
+		{
+			if (cb_auto_shutdown.IsChecked == true)
+			{
+				int time_to_wait = 30;		// second
+				System.Diagnostics.Process.Start("cmd", "/c shutdown -s -t " + time_to_wait);
+
+				Save_all();
+
+				if (!Message_box.Show(
+					string.Format("System will be shutdown after {0} seconds, click 'Cancel' to cancel.", time_to_wait)
+					))
+				{
+					System.Diagnostics.Process.Start("cmd", "/c shutdown -a");
+				}
+			}
+		}
 
 		/**************** Data ****************/
 
@@ -535,6 +584,7 @@ delete from [Cookie] where 1;";
 			kv_adpter.Connection.Close();
 		}
 
+
 		/**************** Event ****************/
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
@@ -594,33 +644,12 @@ delete from [Cookie] where 1;";
 			bd_logs.Visibility = Visibility.Collapsed;
 		}
 
-		private string Get_direcotry(string info)
-		{
-			string path = null;
-
-			bool topmost_temp = MainWindow.Main.Topmost;
-			MainWindow.Main.Topmost = false;
-
-			var dialog = new Ionic.Utils.FolderBrowserDialogEx();
-			dialog.ShowFullPathInEditBox = true;
-			dialog.SelectedPath = txt_dir.Text;
-			dialog.Description = info;
-			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK &&
-				Directory.Exists(dialog.SelectedPath))
-			{
-				path = dialog.SelectedPath;
-			}
-
-			MainWindow.Main.Topmost = topmost_temp;
-
-			return path;
-		}
 		private void btn_save_to_Click(object sender, RoutedEventArgs e)
 		{
 			string path = Get_direcotry("Please select a root folder");
 			if (!string.IsNullOrEmpty(path))
 				txt_dir.Text = path;
-		}
+		}	
 
 		private void View_Click(object sender, RoutedEventArgs e)
 		{
@@ -745,6 +774,51 @@ delete from [Cookie] where 1;";
 				Delelte_list_item_Click(sender, null);
 			}
 		}
+		private void Delete_downloaded_Click(object sender, RoutedEventArgs e)
+		{
+			ListView list_view;
+			if (sender is ListView)
+			{
+				list_view = sender as ListView;
+			}
+			else
+			{
+				MenuItem menu_item = sender as MenuItem;
+				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
+			}
+
+			if (list_view.SelectedItems.Count == 0)
+				return;
+
+			if (!Message_box.Show("Are you sure to delete?"))
+				return;
+
+			var delete_list = new System.Collections.ObjectModel.Collection<Web_resource_info>();
+			if (list_view == volume_list)
+			{
+				foreach (var vol in comic_spider.Manager.Volumes)
+				{
+					if (vol.State == Web_resource_state.Downloaded)
+						delete_list.Add(vol);
+				}
+				foreach (var vol in delete_list)
+				{
+					comic_spider.Manager.Volumes.Remove(vol);
+				}
+			}
+			else
+			{
+				foreach (Web_resource_info item in list_view.Items)
+				{
+					if (item.State == Web_resource_state.Downloaded)
+						item.Parent.Children.Remove(item);
+				}
+				volume_list_SelectionChanged(null, null);
+			}
+
+			this.Title = "Item(s) deleted.";
+			MainWindow.Main.Main_progress = this.Main_progress;
+		}
 		private void btn_help_Click(object sender, RoutedEventArgs e)
 		{
 			MainWindow.Main.Help(null, null);
@@ -780,18 +854,6 @@ delete from [Cookie] where 1;";
 			View_Click(sender, null);
 		}
 
-		private void btn_select_downloaded_Click(object sender, RoutedEventArgs e)
-		{
-			volume_list.Focus();
-			volume_list.SelectedIndex = -1;
-			foreach (Web_resource_info item in volume_list.Items)
-			{
-				if (item.State == Web_resource_state.Downloaded)
-				{
-					volume_list.SelectedItems.Add(item);
-				}
-			}
-		}
 		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
@@ -848,49 +910,49 @@ delete from [Cookie] where 1;";
 						temp_list = list.OrderByDescending(info => info.Progress_int_text);
 					else
 						temp_list = list.OrderBy(info => info.Progress_int_text);
-						break;
+					break;
 
 				case "Progress":
 					if (header.Column.HeaderTemplate == arrow_up)
 						temp_list = list.OrderByDescending(info => info.Progress);
 					else
 						temp_list = list.OrderBy(info => info.Progress);
-						break;
+					break;
 
 				case "Speed":
 					if (header.Column.HeaderTemplate == arrow_up)
 						temp_list = list.OrderByDescending(info => info.Speed);
 					else
 						temp_list = list.OrderBy(info => info.Speed);
-						break;
+					break;
 
 				case "Size":
 					if (header.Column.HeaderTemplate == arrow_up)
 						temp_list = list.OrderByDescending(info => info.Size);
 					else
 						temp_list = list.OrderBy(info => info.Size);
-						break;
+					break;
 
 				case "Main":
 					if (header.Column.HeaderTemplate == arrow_up)
 						temp_list = list.OrderByDescending(info => info.Parent.Name);
 					else
 						temp_list = list.OrderBy(info => info.Parent.Name);
-						break;
+					break;
 
 				case "Name":
 					if (header.Column.HeaderTemplate == arrow_up)
 						temp_list = list.OrderByDescending(info => info.Name);
 					else
 						temp_list = list.OrderBy(info => info.Name);
-						break;
+					break;
 
 				case "Url":
 					if (header.Column.HeaderTemplate == arrow_up)
 						temp_list = list.OrderByDescending(info => info.Url);
 					else
 						temp_list = list.OrderBy(info => info.Url);
-						break;
+					break;
 			}
 
 			if (header.Column.HeaderTemplate == arrow_up)
