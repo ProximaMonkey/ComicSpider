@@ -114,6 +114,7 @@ namespace ComicSpider
 			{
 				Save_vol_info_list();
 				Save_page_info_list();
+				//Save_file_info_list();
 				Cookie_pool.Instance.Save();
 			}
 			catch (Exception ex)
@@ -126,7 +127,6 @@ namespace ComicSpider
 			this.Closing -= Window_Closing;
 			base.Close();
 		}
-
 
 		/**************** Delegate ****************/
 
@@ -234,93 +234,6 @@ namespace ComicSpider
 			btn_start.Content = "Start";
 			working_icon.Hide_working();
 		}
-
-		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
-		{
-			string path = Get_direcotry("Selet the root folder for opertion");
-			if (string.IsNullOrEmpty(path)) return;
-
-			Control btn = sender as Control;
-			btn.IsEnabled = false;
-			
-			working_icon.Show_working();
-
-			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
-			bg_worker.DoWork += (oo, ee) =>
-			{
-				try
-				{
-					comic_spider.Fix_display_pages(path);
-				}
-				catch (Exception ex)
-				{
-					ee.Result = ex.Message;
-				}
-				ee.Result = "Fix display pages completed.";
-			};
-			bg_worker.RunWorkerCompleted += (oo, ee) =>
-			{
-				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
-				{
-					try
-					{
-						System.Diagnostics.Process.Start(path);
-					}
-					catch (Exception ex)
-					{
-						Message_box.Show(ex.Message);
-					}
-				});
-				btn.IsEnabled = true;
-				working_icon.Hide_working();
-			};
-			bg_worker.RunWorkerAsync();
-		}
-		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
-		{
-			string path = Get_direcotry("Selet the root folder for opertion");
-			if (string.IsNullOrEmpty(path))
-				return;
-
-			Control btn = sender as Control;
-			btn.IsEnabled = false;
-
-			working_icon.Show_working();
-
-			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
-			bg_worker.DoWork += (oo, ee) =>
-			{
-				try
-				{
-					comic_spider.Delete_display_pages(path);
-				}
-				catch (Exception ex)
-				{
-					ee.Result = ex.Message;
-				}
-				ee.Result = "Delete display pages completed.";
-			};
-			bg_worker.RunWorkerCompleted += (oo, ee) =>
-			{
-				this.Title = ee.Result as string;
-				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
-				{
-					try
-					{
-						System.Diagnostics.Process.Start(path);
-					}
-					catch (Exception ex)
-					{
-						Message_box.Show(ex.Message);
-					}
-				});
-				btn.IsEnabled = true;
-				working_icon.Hide_working();
-			};
-			bg_worker.RunWorkerAsync();
-		}
-
 
 		/***************************** Private ********************************/
 
@@ -431,11 +344,11 @@ namespace ComicSpider
 		private void Init_info_list()
 		{
 			Volume_listTableAdapter vol_adpter = new Volume_listTableAdapter();
-			User.Volume_listDataTable vol_info_table = vol_adpter.GetData();
+			User.Volume_listDataTable volume_table = vol_adpter.GetData();
 
-			if (vol_info_table.Count > 0)
+			if (volume_table.Count > 0)
 			{
-				var groups = vol_info_table.GroupBy(v => v.Parent_url);
+				var groups = volume_table.GroupBy(v => v.Parent_url);
 				foreach (var group in groups)
 				{
 					Web_resource_info comic = null;
@@ -466,10 +379,14 @@ namespace ComicSpider
 		private void Init_page_info_list(System.Collections.ObjectModel.ObservableCollection<Web_resource_info> vol_list)
 		{
 			Page_listTableAdapter page_adpter = new Page_listTableAdapter();
-			User.Page_listDataTable page_info_table = page_adpter.GetData();
-			if (page_info_table.Count > 0)
+			User.Page_listDataTable page_table = page_adpter.GetData();
+
+			File_listTableAdapter file_adpter = new File_listTableAdapter();
+			User.File_listDataTable file_table = file_adpter.GetData();
+
+			if (page_table.Count > 0)
 			{
-				var groups = page_info_table.GroupBy(p => p.Parent_url);
+				var groups = page_table.GroupBy(p => p.Parent_url);
 				foreach (var group in groups)
 				{
 					Web_resource_info volume = null;
@@ -485,7 +402,7 @@ namespace ComicSpider
 							volume.Children = new List<Web_resource_info>();
 						}
 
-						volume.Children.Add(new Web_resource_info(
+						var page_info = new Web_resource_info(
 							row.Url,
 							row.Index,
 							row.Name,
@@ -496,17 +413,28 @@ namespace ComicSpider
 								Progress = row.Progress,
 								Speed = row.Speed,
 								Size = row.Size,
-							}
-						);
+							};
+
+						//var file_row = file_table.FirstOrDefault(f => f.Parent_url == page_info.Url);
+						//if (file_row != null)
+						//{
+						//    page_info.Children = new List<Web_resource_info>();
+						//    page_info.Children.Add(
+						//        new Web_resource_info(file_row.Url, file_row.Index, file_row.Name, "", null)
+						//    );
+						//}
+
+						volume.Children.Add(page_info);
 					}
 				}
 			}
 		}
+
 		private void Save_vol_info_list()
 		{
 			Volume_listTableAdapter vol_adapter = new Volume_listTableAdapter();
 			vol_adapter.Adapter.DeleteCommand = vol_adapter.Connection.CreateCommand();
-			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from Volume_list where 1";
+			vol_adapter.Adapter.DeleteCommand.CommandText = "delete from [Volume_list] where 1";
 
 			vol_adapter.Connection.Open();
 
@@ -525,8 +453,7 @@ namespace ComicSpider
 					(int)item.State,
 					item.Parent.Url,
 					item.Parent.Name,
-					item.Path,
-					DateTime.Now
+					item.Path
 				);
 			}
 
@@ -538,7 +465,7 @@ namespace ComicSpider
 		{
 			Page_listTableAdapter page_adapter = new Page_listTableAdapter();
 			page_adapter.Adapter.DeleteCommand = page_adapter.Connection.CreateCommand();
-			page_adapter.Adapter.DeleteCommand.CommandText = "delete from Page_list where 1";
+			page_adapter.Adapter.DeleteCommand.CommandText = "delete from [Page_list] where 1";
 
 			page_adapter.Connection.Open();
 
@@ -560,9 +487,7 @@ namespace ComicSpider
 						item.Speed,
 						item.Size,
 						vol.Url,
-						vol.Name,
-						item.Path,
-						DateTime.Now
+						item.Path
 					);
 				}
 			}
@@ -570,6 +495,40 @@ namespace ComicSpider
 			transaction.Commit();
 			page_adapter.Connection.Close();
 		}
+		private void Save_file_info_list()
+		{
+			File_listTableAdapter file_adapter = new File_listTableAdapter();
+			file_adapter.Adapter.DeleteCommand = file_adapter.Connection.CreateCommand();
+			file_adapter.Adapter.DeleteCommand.CommandText = "delete from [File_list] where 1";
+
+			file_adapter.Connection.Open();
+
+			SQLiteTransaction transaction = file_adapter.Connection.BeginTransaction();
+
+			file_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
+
+			foreach (Web_resource_info vol in volume_list.Items)
+			{
+				if (vol.Count == 0) continue;
+				foreach (Web_resource_info item in vol.Children.Distinct(new Web_resource_info.Comparer()))
+				{
+					if (item.Count > 0)
+					{
+						var file_info = item.Children[0];
+						file_adapter.Insert(
+							file_info.Url,
+							file_info.Name,
+							file_info.Index,
+							item.Url
+						);
+					}
+				}
+			}
+
+			transaction.Commit();
+			file_adapter.Connection.Close();
+		}
+
 		private void Clear_cache()
 		{
 			Key_valueTableAdapter kv_adpter = new Key_valueTableAdapter();
@@ -589,6 +548,92 @@ delete from [Cookie] where 1;";
 
 
 		/**************** Event ****************/
+
+		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			string path = Get_direcotry("Selet the root folder for opertion");
+			if (string.IsNullOrEmpty(path)) return;
+
+			Control btn = sender as Control;
+			btn.IsEnabled = false;
+
+			working_icon.Show_working();
+
+			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
+			bg_worker.DoWork += (oo, ee) =>
+			{
+				try
+				{
+					comic_spider.Fix_display_pages(path);
+				}
+				catch (Exception ex)
+				{
+					ee.Result = ex.Message;
+				}
+				ee.Result = "Fix display pages completed.";
+			};
+			bg_worker.RunWorkerCompleted += (oo, ee) =>
+			{
+				this.Title = ee.Result as string;
+				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(path);
+					}
+					catch (Exception ex)
+					{
+						Message_box.Show(ex.Message);
+					}
+				});
+				btn.IsEnabled = true;
+				working_icon.Hide_working();
+			};
+			bg_worker.RunWorkerAsync();
+		}
+		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
+		{
+			string path = Get_direcotry("Selet the root folder for opertion");
+			if (string.IsNullOrEmpty(path))
+				return;
+
+			Control btn = sender as Control;
+			btn.IsEnabled = false;
+
+			working_icon.Show_working();
+
+			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
+			bg_worker.DoWork += (oo, ee) =>
+			{
+				try
+				{
+					comic_spider.Delete_display_pages(path);
+				}
+				catch (Exception ex)
+				{
+					ee.Result = ex.Message;
+				}
+				ee.Result = "Delete display pages completed.";
+			};
+			bg_worker.RunWorkerCompleted += (oo, ee) =>
+			{
+				this.Title = ee.Result as string;
+				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
+				{
+					try
+					{
+						System.Diagnostics.Process.Start(path);
+					}
+					catch (Exception ex)
+					{
+						Message_box.Show(ex.Message);
+					}
+				});
+				btn.IsEnabled = true;
+				working_icon.Hide_working();
+			};
+			bg_worker.RunWorkerAsync();
+		}
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
@@ -826,8 +871,7 @@ delete from [Cookie] where 1;";
 			}
 
 			this.Title = "Item(s) deleted.";
-
-			Report_main_progress();
+			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{

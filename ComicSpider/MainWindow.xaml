@@ -133,7 +133,7 @@
 					<ColumnDefinition Width="36"/>
 				</Grid.ColumnDefinitions>
 				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" />
-				<TextBlock x:Name="txt_title" Text="Comic Spider" ToolTip="{Binding Path=Text, ElementName=txt_title}" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" d:LayoutOverrides="GridBox" FontFamily="/Comic Spider;component/Fonts/#Segoe UI" TextTrimming="CharacterEllipsis"/>
+				<TextBlock x:Name="txt_title" Text="Comic Spider" ToolTip="{Binding Path=Text, ElementName=txt_title}" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" d:LayoutOverrides="GridBox" FontFamily="Segoe UI" TextTrimming="CharacterEllipsis"/>
 				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
@@ -157,7 +157,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="22" />
 					</Grid.RowDefinitions>
-					<TextBlock x:Name="textBlock" Text="Drop Link Here" FontFamily="/Comic Spider;component/Fonts/#Segoe UI Light" Foreground="#FF747474" FontSize="24" RenderTransformOrigin="0.5,0.6" IsHitTestVisible="False" VerticalAlignment="Top" Margin="31.166,6,0,0" HorizontalAlignment="Left">
+					<TextBlock x:Name="textBlock" Text="Drop Link Here" FontFamily="Segoe UI Light" Foreground="#FF747474" FontSize="24" RenderTransformOrigin="0.5,0.6" IsHitTestVisible="False" VerticalAlignment="Top" Margin="31.166,6,0,0" HorizontalAlignment="Left">
 						<TextBlock.RenderTransform>
 							<TransformGroup>
 								<ScaleTransform/>
@@ -167,7 +167,7 @@
 							</TransformGroup>
 						</TextBlock.RenderTransform>
 					</TextBlock>
-					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="hotkey: A" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" FontFamily="/Comic Spider;component/Fonts/#Segoe UI" />
+					<CheckBox Margin="10,3.02,0,3.02" Grid.Row="3" x:Name="cb_auto_begin" ToolTip="hotkey: A" IsChecked="True" Opacity="0.8" Content="auto begin downloading" Click="cb_auto_begin_Click" HorizontalAlignment="Left" FontFamily="Segoe UI" />
 					<StackPanel HorizontalAlignment="Left" Margin="5,0,0,5" VerticalAlignment="Bottom" Orientation="Horizontal" IsHitTestVisible="False">
 						<TextBlock Text="main progress : " FontSize="10" Foreground="#FFBB70BE"/>
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>

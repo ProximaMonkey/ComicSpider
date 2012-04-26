@@ -152,7 +152,7 @@
 					<GridView>
 						<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
 						<GridViewColumn Header="PI" Width="70" DisplayMemberBinding="{Binding Progress_int_text}"></GridViewColumn>
-						<GridViewColumn Header="Main" Width="150" DisplayMemberBinding="{Binding Parent.Name}"/>
+						<GridViewColumn Header="Main" Width="140" DisplayMemberBinding="{Binding Parent.Name}"/>
 						<GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding Name}"/>
 					</GridView>
 				</ListView.View>
@@ -166,7 +166,7 @@
 						<GridViewColumn Header="P" Width="50" DisplayMemberBinding="{Binding Progress_double_text}" />
 						<GridViewColumn Header="Speed" Width="60" DisplayMemberBinding="{Binding Speed_text}" />
 						<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size_text}" />
-						<GridViewColumn Header="Url" Width="185">
+						<GridViewColumn Header="Url" Width="170">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"/>

@@ -34,6 +34,8 @@ namespace ComicSpider {
         
         private Page_listDataTable tablePage_list;
         
+        private File_listDataTable tableFile_list;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -76,6 +78,9 @@ namespace ComicSpider {
                 }
                 if ((ds.Tables["Page_list"] != null)) {
                     base.Tables.Add(new Page_listDataTable(ds.Tables["Page_list"]));
+                }
+                if ((ds.Tables["File_list"] != null)) {
+                    base.Tables.Add(new File_listDataTable(ds.Tables["File_list"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -142,6 +147,16 @@ namespace ComicSpider {
         public Page_listDataTable Page_list {
             get {
                 return this.tablePage_list;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public File_listDataTable File_list {
+            get {
+                return this.tableFile_list;
             }
         }
         
@@ -227,6 +242,9 @@ namespace ComicSpider {
                 if ((ds.Tables["Page_list"] != null)) {
                     base.Tables.Add(new Page_listDataTable(ds.Tables["Page_list"]));
                 }
+                if ((ds.Tables["File_list"] != null)) {
+                    base.Tables.Add(new File_listDataTable(ds.Tables["File_list"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -290,6 +308,12 @@ namespace ComicSpider {
                     this.tablePage_list.InitVars();
                 }
             }
+            this.tableFile_list = ((File_listDataTable)(base.Tables["File_list"]));
+            if ((initTable == true)) {
+                if ((this.tableFile_list != null)) {
+                    this.tableFile_list.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -310,6 +334,8 @@ namespace ComicSpider {
             base.Tables.Add(this.tableKey_value);
             this.tablePage_list = new Page_listDataTable();
             base.Tables.Add(this.tablePage_list);
+            this.tableFile_list = new File_listDataTable();
+            base.Tables.Add(this.tableFile_list);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -339,6 +365,12 @@ namespace ComicSpider {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializePage_list() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeFile_list() {
             return false;
         }
         
@@ -411,6 +443,9 @@ namespace ComicSpider {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void Page_listRowChangeEventHandler(object sender, Page_listRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void File_listRowChangeEventHandler(object sender, File_listRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -707,8 +742,6 @@ namespace ComicSpider {
             
             private global::System.Data.DataColumn columnPath;
             
-            private global::System.Data.DataColumn columnData_time;
-            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public Volume_listDataTable() {
@@ -800,14 +833,6 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn Data_timeColumn {
-                get {
-                    return this.columnData_time;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -843,7 +868,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Volume_listRow AddVolume_listRow(string Url, string Name, int Index, int State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+            public Volume_listRow AddVolume_listRow(string Url, string Name, int Index, int State, string Parent_url, string Parent_name, string Path) {
                 Volume_listRow rowVolume_listRow = ((Volume_listRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Url,
@@ -852,8 +877,7 @@ namespace ComicSpider {
                         State,
                         Parent_url,
                         Parent_name,
-                        Path,
-                        Data_time};
+                        Path};
                 rowVolume_listRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowVolume_listRow);
                 return rowVolume_listRow;
@@ -890,7 +914,6 @@ namespace ComicSpider {
                 this.columnParent_url = base.Columns["Parent_url"];
                 this.columnParent_name = base.Columns["Parent_name"];
                 this.columnPath = base.Columns["Path"];
-                this.columnData_time = base.Columns["Data_time"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -910,8 +933,6 @@ namespace ComicSpider {
                 base.Columns.Add(this.columnParent_name);
                 this.columnPath = new global::System.Data.DataColumn("Path", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPath);
-                this.columnData_time = new global::System.Data.DataColumn("Data_time", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnData_time);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnUrl}, true));
                 this.columnUrl.AllowDBNull = false;
@@ -921,7 +942,6 @@ namespace ComicSpider {
                 this.columnParent_url.MaxLength = 300;
                 this.columnParent_name.MaxLength = 300;
                 this.columnPath.MaxLength = 300;
-                this.columnData_time.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1649,11 +1669,7 @@ namespace ComicSpider {
             
             private global::System.Data.DataColumn columnParent_url;
             
-            private global::System.Data.DataColumn columnParent_name;
-            
             private global::System.Data.DataColumn columnPath;
-            
-            private global::System.Data.DataColumn columnData_time;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -1754,25 +1770,9 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn Parent_nameColumn {
-                get {
-                    return this.columnParent_name;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn PathColumn {
                 get {
                     return this.columnPath;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn Data_timeColumn {
-                get {
-                    return this.columnData_time;
                 }
             }
             
@@ -1813,7 +1813,7 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public Page_listRow AddPage_listRow(string Url, string Name, int Index, int State, double Progress, double Speed, double Size, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+            public Page_listRow AddPage_listRow(string Url, string Name, int Index, int State, double Progress, double Speed, double Size, string Parent_url, string Path) {
                 Page_listRow rowPage_listRow = ((Page_listRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Url,
@@ -1824,9 +1824,7 @@ namespace ComicSpider {
                         Speed,
                         Size,
                         Parent_url,
-                        Parent_name,
-                        Path,
-                        Data_time};
+                        Path};
                 rowPage_listRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPage_listRow);
                 return rowPage_listRow;
@@ -1864,9 +1862,7 @@ namespace ComicSpider {
                 this.columnSpeed = base.Columns["Speed"];
                 this.columnSize = base.Columns["Size"];
                 this.columnParent_url = base.Columns["Parent_url"];
-                this.columnParent_name = base.Columns["Parent_name"];
                 this.columnPath = base.Columns["Path"];
-                this.columnData_time = base.Columns["Data_time"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1888,12 +1884,8 @@ namespace ComicSpider {
                 base.Columns.Add(this.columnSize);
                 this.columnParent_url = new global::System.Data.DataColumn("Parent_url", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnParent_url);
-                this.columnParent_name = new global::System.Data.DataColumn("Parent_name", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnParent_name);
                 this.columnPath = new global::System.Data.DataColumn("Path", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPath);
-                this.columnData_time = new global::System.Data.DataColumn("Data_time", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnData_time);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnUrl}, true));
                 this.columnUrl.AllowDBNull = false;
@@ -1901,9 +1893,7 @@ namespace ComicSpider {
                 this.columnUrl.MaxLength = 300;
                 this.columnName.MaxLength = 300;
                 this.columnParent_url.MaxLength = 300;
-                this.columnParent_name.MaxLength = 300;
                 this.columnPath.MaxLength = 300;
-                this.columnData_time.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1990,6 +1980,309 @@ namespace ComicSpider {
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "Page_listDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class File_listDataTable : global::System.Data.TypedTableBase<File_listRow> {
+            
+            private global::System.Data.DataColumn columnUrl;
+            
+            private global::System.Data.DataColumn columnName;
+            
+            private global::System.Data.DataColumn columnIndex;
+            
+            private global::System.Data.DataColumn columnParent_url;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listDataTable() {
+                this.TableName = "File_list";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal File_listDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected File_listDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn UrlColumn {
+                get {
+                    return this.columnUrl;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn NameColumn {
+                get {
+                    return this.columnName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn IndexColumn {
+                get {
+                    return this.columnIndex;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Parent_urlColumn {
+                get {
+                    return this.columnParent_url;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listRow this[int index] {
+                get {
+                    return ((File_listRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event File_listRowChangeEventHandler File_listRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event File_listRowChangeEventHandler File_listRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event File_listRowChangeEventHandler File_listRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event File_listRowChangeEventHandler File_listRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddFile_listRow(File_listRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listRow AddFile_listRow(string Url, string Name, int Index, string Parent_url) {
+                File_listRow rowFile_listRow = ((File_listRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        Url,
+                        Name,
+                        Index,
+                        Parent_url};
+                rowFile_listRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowFile_listRow);
+                return rowFile_listRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listRow FindByUrl(string Url) {
+                return ((File_listRow)(this.Rows.Find(new object[] {
+                            Url})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                File_listDataTable cln = ((File_listDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new File_listDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnUrl = base.Columns["Url"];
+                this.columnName = base.Columns["Name"];
+                this.columnIndex = base.Columns["Index"];
+                this.columnParent_url = base.Columns["Parent_url"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnUrl = new global::System.Data.DataColumn("Url", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUrl);
+                this.columnName = new global::System.Data.DataColumn("Name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnName);
+                this.columnIndex = new global::System.Data.DataColumn("Index", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnIndex);
+                this.columnParent_url = new global::System.Data.DataColumn("Parent_url", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnParent_url);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnUrl}, true));
+                this.columnUrl.AllowDBNull = false;
+                this.columnUrl.Unique = true;
+                this.columnUrl.MaxLength = 300;
+                this.columnName.MaxLength = 300;
+                this.columnParent_url.MaxLength = 300;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listRow NewFile_listRow() {
+                return ((File_listRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new File_listRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(File_listRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.File_listRowChanged != null)) {
+                    this.File_listRowChanged(this, new File_listRowChangeEvent(((File_listRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.File_listRowChanging != null)) {
+                    this.File_listRowChanging(this, new File_listRowChangeEvent(((File_listRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.File_listRowDeleted != null)) {
+                    this.File_listRowDeleted(this, new File_listRowChangeEvent(((File_listRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.File_listRowDeleting != null)) {
+                    this.File_listRowDeleting(this, new File_listRowChangeEvent(((File_listRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveFile_listRow(File_listRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                User ds = new User();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "File_listDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -2202,17 +2495,6 @@ namespace ComicSpider {
                 }
                 set {
                     this[this.tableVolume_list.PathColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public System.DateTime Data_time {
-                get {
-                    return ((global::System.DateTime)(this[this.tableVolume_list.Data_timeColumn]));
-                }
-                set {
-                    this[this.tableVolume_list.Data_timeColumn] = value;
                 }
             }
             
@@ -2558,22 +2840,6 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string Parent_name {
-                get {
-                    try {
-                        return ((string)(this[this.tablePage_list.Parent_nameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_name\' in table \'Page_list\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablePage_list.Parent_nameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string Path {
                 get {
                     try {
@@ -2585,17 +2851,6 @@ namespace ComicSpider {
                 }
                 set {
                     this[this.tablePage_list.PathColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public System.DateTime Data_time {
-                get {
-                    return ((global::System.DateTime)(this[this.tablePage_list.Data_timeColumn]));
-                }
-                set {
-                    this[this.tablePage_list.Data_timeColumn] = value;
                 }
             }
             
@@ -2685,18 +2940,6 @@ namespace ComicSpider {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsParent_nameNull() {
-                return this.IsNull(this.tablePage_list.Parent_nameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetParent_nameNull() {
-                this[this.tablePage_list.Parent_nameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsPathNull() {
                 return this.IsNull(this.tablePage_list.PathColumn);
             }
@@ -2705,6 +2948,116 @@ namespace ComicSpider {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetPathNull() {
                 this[this.tablePage_list.PathColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class File_listRow : global::System.Data.DataRow {
+            
+            private File_listDataTable tableFile_list;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal File_listRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableFile_list = ((File_listDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Url {
+                get {
+                    return ((string)(this[this.tableFile_list.UrlColumn]));
+                }
+                set {
+                    this[this.tableFile_list.UrlColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Name {
+                get {
+                    try {
+                        return ((string)(this[this.tableFile_list.NameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'File_list\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFile_list.NameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public int Index {
+                get {
+                    try {
+                        return ((int)(this[this.tableFile_list.IndexColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Index\' in table \'File_list\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFile_list.IndexColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Parent_url {
+                get {
+                    try {
+                        return ((string)(this[this.tableFile_list.Parent_urlColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Parent_url\' in table \'File_list\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFile_list.Parent_urlColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsNameNull() {
+                return this.IsNull(this.tableFile_list.NameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetNameNull() {
+                this[this.tableFile_list.NameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsIndexNull() {
+                return this.IsNull(this.tableFile_list.IndexColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetIndexNull() {
+                this[this.tableFile_list.IndexColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsParent_urlNull() {
+                return this.IsNull(this.tableFile_list.Parent_urlColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetParent_urlNull() {
+                this[this.tableFile_list.Parent_urlColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -2864,6 +3217,40 @@ namespace ComicSpider {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public Page_listRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class File_listRowChangeEvent : global::System.EventArgs {
+            
+            private File_listRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listRowChangeEvent(File_listRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public File_listRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -3405,11 +3792,10 @@ namespace ComicSpider.UserTableAdapters {
             tableMapping.ColumnMappings.Add("Parent_url", "Parent_url");
             tableMapping.ColumnMappings.Add("Parent_name", "Parent_name");
             tableMapping.ColumnMappings.Add("Path", "Path");
-            tableMapping.ColumnMappings.Add("Data_time", "Data_time");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Volume_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Volume_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             global::System.Data.SQLite.SQLiteParameter param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -3503,18 +3889,11 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceColumn = "Path";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Original_Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
             this._adapter.InsertCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
             this._adapter.InsertCommand.CommandText = "INSERT INTO [Volume_list] ([Url], [Name], [Index], [State], [Parent_url], [Parent" +
-                "_name], [Path], [Data_time]) VALUES (@Url, @Name, @Index, @State, @Parent_url, @" +
-                "Parent_name, @Path, @Data_time)";
+                "_name], [Path]) VALUES (@Url, @Name, @Index, @State, @Parent_url, @Parent_name, " +
+                "@Path)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -3553,15 +3932,9 @@ namespace ComicSpider.UserTableAdapters {
             param.DbType = global::System.Data.DbType.String;
             param.SourceColumn = "Path";
             this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
-            this._adapter.InsertCommand.Parameters.Add(param);
             this._adapter.UpdateCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Volume_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [State] = @State, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Path] = @Path, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Volume_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [State] = @State, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Path] = @Path WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -3599,12 +3972,6 @@ namespace ComicSpider.UserTableAdapters {
             param.ParameterName = "@Path";
             param.DbType = global::System.Data.DbType.String;
             param.SourceColumn = "Path";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -3698,13 +4065,6 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceColumn = "Path";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Original_Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3720,8 +4080,8 @@ namespace ComicSpider.UserTableAdapters {
             this._commandCollection = new global::System.Data.SQLite.SQLiteCommand[1];
             this._commandCollection[0] = new global::System.Data.SQLite.SQLiteCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = "SELECT [Url], [Name], [Index], [State], [Parent_url], [Parent_name], [Path], [Dat" +
-                "a_time] FROM [Volume_list]";
+            this._commandCollection[0].CommandText = "SELECT [Url], [Name], [Index], [State], [Parent_url], [Parent_name], [Path] FROM " +
+                "[Volume_list]";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -3782,7 +4142,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
+        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path) {
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
@@ -3837,7 +4197,6 @@ namespace ComicSpider.UserTableAdapters {
                 this.Adapter.DeleteCommand.Parameters[11].Value = ((object)(0));
                 this.Adapter.DeleteCommand.Parameters[12].Value = ((string)(Original_Path));
             }
-            this.Adapter.DeleteCommand.Parameters[13].Value = ((System.DateTime)(Original_Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -3858,7 +4217,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path) {
             if ((Url == null)) {
                 throw new global::System.ArgumentNullException("Url");
             }
@@ -3901,7 +4260,6 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[6].Value = ((string)(Path));
             }
-            this.Adapter.InsertCommand.Parameters[7].Value = ((System.DateTime)(Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -3922,23 +4280,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(
-                    string Url, 
-                    string Name, 
-                    global::System.Nullable<int> Index, 
-                    global::System.Nullable<int> State, 
-                    string Parent_url, 
-                    string Parent_name, 
-                    string Path, 
-                    System.DateTime Data_time, 
-                    string Original_Url, 
-                    string Original_Name, 
-                    global::System.Nullable<int> Original_Index, 
-                    global::System.Nullable<int> Original_State, 
-                    string Original_Parent_url, 
-                    string Original_Parent_name, 
-                    string Original_Path, 
-                    System.DateTime Original_Data_time) {
+        public virtual int Update(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path) {
             if ((Url == null)) {
                 throw new global::System.ArgumentNullException("Url");
             }
@@ -3981,62 +4323,60 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(Path));
             }
-            this.Adapter.UpdateCommand.Parameters[7].Value = ((System.DateTime)(Data_time));
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(Original_Url));
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(Original_Url));
             }
             if ((Original_Name == null)) {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[10].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[10].Value = ((string)(Original_Name));
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Original_Name));
             }
             if ((Original_Index.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((int)(Original_Index.Value));
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[11].Value = ((int)(Original_Index.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[12].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
             }
             if ((Original_State.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[14].Value = ((int)(Original_State.Value));
+                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((int)(Original_State.Value));
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[14].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
             }
             if ((Original_Parent_url == null)) {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[16].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[15].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[16].Value = ((string)(Original_Parent_url));
+                this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[15].Value = ((string)(Original_Parent_url));
             }
             if ((Original_Parent_name == null)) {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[18].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[18].Value = ((string)(Original_Parent_name));
+                this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((string)(Original_Parent_name));
             }
             if ((Original_Path == null)) {
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[20].Value = global::System.DBNull.Value;
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[20].Value = ((string)(Original_Path));
+                this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[19].Value = ((string)(Original_Path));
             }
-            this.Adapter.UpdateCommand.Parameters[21].Value = ((System.DateTime)(Original_Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -4057,8 +4397,8 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
-        public virtual int Update(string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path, System.DateTime Data_time, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
-            return this.Update(Original_Url, Name, Index, State, Parent_url, Parent_name, Path, Data_time, Original_Url, Original_Name, Original_Index, Original_State, Original_Parent_url, Original_Parent_name, Original_Path, Original_Data_time);
+        public virtual int Update(string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, string Parent_url, string Parent_name, string Path, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, string Original_Parent_url, string Original_Parent_name, string Original_Path) {
+            return this.Update(Original_Url, Name, Index, State, Parent_url, Parent_name, Path, Original_Url, Original_Name, Original_Index, Original_State, Original_Parent_url, Original_Parent_name, Original_Path);
         }
     }
     
@@ -5063,13 +5403,11 @@ namespace ComicSpider.UserTableAdapters {
             tableMapping.ColumnMappings.Add("Speed", "Speed");
             tableMapping.ColumnMappings.Add("Size", "Size");
             tableMapping.ColumnMappings.Add("Parent_url", "Parent_url");
-            tableMapping.ColumnMappings.Add("Parent_name", "Parent_name");
             tableMapping.ColumnMappings.Add("Path", "Path");
-            tableMapping.ColumnMappings.Add("Data_time", "Data_time");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
-            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Page_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Progress = 1 AND [Progress] IS NULL) OR ([Progress] = @Original_Progress)) AND ((@IsNull_Speed = 1 AND [Speed] IS NULL) OR ([Speed] = @Original_Speed)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [Page_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Progress = 1 AND [Progress] IS NULL) OR ([Progress] = @Original_Progress)) AND ((@IsNull_Speed = 1 AND [Speed] IS NULL) OR ([Speed] = @Original_Speed)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             global::System.Data.SQLite.SQLiteParameter param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -5181,20 +5519,6 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.DeleteCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@IsNull_Parent_name";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.DbType = global::System.Data.DbType.Int32;
-            param.SourceColumn = "Parent_name";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Original_Parent_name";
-            param.DbType = global::System.Data.DbType.String;
-            param.SourceColumn = "Parent_name";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@IsNull_Path";
             param.DbType = global::System.Data.DbType.Int32;
             param.DbType = global::System.Data.DbType.Int32;
@@ -5208,19 +5532,11 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceColumn = "Path";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.DeleteCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Original_Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.DeleteCommand.Parameters.Add(param);
             this._adapter.InsertCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
             this._adapter.InsertCommand.CommandText = "INSERT INTO [Page_list] ([Url], [Name], [Index], [State], [Progress], [Speed], [S" +
-                "ize], [Parent_url], [Parent_name], [Path], [Data_time]) VALUES (@Url, @Name, @In" +
-                "dex, @State, @Progress, @Speed, @Size, @Parent_url, @Parent_name, @Path, @Data_t" +
-                "ime)";
+                "ize], [Parent_url], [Path]) VALUES (@Url, @Name, @Index, @State, @Progress, @Spe" +
+                "ed, @Size, @Parent_url, @Path)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -5268,24 +5584,13 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceColumn = "Parent_url";
             this._adapter.InsertCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Parent_name";
-            param.DbType = global::System.Data.DbType.String;
-            param.SourceColumn = "Parent_name";
-            this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Path";
             param.DbType = global::System.Data.DbType.String;
             param.SourceColumn = "Path";
             this._adapter.InsertCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
-            this._adapter.InsertCommand.Parameters.Add(param);
             this._adapter.UpdateCommand = new global::System.Data.SQLite.SQLiteCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
-            this._adapter.UpdateCommand.CommandText = @"UPDATE [Page_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [State] = @State, [Progress] = @Progress, [Speed] = @Speed, [Size] = @Size, [Parent_url] = @Parent_url, [Parent_name] = @Parent_name, [Path] = @Path, [Data_time] = @Data_time WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Progress = 1 AND [Progress] IS NULL) OR ([Progress] = @Original_Progress)) AND ((@IsNull_Speed = 1 AND [Speed] IS NULL) OR ([Speed] = @Original_Speed)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Parent_name = 1 AND [Parent_name] IS NULL) OR ([Parent_name] = @Original_Parent_name)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)) AND ([Data_time] = @Original_Data_time))";
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [Page_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [State] = @State, [Progress] = @Progress, [Speed] = @Speed, [Size] = @Size, [Parent_url] = @Parent_url, [Path] = @Path WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_State = 1 AND [State] IS NULL) OR ([State] = @Original_State)) AND ((@IsNull_Progress = 1 AND [Progress] IS NULL) OR ([Progress] = @Original_Progress)) AND ((@IsNull_Speed = 1 AND [Speed] IS NULL) OR ([Speed] = @Original_Speed)) AND ((@IsNull_Size = 1 AND [Size] IS NULL) OR ([Size] = @Original_Size)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)) AND ((@IsNull_Path = 1 AND [Path] IS NULL) OR ([Path] = @Original_Path)))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Url";
@@ -5333,20 +5638,9 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceColumn = "Parent_url";
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Parent_name";
-            param.DbType = global::System.Data.DbType.String;
-            param.SourceColumn = "Parent_name";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Path";
             param.DbType = global::System.Data.DbType.String;
             param.SourceColumn = "Path";
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@Original_Url";
@@ -5458,20 +5752,6 @@ namespace ComicSpider.UserTableAdapters {
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.UpdateCommand.Parameters.Add(param);
             param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@IsNull_Parent_name";
-            param.DbType = global::System.Data.DbType.Int32;
-            param.DbType = global::System.Data.DbType.Int32;
-            param.SourceColumn = "Parent_name";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            param.SourceColumnNullMapping = true;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Original_Parent_name";
-            param.DbType = global::System.Data.DbType.String;
-            param.SourceColumn = "Parent_name";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
             param.ParameterName = "@IsNull_Path";
             param.DbType = global::System.Data.DbType.Int32;
             param.DbType = global::System.Data.DbType.Int32;
@@ -5483,13 +5763,6 @@ namespace ComicSpider.UserTableAdapters {
             param.ParameterName = "@Original_Path";
             param.DbType = global::System.Data.DbType.String;
             param.SourceColumn = "Path";
-            param.SourceVersion = global::System.Data.DataRowVersion.Original;
-            this._adapter.UpdateCommand.Parameters.Add(param);
-            param = new global::System.Data.SQLite.SQLiteParameter();
-            param.ParameterName = "@Original_Data_time";
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.DbType = global::System.Data.DbType.DateTime;
-            param.SourceColumn = "Data_time";
             param.SourceVersion = global::System.Data.DataRowVersion.Original;
             this._adapter.UpdateCommand.Parameters.Add(param);
         }
@@ -5508,7 +5781,7 @@ namespace ComicSpider.UserTableAdapters {
             this._commandCollection[0] = new global::System.Data.SQLite.SQLiteCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT [Url], [Name], [Index], [State], [Progress], [Speed], [Size], [Parent_url]" +
-                ", [Parent_name], [Path], [Data_time] FROM [Page_list]";
+                ", [Path] FROM [Page_list]";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }
         
@@ -5569,7 +5842,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
-        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, global::System.Nullable<double> Original_Progress, global::System.Nullable<double> Original_Speed, global::System.Nullable<double> Original_Size, string Original_Parent_url, string Original_Parent_name, string Original_Path, System.DateTime Original_Data_time) {
+        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, global::System.Nullable<int> Original_State, global::System.Nullable<double> Original_Progress, global::System.Nullable<double> Original_Speed, global::System.Nullable<double> Original_Size, string Original_Parent_url, string Original_Path) {
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
@@ -5632,23 +5905,14 @@ namespace ComicSpider.UserTableAdapters {
                 this.Adapter.DeleteCommand.Parameters[13].Value = ((object)(0));
                 this.Adapter.DeleteCommand.Parameters[14].Value = ((string)(Original_Parent_url));
             }
-            if ((Original_Parent_name == null)) {
+            if ((Original_Path == null)) {
                 this.Adapter.DeleteCommand.Parameters[15].Value = ((object)(1));
                 this.Adapter.DeleteCommand.Parameters[16].Value = global::System.DBNull.Value;
             }
             else {
                 this.Adapter.DeleteCommand.Parameters[15].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[16].Value = ((string)(Original_Parent_name));
+                this.Adapter.DeleteCommand.Parameters[16].Value = ((string)(Original_Path));
             }
-            if ((Original_Path == null)) {
-                this.Adapter.DeleteCommand.Parameters[17].Value = ((object)(1));
-                this.Adapter.DeleteCommand.Parameters[18].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.DeleteCommand.Parameters[17].Value = ((object)(0));
-                this.Adapter.DeleteCommand.Parameters[18].Value = ((string)(Original_Path));
-            }
-            this.Adapter.DeleteCommand.Parameters[19].Value = ((System.DateTime)(Original_Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5669,7 +5933,7 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
         [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
-        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, global::System.Nullable<double> Progress, global::System.Nullable<double> Speed, global::System.Nullable<double> Size, string Parent_url, string Parent_name, string Path, System.DateTime Data_time) {
+        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, global::System.Nullable<int> State, global::System.Nullable<double> Progress, global::System.Nullable<double> Speed, global::System.Nullable<double> Size, string Parent_url, string Path) {
             if ((Url == null)) {
                 throw new global::System.ArgumentNullException("Url");
             }
@@ -5718,19 +5982,12 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[7].Value = ((string)(Parent_url));
             }
-            if ((Parent_name == null)) {
+            if ((Path == null)) {
                 this.Adapter.InsertCommand.Parameters[8].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(Parent_name));
+                this.Adapter.InsertCommand.Parameters[8].Value = ((string)(Path));
             }
-            if ((Path == null)) {
-                this.Adapter.InsertCommand.Parameters[9].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.InsertCommand.Parameters[9].Value = ((string)(Path));
-            }
-            this.Adapter.InsertCommand.Parameters[10].Value = ((System.DateTime)(Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5760,9 +6017,7 @@ namespace ComicSpider.UserTableAdapters {
                     global::System.Nullable<double> Speed, 
                     global::System.Nullable<double> Size, 
                     string Parent_url, 
-                    string Parent_name, 
                     string Path, 
-                    System.DateTime Data_time, 
                     string Original_Url, 
                     string Original_Name, 
                     global::System.Nullable<int> Original_Index, 
@@ -5771,9 +6026,7 @@ namespace ComicSpider.UserTableAdapters {
                     global::System.Nullable<double> Original_Speed, 
                     global::System.Nullable<double> Original_Size, 
                     string Original_Parent_url, 
-                    string Original_Parent_name, 
-                    string Original_Path, 
-                    System.DateTime Original_Data_time) {
+                    string Original_Path) {
             if ((Url == null)) {
                 throw new global::System.ArgumentNullException("Url");
             }
@@ -5822,98 +6075,82 @@ namespace ComicSpider.UserTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[7].Value = ((string)(Parent_url));
             }
-            if ((Parent_name == null)) {
+            if ((Path == null)) {
                 this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(Parent_name));
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((string)(Path));
             }
-            if ((Path == null)) {
-                this.Adapter.UpdateCommand.Parameters[9].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Path));
-            }
-            this.Adapter.UpdateCommand.Parameters[10].Value = ((System.DateTime)(Data_time));
             if ((Original_Url == null)) {
                 throw new global::System.ArgumentNullException("Original_Url");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Original_Url));
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((string)(Original_Url));
             }
             if ((Original_Name == null)) {
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[11].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[11].Value = ((string)(Original_Name));
+            }
+            if ((Original_Index.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[13].Value = ((int)(Original_Index.Value));
+            }
+            else {
                 this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[13].Value = global::System.DBNull.Value;
             }
-            else {
-                this.Adapter.UpdateCommand.Parameters[12].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[13].Value = ((string)(Original_Name));
-            }
-            if ((Original_Index.HasValue == true)) {
+            if ((Original_State.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[15].Value = ((int)(Original_Index.Value));
+                this.Adapter.UpdateCommand.Parameters[15].Value = ((int)(Original_State.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[14].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[15].Value = global::System.DBNull.Value;
             }
-            if ((Original_State.HasValue == true)) {
+            if ((Original_Progress.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[17].Value = ((int)(Original_State.Value));
+                this.Adapter.UpdateCommand.Parameters[17].Value = ((double)(Original_Progress.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[16].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[17].Value = global::System.DBNull.Value;
             }
-            if ((Original_Progress.HasValue == true)) {
+            if ((Original_Speed.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[19].Value = ((double)(Original_Progress.Value));
+                this.Adapter.UpdateCommand.Parameters[19].Value = ((double)(Original_Speed.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[18].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[19].Value = global::System.DBNull.Value;
             }
-            if ((Original_Speed.HasValue == true)) {
+            if ((Original_Size.HasValue == true)) {
                 this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[21].Value = ((double)(Original_Speed.Value));
+                this.Adapter.UpdateCommand.Parameters[21].Value = ((double)(Original_Size.Value));
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[20].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[21].Value = global::System.DBNull.Value;
             }
-            if ((Original_Size.HasValue == true)) {
-                this.Adapter.UpdateCommand.Parameters[22].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[23].Value = ((double)(Original_Size.Value));
-            }
-            else {
+            if ((Original_Parent_url == null)) {
                 this.Adapter.UpdateCommand.Parameters[22].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[23].Value = global::System.DBNull.Value;
             }
-            if ((Original_Parent_url == null)) {
+            else {
+                this.Adapter.UpdateCommand.Parameters[22].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[23].Value = ((string)(Original_Parent_url));
+            }
+            if ((Original_Path == null)) {
                 this.Adapter.UpdateCommand.Parameters[24].Value = ((object)(1));
                 this.Adapter.UpdateCommand.Parameters[25].Value = global::System.DBNull.Value;
             }
             else {
                 this.Adapter.UpdateCommand.Parameters[24].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[25].Value = ((string)(Original_Parent_url));
+                this.Adapter.UpdateCommand.Parameters[25].Value = ((string)(Original_Path));
             }
-            if ((Original_Parent_name == null)) {
-                this.Adapter.UpdateCommand.Parameters[26].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[27].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[26].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[27].Value = ((string)(Original_Parent_name));
-            }
-            if ((Original_Path == null)) {
-                this.Adapter.UpdateCommand.Parameters[28].Value = ((object)(1));
-                this.Adapter.UpdateCommand.Parameters[29].Value = global::System.DBNull.Value;
-            }
-            else {
-                this.Adapter.UpdateCommand.Parameters[28].Value = ((object)(0));
-                this.Adapter.UpdateCommand.Parameters[29].Value = ((string)(Original_Path));
-            }
-            this.Adapter.UpdateCommand.Parameters[30].Value = ((System.DateTime)(Original_Data_time));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -5942,9 +6179,7 @@ namespace ComicSpider.UserTableAdapters {
                     global::System.Nullable<double> Speed, 
                     global::System.Nullable<double> Size, 
                     string Parent_url, 
-                    string Parent_name, 
                     string Path, 
-                    System.DateTime Data_time, 
                     string Original_Url, 
                     string Original_Name, 
                     global::System.Nullable<int> Original_Index, 
@@ -5953,10 +6188,539 @@ namespace ComicSpider.UserTableAdapters {
                     global::System.Nullable<double> Original_Speed, 
                     global::System.Nullable<double> Original_Size, 
                     string Original_Parent_url, 
-                    string Original_Parent_name, 
-                    string Original_Path, 
-                    System.DateTime Original_Data_time) {
-            return this.Update(Original_Url, Name, Index, State, Progress, Speed, Size, Parent_url, Parent_name, Path, Data_time, Original_Url, Original_Name, Original_Index, Original_State, Original_Progress, Original_Speed, Original_Size, Original_Parent_url, Original_Parent_name, Original_Path, Original_Data_time);
+                    string Original_Path) {
+            return this.Update(Original_Url, Name, Index, State, Progress, Speed, Size, Parent_url, Path, Original_Url, Original_Name, Original_Index, Original_State, Original_Progress, Original_Speed, Original_Size, Original_Parent_url, Original_Path);
+        }
+    }
+    
+    /// <summary>
+    ///Represents the connection and commands used to retrieve and save data.
+    ///</summary>
+    [global::System.ComponentModel.DesignerCategoryAttribute("code")]
+    [global::System.ComponentModel.ToolboxItem(true)]
+    [global::System.ComponentModel.DataObjectAttribute(true)]
+    [global::System.ComponentModel.DesignerAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterDesigner, Microsoft.VSDesigner" +
+        ", Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+    public partial class File_listTableAdapter : global::System.ComponentModel.Component {
+        
+        private global::System.Data.SQLite.SQLiteDataAdapter _adapter;
+        
+        private global::System.Data.SQLite.SQLiteConnection _connection;
+        
+        private global::System.Data.SQLite.SQLiteTransaction _transaction;
+        
+        private global::System.Data.SQLite.SQLiteCommand[] _commandCollection;
+        
+        private bool _clearBeforeFill;
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public File_listTableAdapter() {
+            this.ClearBeforeFill = true;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected internal global::System.Data.SQLite.SQLiteDataAdapter Adapter {
+            get {
+                if ((this._adapter == null)) {
+                    this.InitAdapter();
+                }
+                return this._adapter;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal global::System.Data.SQLite.SQLiteConnection Connection {
+            get {
+                if ((this._connection == null)) {
+                    this.InitConnection();
+                }
+                return this._connection;
+            }
+            set {
+                this._connection = value;
+                if ((this.Adapter.InsertCommand != null)) {
+                    this.Adapter.InsertCommand.Connection = value;
+                }
+                if ((this.Adapter.DeleteCommand != null)) {
+                    this.Adapter.DeleteCommand.Connection = value;
+                }
+                if ((this.Adapter.UpdateCommand != null)) {
+                    this.Adapter.UpdateCommand.Connection = value;
+                }
+                for (int i = 0; (i < this.CommandCollection.Length); i = (i + 1)) {
+                    if ((this.CommandCollection[i] != null)) {
+                        ((global::System.Data.SQLite.SQLiteCommand)(this.CommandCollection[i])).Connection = value;
+                    }
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        internal global::System.Data.SQLite.SQLiteTransaction Transaction {
+            get {
+                return this._transaction;
+            }
+            set {
+                this._transaction = value;
+                for (int i = 0; (i < this.CommandCollection.Length); i = (i + 1)) {
+                    this.CommandCollection[i].Transaction = this._transaction;
+                }
+                if (((this.Adapter != null) 
+                            && (this.Adapter.DeleteCommand != null))) {
+                    this.Adapter.DeleteCommand.Transaction = this._transaction;
+                }
+                if (((this.Adapter != null) 
+                            && (this.Adapter.InsertCommand != null))) {
+                    this.Adapter.InsertCommand.Transaction = this._transaction;
+                }
+                if (((this.Adapter != null) 
+                            && (this.Adapter.UpdateCommand != null))) {
+                    this.Adapter.UpdateCommand.Transaction = this._transaction;
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        protected global::System.Data.SQLite.SQLiteCommand[] CommandCollection {
+            get {
+                if ((this._commandCollection == null)) {
+                    this.InitCommandCollection();
+                }
+                return this._commandCollection;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public bool ClearBeforeFill {
+            get {
+                return this._clearBeforeFill;
+            }
+            set {
+                this._clearBeforeFill = value;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitAdapter() {
+            this._adapter = new global::System.Data.SQLite.SQLiteDataAdapter();
+            global::System.Data.Common.DataTableMapping tableMapping = new global::System.Data.Common.DataTableMapping();
+            tableMapping.SourceTable = "Table";
+            tableMapping.DataSetTable = "File_list";
+            tableMapping.ColumnMappings.Add("Url", "Url");
+            tableMapping.ColumnMappings.Add("Name", "Name");
+            tableMapping.ColumnMappings.Add("Index", "Index");
+            tableMapping.ColumnMappings.Add("Parent_url", "Parent_url");
+            this._adapter.TableMappings.Add(tableMapping);
+            this._adapter.DeleteCommand = new global::System.Data.SQLite.SQLiteCommand();
+            this._adapter.DeleteCommand.Connection = this.Connection;
+            this._adapter.DeleteCommand.CommandText = @"DELETE FROM [File_list] WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)))";
+            this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
+            global::System.Data.SQLite.SQLiteParameter param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Url";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Name";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Name";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Name";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Name";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Index";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Index";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Index";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Index";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Parent_url";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Parent_url";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Parent_url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Parent_url";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.DeleteCommand.Parameters.Add(param);
+            this._adapter.InsertCommand = new global::System.Data.SQLite.SQLiteCommand();
+            this._adapter.InsertCommand.Connection = this.Connection;
+            this._adapter.InsertCommand.CommandText = "INSERT INTO [File_list] ([Url], [Name], [Index], [Parent_url]) VALUES (@Url, @Nam" +
+                "e, @Index, @Parent_url)";
+            this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Url";
+            this._adapter.InsertCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Name";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Name";
+            this._adapter.InsertCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Index";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Index";
+            this._adapter.InsertCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Parent_url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Parent_url";
+            this._adapter.InsertCommand.Parameters.Add(param);
+            this._adapter.UpdateCommand = new global::System.Data.SQLite.SQLiteCommand();
+            this._adapter.UpdateCommand.Connection = this.Connection;
+            this._adapter.UpdateCommand.CommandText = @"UPDATE [File_list] SET [Url] = @Url, [Name] = @Name, [Index] = @Index, [Parent_url] = @Parent_url WHERE (([Url] = @Original_Url) AND ((@IsNull_Name = 1 AND [Name] IS NULL) OR ([Name] = @Original_Name)) AND ((@IsNull_Index = 1 AND [Index] IS NULL) OR ([Index] = @Original_Index)) AND ((@IsNull_Parent_url = 1 AND [Parent_url] IS NULL) OR ([Parent_url] = @Original_Parent_url)))";
+            this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Url";
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Name";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Name";
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Index";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Index";
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Parent_url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Parent_url";
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Url";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Name";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Name";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Name";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Name";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Index";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Index";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Index";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Index";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@IsNull_Parent_url";
+            param.DbType = global::System.Data.DbType.Int32;
+            param.DbType = global::System.Data.DbType.Int32;
+            param.SourceColumn = "Parent_url";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            param.SourceColumnNullMapping = true;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+            param = new global::System.Data.SQLite.SQLiteParameter();
+            param.ParameterName = "@Original_Parent_url";
+            param.DbType = global::System.Data.DbType.String;
+            param.SourceColumn = "Parent_url";
+            param.SourceVersion = global::System.Data.DataRowVersion.Original;
+            this._adapter.UpdateCommand.Parameters.Add(param);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitConnection() {
+            this._connection = new global::System.Data.SQLite.SQLiteConnection();
+            this._connection.ConnectionString = global::ComicSpider.Properties.Settings.Default.userConnectionString;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private void InitCommandCollection() {
+            this._commandCollection = new global::System.Data.SQLite.SQLiteCommand[1];
+            this._commandCollection[0] = new global::System.Data.SQLite.SQLiteCommand();
+            this._commandCollection[0].Connection = this.Connection;
+            this._commandCollection[0].CommandText = "SELECT [Url], [Name], [Index], [Parent_url] FROM [File_list]";
+            this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Fill, true)]
+        public virtual int Fill(User.File_listDataTable dataTable) {
+            this.Adapter.SelectCommand = this.CommandCollection[0];
+            if ((this.ClearBeforeFill == true)) {
+                dataTable.Clear();
+            }
+            int returnValue = this.Adapter.Fill(dataTable);
+            return returnValue;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Select, true)]
+        public virtual User.File_listDataTable GetData() {
+            this.Adapter.SelectCommand = this.CommandCollection[0];
+            User.File_listDataTable dataTable = new User.File_listDataTable();
+            this.Adapter.Fill(dataTable);
+            return dataTable;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(User.File_listDataTable dataTable) {
+            return this.Adapter.Update(dataTable);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(User dataSet) {
+            return this.Adapter.Update(dataSet, "File_list");
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(global::System.Data.DataRow dataRow) {
+            return this.Adapter.Update(new global::System.Data.DataRow[] {
+                        dataRow});
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        public virtual int Update(global::System.Data.DataRow[] dataRows) {
+            return this.Adapter.Update(dataRows);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Delete, true)]
+        public virtual int Delete(string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, string Original_Parent_url) {
+            if ((Original_Url == null)) {
+                throw new global::System.ArgumentNullException("Original_Url");
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[0].Value = ((string)(Original_Url));
+            }
+            if ((Original_Name == null)) {
+                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[2].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[1].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[2].Value = ((string)(Original_Name));
+            }
+            if ((Original_Index.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[4].Value = ((int)(Original_Index.Value));
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[3].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[4].Value = global::System.DBNull.Value;
+            }
+            if ((Original_Parent_url == null)) {
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[6].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[5].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[6].Value = ((string)(Original_Parent_url));
+            }
+            global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
+            if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                this.Adapter.DeleteCommand.Connection.Open();
+            }
+            try {
+                int returnValue = this.Adapter.DeleteCommand.ExecuteNonQuery();
+                return returnValue;
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    this.Adapter.DeleteCommand.Connection.Close();
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Insert, true)]
+        public virtual int Insert(string Url, string Name, global::System.Nullable<int> Index, string Parent_url) {
+            if ((Url == null)) {
+                throw new global::System.ArgumentNullException("Url");
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[0].Value = ((string)(Url));
+            }
+            if ((Name == null)) {
+                this.Adapter.InsertCommand.Parameters[1].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[1].Value = ((string)(Name));
+            }
+            if ((Index.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[2].Value = ((int)(Index.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[2].Value = global::System.DBNull.Value;
+            }
+            if ((Parent_url == null)) {
+                this.Adapter.InsertCommand.Parameters[3].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[3].Value = ((string)(Parent_url));
+            }
+            global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
+            if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                this.Adapter.InsertCommand.Connection.Open();
+            }
+            try {
+                int returnValue = this.Adapter.InsertCommand.ExecuteNonQuery();
+                return returnValue;
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    this.Adapter.InsertCommand.Connection.Close();
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
+        public virtual int Update(string Url, string Name, global::System.Nullable<int> Index, string Parent_url, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, string Original_Parent_url) {
+            if ((Url == null)) {
+                throw new global::System.ArgumentNullException("Url");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[0].Value = ((string)(Url));
+            }
+            if ((Name == null)) {
+                this.Adapter.UpdateCommand.Parameters[1].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[1].Value = ((string)(Name));
+            }
+            if ((Index.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[2].Value = ((int)(Index.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[2].Value = global::System.DBNull.Value;
+            }
+            if ((Parent_url == null)) {
+                this.Adapter.UpdateCommand.Parameters[3].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[3].Value = ((string)(Parent_url));
+            }
+            if ((Original_Url == null)) {
+                throw new global::System.ArgumentNullException("Original_Url");
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[4].Value = ((string)(Original_Url));
+            }
+            if ((Original_Name == null)) {
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[6].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[5].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[6].Value = ((string)(Original_Name));
+            }
+            if ((Original_Index.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[8].Value = ((int)(Original_Index.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[7].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[8].Value = global::System.DBNull.Value;
+            }
+            if ((Original_Parent_url == null)) {
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[10].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[9].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[10].Value = ((string)(Original_Parent_url));
+            }
+            global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
+            if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                this.Adapter.UpdateCommand.Connection.Open();
+            }
+            try {
+                int returnValue = this.Adapter.UpdateCommand.ExecuteNonQuery();
+                return returnValue;
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    this.Adapter.UpdateCommand.Connection.Close();
+                }
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, true)]
+        public virtual int Update(string Name, global::System.Nullable<int> Index, string Parent_url, string Original_Url, string Original_Name, global::System.Nullable<int> Original_Index, string Original_Parent_url) {
+            return this.Update(Original_Url, Name, Index, Parent_url, Original_Url, Original_Name, Original_Index, Original_Parent_url);
         }
     }
     
@@ -5981,6 +6745,8 @@ namespace ComicSpider.UserTableAdapters {
         private Key_valueTableAdapter _key_valueTableAdapter;
         
         private Page_listTableAdapter _page_listTableAdapter;
+        
+        private File_listTableAdapter _file_listTableAdapter;
         
         private bool _backupDataSetBeforeUpdate;
         
@@ -6069,6 +6835,20 @@ namespace ComicSpider.UserTableAdapters {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.EditorAttribute("Microsoft.VSDesigner.DataSource.Design.TableAdapterManagerPropertyEditor, Microso" +
+            "ft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3" +
+            "a", "System.Drawing.Design.UITypeEditor")]
+        public File_listTableAdapter File_listTableAdapter {
+            get {
+                return this._file_listTableAdapter;
+            }
+            set {
+                this._file_listTableAdapter = value;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public bool BackupDataSetBeforeUpdate {
             get {
                 return this._backupDataSetBeforeUpdate;
@@ -6106,6 +6886,10 @@ namespace ComicSpider.UserTableAdapters {
                             && (this._page_listTableAdapter.Connection != null))) {
                     return this._page_listTableAdapter.Connection;
                 }
+                if (((this._file_listTableAdapter != null) 
+                            && (this._file_listTableAdapter.Connection != null))) {
+                    return this._file_listTableAdapter.Connection;
+                }
                 return null;
             }
             set {
@@ -6132,6 +6916,9 @@ namespace ComicSpider.UserTableAdapters {
                     count = (count + 1);
                 }
                 if ((this._page_listTableAdapter != null)) {
+                    count = (count + 1);
+                }
+                if ((this._file_listTableAdapter != null)) {
                     count = (count + 1);
                 }
                 return count;
@@ -6163,12 +6950,12 @@ namespace ComicSpider.UserTableAdapters {
                     allChangedRows.AddRange(updatedRows);
                 }
             }
-            if ((this._error_logTableAdapter != null)) {
-                global::System.Data.DataRow[] updatedRows = dataSet.Error_log.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
+            if ((this._file_listTableAdapter != null)) {
+                global::System.Data.DataRow[] updatedRows = dataSet.File_list.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
                 updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
                 if (((updatedRows != null) 
                             && (0 < updatedRows.Length))) {
-                    result = (result + this._error_logTableAdapter.Update(updatedRows));
+                    result = (result + this._file_listTableAdapter.Update(updatedRows));
                     allChangedRows.AddRange(updatedRows);
                 }
             }
@@ -6187,6 +6974,15 @@ namespace ComicSpider.UserTableAdapters {
                 if (((updatedRows != null) 
                             && (0 < updatedRows.Length))) {
                     result = (result + this._volume_listTableAdapter.Update(updatedRows));
+                    allChangedRows.AddRange(updatedRows);
+                }
+            }
+            if ((this._error_logTableAdapter != null)) {
+                global::System.Data.DataRow[] updatedRows = dataSet.Error_log.Select(null, null, global::System.Data.DataViewRowState.ModifiedCurrent);
+                updatedRows = this.GetRealUpdatedRows(updatedRows, allAddedRows);
+                if (((updatedRows != null) 
+                            && (0 < updatedRows.Length))) {
+                    result = (result + this._error_logTableAdapter.Update(updatedRows));
                     allChangedRows.AddRange(updatedRows);
                 }
             }
@@ -6216,11 +7012,11 @@ namespace ComicSpider.UserTableAdapters {
                     allAddedRows.AddRange(addedRows);
                 }
             }
-            if ((this._error_logTableAdapter != null)) {
-                global::System.Data.DataRow[] addedRows = dataSet.Error_log.Select(null, null, global::System.Data.DataViewRowState.Added);
+            if ((this._file_listTableAdapter != null)) {
+                global::System.Data.DataRow[] addedRows = dataSet.File_list.Select(null, null, global::System.Data.DataViewRowState.Added);
                 if (((addedRows != null) 
                             && (0 < addedRows.Length))) {
-                    result = (result + this._error_logTableAdapter.Update(addedRows));
+                    result = (result + this._file_listTableAdapter.Update(addedRows));
                     allAddedRows.AddRange(addedRows);
                 }
             }
@@ -6240,6 +7036,14 @@ namespace ComicSpider.UserTableAdapters {
                     allAddedRows.AddRange(addedRows);
                 }
             }
+            if ((this._error_logTableAdapter != null)) {
+                global::System.Data.DataRow[] addedRows = dataSet.Error_log.Select(null, null, global::System.Data.DataViewRowState.Added);
+                if (((addedRows != null) 
+                            && (0 < addedRows.Length))) {
+                    result = (result + this._error_logTableAdapter.Update(addedRows));
+                    allAddedRows.AddRange(addedRows);
+                }
+            }
             return result;
         }
         
@@ -6250,6 +7054,14 @@ namespace ComicSpider.UserTableAdapters {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private int UpdateDeletedRows(User dataSet, global::System.Collections.Generic.List<global::System.Data.DataRow> allChangedRows) {
             int result = 0;
+            if ((this._error_logTableAdapter != null)) {
+                global::System.Data.DataRow[] deletedRows = dataSet.Error_log.Select(null, null, global::System.Data.DataViewRowState.Deleted);
+                if (((deletedRows != null) 
+                            && (0 < deletedRows.Length))) {
+                    result = (result + this._error_logTableAdapter.Update(deletedRows));
+                    allChangedRows.AddRange(deletedRows);
+                }
+            }
             if ((this._volume_listTableAdapter != null)) {
                 global::System.Data.DataRow[] deletedRows = dataSet.Volume_list.Select(null, null, global::System.Data.DataViewRowState.Deleted);
                 if (((deletedRows != null) 
@@ -6266,11 +7078,11 @@ namespace ComicSpider.UserTableAdapters {
                     allChangedRows.AddRange(deletedRows);
                 }
             }
-            if ((this._error_logTableAdapter != null)) {
-                global::System.Data.DataRow[] deletedRows = dataSet.Error_log.Select(null, null, global::System.Data.DataViewRowState.Deleted);
+            if ((this._file_listTableAdapter != null)) {
+                global::System.Data.DataRow[] deletedRows = dataSet.File_list.Select(null, null, global::System.Data.DataViewRowState.Deleted);
                 if (((deletedRows != null) 
                             && (0 < deletedRows.Length))) {
-                    result = (result + this._error_logTableAdapter.Update(deletedRows));
+                    result = (result + this._file_listTableAdapter.Update(deletedRows));
                     allChangedRows.AddRange(deletedRows);
                 }
             }
@@ -6354,6 +7166,11 @@ namespace ComicSpider.UserTableAdapters {
                 throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
                         "tring.");
             }
+            if (((this._file_listTableAdapter != null) 
+                        && (this.MatchTableAdapterConnection(this._file_listTableAdapter.Connection) == false))) {
+                throw new global::System.ArgumentException("All TableAdapters managed by a TableAdapterManager must use the same connection s" +
+                        "tring.");
+            }
             global::System.Data.IDbConnection workConnection = this.Connection;
             if ((workConnection == null)) {
                 throw new global::System.ApplicationException("TableAdapterManager contains no connection information. Set each TableAdapterMana" +
@@ -6429,6 +7246,15 @@ namespace ComicSpider.UserTableAdapters {
                     if (this._page_listTableAdapter.Adapter.AcceptChangesDuringUpdate) {
                         this._page_listTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
                         adaptersWithAcceptChangesDuringUpdate.Add(this._page_listTableAdapter.Adapter);
+                    }
+                }
+                if ((this._file_listTableAdapter != null)) {
+                    revertConnections.Add(this._file_listTableAdapter, this._file_listTableAdapter.Connection);
+                    this._file_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(workConnection));
+                    this._file_listTableAdapter.Transaction = ((global::System.Data.SQLite.SQLiteTransaction)(workTransaction));
+                    if (this._file_listTableAdapter.Adapter.AcceptChangesDuringUpdate) {
+                        this._file_listTableAdapter.Adapter.AcceptChangesDuringUpdate = false;
+                        adaptersWithAcceptChangesDuringUpdate.Add(this._file_listTableAdapter.Adapter);
                     }
                 }
                 // 
@@ -6508,6 +7334,10 @@ namespace ComicSpider.UserTableAdapters {
                 if ((this._page_listTableAdapter != null)) {
                     this._page_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._page_listTableAdapter]));
                     this._page_listTableAdapter.Transaction = null;
+                }
+                if ((this._file_listTableAdapter != null)) {
+                    this._file_listTableAdapter.Connection = ((global::System.Data.SQLite.SQLiteConnection)(revertConnections[this._file_listTableAdapter]));
+                    this._file_listTableAdapter.Transaction = null;
                 }
                 if ((0 < adaptersWithAcceptChangesDuringUpdate.Count)) {
                     global::System.Data.Common.DataAdapter[] adapters = new System.Data.Common.DataAdapter[adaptersWithAcceptChangesDuringUpdate.Count];

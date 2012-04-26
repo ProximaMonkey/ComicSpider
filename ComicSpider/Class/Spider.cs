@@ -270,7 +270,6 @@ namespace ys
 				App_analyse();
 			}));
 
-			thread.SetApartmentState(ApartmentState.STA);
 			thread.Name = "ScriptLoader";
 			thread.Start();
 		}
@@ -469,9 +468,9 @@ namespace ys
 					continue;
 				}
 
-				if (vol_info.Count == 0)
+				try
 				{
-					try
+					if (vol_info.Count == 0)
 					{
 						if (file_types.Contains(ys.Common.Get_web_src_extension(vol_info.Url)))
 						{
@@ -483,68 +482,65 @@ namespace ys
 							vol_info.Children = Get_info_list_from_html(lua_c, vol_info, "get_pages");
 						}
 					}
-					catch (ThreadAbortException)
+
+					if (vol_info.Count > 0)
 					{
+						Dashboard.Instance.Dispatcher.Invoke(
+							new Dashboard.Report_main_progress_delegate(
+								Dashboard.Instance.Report_main_progress
+							)
+						);
+
+						#region Create folder
+						string dir_path = "";
+
+						foreach (var c in Path.GetInvalidFileNameChars())
+						{
+							vol_info.Parent.Name = vol_info.Parent.Name.Replace(c, ' ');
+						}
+
+						dir_path = ys.Common.Combine_path(
+							Main_settings.Instance.Root_dir,
+							vol_info.Parent.Name,
+							vol_info.Name);
+
+						vol_info.Path = dir_path;
+
+						if (!Directory.Exists(dir_path))
+						{
+							try
+							{
+								Directory.CreateDirectory(dir_path);
+								Report("Create dir: {0}", dir_path);
+							}
+							catch (ThreadAbortException)
+							{
+							}
+							catch (Exception ex)
+							{
+								Dashboard.Instance.Dispatcher.Invoke(
+									new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
+									ex.Message
+								);
+							}
+						}
+						#endregion
 					}
-					catch (Exception ex)
+					else
 					{
-						Log_error(ex, vol_info.Url);
-						Thread.Sleep(worker_cooldown_span);
-						continue;
+						vol_info.State = Web_resource_state.Failed;
+
+						Report("No page found in " + vol_info.Url);
 					}
 				}
-
-				if (vol_info.Count > 0)
+				catch (ThreadAbortException)
 				{
-					Dashboard.Instance.Dispatcher.Invoke(
-						new Dashboard.Report_main_progress_delegate(
-							Dashboard.Instance.Report_main_progress
-						)
-					);
-
-					#region Create folder
-					string dir_path = "";
-
-					foreach (var c in Path.GetInvalidFileNameChars())
-					{
-						vol_info.Parent.Name = vol_info.Parent.Name.Replace(c, ' ');
-					}
-
-					dir_path = ys.Common.Combine_path(
-						Main_settings.Instance.Root_dir,
-						vol_info.Parent.Name,
-						vol_info.Name);
-
-					vol_info.Path = dir_path;
-
-					if (!Directory.Exists(dir_path))
-					{
-						try
-						{
-							Directory.CreateDirectory(dir_path);
-							Report("Create dir: {0}", dir_path);
-						}
-						catch (ThreadAbortException)
-						{
-						}
-						catch (Exception ex)
-						{
-							Dashboard.Instance.Dispatcher.Invoke(
-								new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
-								ex.Message
-							);
-						}
-					}
-					#endregion
 				}
-				else
+				catch (Exception ex)
 				{
-					// If failed, move the item to the end of the queue.
-					vol_info.State = Web_resource_state.Failed;
-					Manager.Volumes.Remove(vol_info);
-					Manager.Volumes.Add(vol_info);
-
-					Report("No page found in " + vol_info.Url);
+					Log_error(ex, vol_info.Url);
+					Thread.Sleep(worker_cooldown_span);
+					continue;
 				}
 			}
 		}
@@ -562,38 +558,40 @@ namespace ys
 					continue;
 				}
 
-				if (stopped)
-					return;
-				if (page_info.State == Web_resource_state.Downloaded)
-					continue;
-
 				try
 				{
-					if (file_types.Contains(ys.Common.Get_web_src_extension(page_info.Url)))
-					{
-						page_info.Children = new List<Web_resource_info>();
-						page_info.Children.Add(new Web_resource_info(page_info.Url, 0, "", "", page_info));
-					}
-					else
-					{
-						page_info.Children = Get_info_list_from_html(lua_c, page_info, "get_files");
-					}
+					if (stopped)
+						return;
+					if (page_info.State == Web_resource_state.Downloaded)
+						continue;
 
-					if (page_info.Count == 0 ||
-						page_info.Children[0] == null)
-						throw new Exception("No file info found in " + page_info.Url);
+					if (page_info.Count == 0)
+					{
+						if (file_types.Contains(ys.Common.Get_web_src_extension(page_info.Url)))
+						{
+							page_info.Children = new List<Web_resource_info>();
+							page_info.Children.Add(new Web_resource_info(page_info.Url, 0, "", "", page_info));
 
-					Report("Get file info: {0}", page_info.Children[0].Url);
+							if (page_info.Count == 0)
+								Report("No file info found in " + page_info.Url);
+						}
+						else
+						{
+							page_info.Children = Get_info_list_from_html(lua_c, page_info, "get_files");
+
+							if (page_info.Count == 0)
+								Report("No file info found in " + page_info.Url);
+							else
+								Report("Get file info: {0}", page_info.Children[0].Url);
+						}
+					}
 				}
 				catch (ThreadAbortException)
 				{
 				}
 				catch (Exception ex)
 				{
-					// If failed, move the item to the end of the queue.
 					page_info.State = Web_resource_state.Failed;
-					page_info.Parent.Children.Remove(page_info);
-					page_info.Parent.Children.Add(page_info);
 
 					Log_error(ex, page_info.Url);
 					Thread.Sleep(worker_cooldown_span);
@@ -801,10 +799,7 @@ namespace ys
 					}
 					else
 					{
-						// If failed, move the item to the end of the queue.
 						file_info.Parent.State = Web_resource_state.Failed;
-						file_info.Parent.Parent.Children.Remove(file_info.Parent);
-						file_info.Parent.Parent.Children.Add(file_info.Parent);
 
 						Log_error(ex, file_info.Url);
 						Thread.Sleep(worker_cooldown_span);
@@ -914,7 +909,7 @@ namespace ys
 				this["lc"] = this;
 
 				main = MainWindow.Main;
-				dashboard = Dashboard.Instance;
+				if (Dashboard.Is_initialized) dashboard = Dashboard.Instance;
 				settings = Main_settings.Instance;
 
 				this.DoString(Comic_spider.lua_script);

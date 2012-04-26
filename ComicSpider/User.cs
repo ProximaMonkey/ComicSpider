@@ -31,8 +31,7 @@ create table if not exists [Volume_list] (
 	[State] int,
 	[Parent_url] nvarchar(300),
 	[Parent_name] nvarchar(300),
-	[Path] nvarchar(300),
-	[Data_time] datetime NOT NULL
+	[Path] nvarchar(300)
 );
 create table if not exists [Page_list] (
 	[Url] nvarchar(300) PRIMARY KEY NOT NULL,
@@ -43,9 +42,13 @@ create table if not exists [Page_list] (
 	[Speed] float,
 	[Size] float,
 	[Parent_url] nvarchar(300),
-	[Parent_name] nvarchar(300),
-	[Path] nvarchar(300),
-	[Data_time] datetime NOT NULL
+	[Path] nvarchar(300)
+);
+create table if not exists [File_list] (
+	[Url] nvarchar(300) PRIMARY KEY NOT NULL,
+	[Name] nvarchar(300),
+	[Index] int,
+	[Parent_url] nvarchar(300)
 );";
 			da.Connection.Open();
 			da.Adapter.SelectCommand.ExecuteNonQuery();
