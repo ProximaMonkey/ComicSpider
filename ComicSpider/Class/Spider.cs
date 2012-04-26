@@ -64,6 +64,8 @@ namespace ys
 
 			stopped = false;
 
+			Manager.Start();
+
 			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
 
 			int worker_num = int.Parse(Main_settings.Instance.Thread_count);
@@ -382,8 +384,7 @@ namespace ys
 			try
 			{
 				ComicSpider.UserTableAdapters.Error_logTableAdapter a = new ComicSpider.UserTableAdapters.Error_logTableAdapter();
-				a.Connection.Open();
-
+				
 				a.Adapter.UpdateCommand = a.Connection.CreateCommand();
 				a.Adapter.UpdateCommand.CommandText = "insert or replace into Error_log ([Date_time], [Url], [Title], [Detail]) values (@Date_time, @Url, @Title, @Detail)";
 				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Date_time", DateTime.Now);
@@ -391,10 +392,13 @@ namespace ys
 				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Title", ex.Message);
 				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Detail", ex.StackTrace);
 
+				a.Connection.Open();
+				a.Adapter.UpdateCommand.ExecuteNonQuery();
 				a.Connection.Close();
 			}
-			catch
+			catch(Exception err)
 			{
+				Report(err.Message);
 			}
 		}
 		private void Report(string format, params object[] arg)
@@ -453,23 +457,27 @@ namespace ys
 					"No volume found in " + url
 				);
 			}
+			Dashboard.Instance.Dispatcher.Invoke(
+				new Dashboard.Hide_working_delegate(Dashboard.Instance.Hide_working)
+			);
 		}
 		private void Get_page_list()
 		{
-			Web_resource_info vol_info;
+			Web_resource_info vol_info = null;
 			Lua_controller lua_c = new Lua_controller();
 
 			while (!stopped)
 			{
-				vol_info = Manager.Volumes_dequeue();
-				if (vol_info == null)
-				{
-					Thread.Sleep(worker_cooldown_span);
-					continue;
-				}
-
 				try
 				{
+					vol_info = null;
+					vol_info = Manager.Volumes_dequeue();
+					if (vol_info == null)
+					{
+						Thread.Sleep(worker_cooldown_span);
+						continue;
+					}
+
 					if (vol_info.Count == 0)
 					{
 						if (file_types.Contains(ys.Common.Get_web_src_extension(vol_info.Url)))
@@ -538,28 +546,31 @@ namespace ys
 				}
 				catch (Exception ex)
 				{
-					Log_error(ex, vol_info.Url);
-					Thread.Sleep(worker_cooldown_span);
-					continue;
+					if (vol_info != null)
+					{
+						Log_error(ex, vol_info.Url);
+						Thread.Sleep(worker_cooldown_span);
+					}
 				}
 			}
 		}
 		private void Get_file_list()
 		{
-			Web_resource_info page_info;
+			Web_resource_info page_info = null;
 			Lua_controller lua_c = new Lua_controller();
 
 			while (!stopped)
 			{
-				page_info = Manager.Pages_dequeue();
-				if (page_info == null)
-				{
-					Thread.Sleep(worker_cooldown_span);
-					continue;
-				}
-
 				try
 				{
+					page_info = null;
+					page_info = Manager.Pages_dequeue();
+					if (page_info == null)
+					{
+						Thread.Sleep(worker_cooldown_span);
+						continue;
+					}
+
 					if (stopped)
 						return;
 					if (page_info.State == Web_resource_state.Downloaded)
@@ -571,19 +582,14 @@ namespace ys
 						{
 							page_info.Children = new List<Web_resource_info>();
 							page_info.Children.Add(new Web_resource_info(page_info.Url, 0, "", "", page_info));
-
-							if (page_info.Count == 0)
-								Report("No file info found in " + page_info.Url);
 						}
 						else
 						{
 							page_info.Children = Get_info_list_from_html(lua_c, page_info, "get_files");
-
-							if (page_info.Count == 0)
-								Report("No file info found in " + page_info.Url);
-							else
-								Report("Get file info: {0}", page_info.Children[0].Url);
 						}
+
+						if (page_info.Count == 0)
+							Report("No file info found in " + page_info.Url);
 					}
 				}
 				catch (ThreadAbortException)
@@ -591,16 +597,19 @@ namespace ys
 				}
 				catch (Exception ex)
 				{
-					page_info.State = Web_resource_state.Failed;
+					if (page_info != null)
+					{
+						page_info.State = Web_resource_state.Failed;
 
-					Log_error(ex, page_info.Url);
+						Log_error(ex, page_info.Url);
+					}
 					Thread.Sleep(worker_cooldown_span);
 				}
 			}
 		}
 		private void Download_file()
 		{
-			Web_resource_info file_info;
+			Web_resource_info file_info = null;
 			Lua_controller lua_c = new Lua_controller();
 			int time_out = 30 * 1000;
 			byte[] buffer = new byte[1024 * 10];
@@ -608,16 +617,16 @@ namespace ys
 
 			while (!stopped)
 			{
-				file_info = Manager.Files_dequeue();
-
-				if (file_info == null)
-				{
-					Thread.Sleep(worker_cooldown_span);
-					continue;
-				}
-
 				try
 				{
+					file_info = null;
+					file_info = Manager.Files_dequeue();
+					if (file_info == null)
+					{
+						Thread.Sleep(worker_cooldown_span);
+						continue;
+					}
+
 					string host = ys.Web.Get_host_name(file_info.Url);
 
 					HttpWebRequest request = (HttpWebRequest)WebRequest.Create(file_info.Url);
@@ -650,9 +659,6 @@ namespace ys
 					int speed_recorder = 0;
 					do
 					{
-						if (file_info.Parent.State == Web_resource_state.Paused)
-							throw new Exception("Abort downloading: " + file_info.Url);
-
 						current_recieved_bytes = remote_stream.Read(buffer, 0, buffer.Length);
 						cache.Write(buffer, 0, current_recieved_bytes);
 
@@ -752,12 +758,12 @@ namespace ys
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
 
-					Report("{0} {1}: {2} / {3} , Downloaded: {4}",
-						file_info.Parent.Parent.Parent.Name,
-						file_info.Parent.Parent.Name,
-						downloaded,
-						file_info.Parent.Parent.Count,
-						file_path);
+					//Report("{0} {1}: {2} / {3} , Downloaded: {4}",
+					//    file_info.Parent.Parent.Parent.Name,
+					//    file_info.Parent.Parent.Name,
+					//    downloaded,
+					//    file_info.Parent.Parent.Count,
+					//    file_path);
 
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
@@ -793,17 +799,13 @@ namespace ys
 				}
 				catch (Exception ex)
 				{
-					if (!ex.Message.StartsWith("Abort"))
-					{
-						Report(ex.Message);
-					}
-					else
+					if (file_info != null)
 					{
 						file_info.Parent.State = Web_resource_state.Failed;
-
 						Log_error(ex, file_info.Url);
-						Thread.Sleep(worker_cooldown_span);
 					}
+
+					Thread.Sleep(worker_cooldown_span);
 				}
 			}
 		}

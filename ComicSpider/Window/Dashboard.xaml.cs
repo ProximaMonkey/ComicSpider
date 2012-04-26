@@ -67,7 +67,7 @@ namespace ComicSpider
 			}
 		}
 
-		public bool All_downloaded { get; set; }
+		public bool Is_all_downloaded { get; set; }
 
 		public new void Show()
 		{
@@ -180,13 +180,15 @@ namespace ComicSpider
 		public delegate void Report_main_progress_delegate();
 		public void Report_main_progress()
 		{
-			if (All_downloaded) return;
+			if (Is_all_downloaded) return;
 
 			MainWindow.Main.Main_progress = this.Main_progress;
 
-			if (downloaded_files_count == all_files_count)
+			int all = all_files_count;
+			if (downloaded_files_count == all &&
+				all != 0)
 			{
-				All_downloaded = true;
+				Is_all_downloaded = true;
 
 				MainWindow.Main.Taskbar.FlashTaskBar(ys.Win7.FlashOption.FLASHW_ALL);
 
@@ -219,6 +221,15 @@ namespace ComicSpider
 			{
 				this.Show();
 			}, true);
+		}
+
+		public delegate void Hide_working_delegate();
+		public void Hide_working()
+		{
+			if (comic_spider.Stopped)
+				working_icon.Hide_working();
+
+			MainWindow.Main.Task_done();
 		}
 
 		public delegate void Stop_downloading_delegate(string info);
@@ -546,7 +557,6 @@ delete from [Cookie] where 1;";
 			kv_adpter.Connection.Close();
 		}
 
-
 		/**************** Event ****************/
 
 		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
@@ -644,7 +654,7 @@ delete from [Cookie] where 1;";
 
 			if (btn_start.Content.ToString() == "Start")
 			{
-				All_downloaded = false;
+				Is_all_downloaded = false;
 				btn_start.Content = "Stop";
 				working_icon.Show_working();
 				comic_spider.Async_start();
@@ -856,9 +866,14 @@ delete from [Cookie] where 1;";
 
 			if (list_view == volume_list)
 			{
-				while (list_view.SelectedItems.Count > 0)
+				List<Web_resource_info> selected_list = new List<Web_resource_info>();
+				foreach (Web_resource_info item in list_view.SelectedItems)
 				{
-					comic_spider.Manager.Volumes.RemoveAt(list_view.SelectedIndex);
+					selected_list.Add(item);
+				}
+				foreach (var item in selected_list)
+				{
+					comic_spider.Manager.Volumes.Remove(item);
 				}
 			}
 			else
@@ -871,7 +886,7 @@ delete from [Cookie] where 1;";
 			}
 
 			this.Title = "Item(s) deleted.";
-			MainWindow.Main.Main_progress = this.Main_progress;
+			Report_main_progress();
 		}
 		private void Delelte_list_item_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
 		{
@@ -923,7 +938,7 @@ delete from [Cookie] where 1;";
 			}
 
 			this.Title = "Item(s) deleted.";
-			MainWindow.Main.Main_progress = this.Main_progress;
+			Report_main_progress();
 		}
 		private void btn_help_Click(object sender, RoutedEventArgs e)
 		{

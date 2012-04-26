@@ -16,6 +16,29 @@ namespace ComicSpider
 			Volumes = new ObservableCollection<Web_resource_info>();
 		}
 
+		public void Start()
+		{
+			foreach (var vol in Volumes)
+			{
+				if (vol.State == Web_resource_state.Failed)
+					vol.State = Web_resource_state.Wait;
+
+				if (vol.Count == 0) continue;
+
+				foreach (var page in vol.Children)
+				{
+					if (page.State == Web_resource_state.Failed)
+					{
+						page.State = Web_resource_state.Wait;
+					}
+
+					if (page.Count > 0)
+					{
+						page.Children[0].State = Web_resource_state.Wait;
+					}
+				}
+			}
+		}
 		public void Stop()
 		{
 			foreach (var vol in Volumes)
@@ -63,8 +86,7 @@ namespace ComicSpider
 
 					foreach (var page in vol.Children)
 					{
-						if ((page.State == Web_resource_state.Wait) ||
-							(page.State == Web_resource_state.Failed))
+						if (page.State == Web_resource_state.Wait)
 						{
 							page.State = Web_resource_state.Downloading;
 							return page;
@@ -93,8 +115,7 @@ namespace ComicSpider
 
 						foreach (var file in page.Children)
 						{
-							if ((file.State == Web_resource_state.Wait) ||
-								(file.State == Web_resource_state.Failed))
+							if (file.State == Web_resource_state.Wait)
 							{
 								file.State = Web_resource_state.Downloading;
 								return file;
@@ -128,8 +149,7 @@ namespace ComicSpider
 
 			return volumes.FirstOrDefault(v =>
 			{
-				return (v.State == Web_resource_state.Wait) ||
-					(v.State == Web_resource_state.Failed);
+				return v.State == Web_resource_state.Wait;
 			});
 		}
 	}

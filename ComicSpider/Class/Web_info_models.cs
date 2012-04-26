@@ -101,9 +101,9 @@ namespace ys
 				switch (state)
 				{
 					case Web_resource_state.Wait:
-						return "-";
+						return "";
 					case Web_resource_state.Downloading:
-						return "*";
+						return "-";
 					case Web_resource_state.Downloaded:
 						return "√";
 					case Web_resource_state.Paused:
