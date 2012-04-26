@@ -36,7 +36,7 @@ namespace ComicSpider
 			return wc;
 		}
 
-		public int Timeout = 30 * 1000;
+		public int Timeout = 15 * 1000;
 		public bool AllowAutoRedirect = true;
 
 		protected override WebRequest GetWebRequest(Uri address)
