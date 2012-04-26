@@ -175,6 +175,12 @@ namespace ComicSpider
 		public void Report_progress(string info)
 		{
 			this.Title = info;
+
+			if (volume_list.SelectedItems.Count > 0 &&
+				page_list.SelectedItems.Count == 0)
+			{
+				volume_list_SelectionChanged(null, null);
+			}
 		}
 
 		public delegate void Report_main_progress_delegate();
@@ -251,7 +257,7 @@ namespace ComicSpider
 		private Dashboard()
 		{
 			InitializeComponent();
-
+			
 			if (Main_settings.Instance.Is_need_clear_cache)
 				Clear_cache();
 

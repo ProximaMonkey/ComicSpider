@@ -60,11 +60,11 @@ namespace ys
 		}
 		public void Async_start()
 		{
-			Report("Begin downloading...");
+			Report("Downloading...");
 
 			stopped = false;
 
-			Manager.Start();
+			Manager.Reset_failed_items();
 
 			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
 
@@ -379,7 +379,7 @@ namespace ys
 
 		private void Log_error(Exception ex, string url = "")
 		{
-			Report(ex.Message, url);
+			Report(ex.Message + " " + url);
 
 			try
 			{
@@ -659,6 +659,12 @@ namespace ys
 					int speed_recorder = 0;
 					do
 					{
+						if (stopped ||
+							file_info.Parent.State == Web_resource_state.Paused)
+						{
+							throw new Stop_exception();
+						}
+
 						current_recieved_bytes = remote_stream.Read(buffer, 0, buffer.Length);
 						cache.Write(buffer, 0, current_recieved_bytes);
 
@@ -674,8 +680,7 @@ namespace ys
 							speed_recorder = 0;
 						}
 					}
-					while (!stopped &&
-						current_recieved_bytes > 0);
+					while (current_recieved_bytes > 0);
 
 					#endregion
 
@@ -749,7 +754,7 @@ namespace ys
 					FileStream fs = new FileStream(file_path, FileMode.Create);
 					fs.Write(cache.GetBuffer(), 0, (int)cache.Length);
 					fs.Close();
-					
+
 					file_info.Parent.Path = file_path;
 					file_info.State = Web_resource_state.Downloaded;
 					file_info.Parent.State = Web_resource_state.Downloaded;
@@ -791,8 +796,9 @@ namespace ys
 					);
 				}
 				catch (ThreadAbortException)
-				{
-				}
+				{ }
+				catch (Stop_exception)
+				{ }
 				catch (LuaException ex)
 				{
 					Report("Lua exception: " + ex.Message);
@@ -1144,5 +1150,11 @@ namespace ys
 			public string ETag { get; set; }
 			public DateTime Date { get; set; }
 		}
+
+		private class Stop_exception : Exception
+		{
+
+		}
+
 	}
 }
