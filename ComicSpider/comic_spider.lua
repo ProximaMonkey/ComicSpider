@@ -173,40 +173,6 @@ comic_spider = {
 		end,
 	},
 
-	['* Manga Here'] = {
-		home = 'http://www.mangahere.com/',
-
-		hosts = { 'mangahere.com', 'mhcdn.net' },
-
-		get_volumes = function()
-			-- First get comic's main name.
-			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
-			-- Get volume list.
-			lc:fill_list(
-				{
-					[[class="detail_list"[\s\S]+?/ul]],
-					[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
-				}
-			)
-			-- If can't find volume list, then treat it as a volume page, not the index of the comic.
-			if info_list.Count == 0 then
-				src_info.Name = lc:find([[class="readpage_top"[\s\S]+?>(?<find>[^>]+) Manga</a>]])
-				vol_name = lc:find([[<title>(?<find>.+?) - Read]])
-				lc:add(src_info.Url, 0, vol_name, src_info)
-			end
-			info_list:Reverse()
-		end,
-
-		get_pages = function()
-			html = lc:find([[change_page(?<find>[\s\S]+?)/select>]])
-			lc:fill_list([[value="(?<url>.+?)"]])
-		end,
-
-		get_files = function()
-			lc:fill_list([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]])
-		end,
-	},
-
 	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
 	['* 178.com'] = {
 		home = 'http://manhua.178.com/',
