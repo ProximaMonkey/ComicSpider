@@ -186,9 +186,9 @@ namespace ComicSpider
 		public delegate void Report_main_progress_delegate();
 		public void Report_main_progress()
 		{
-			if (Is_all_downloaded) return;
-
 			MainWindow.Main.Main_progress = this.Main_progress;
+
+			if (Is_all_downloaded) return;
 
 			int all = all_files_count;
 			if (downloaded_files_count == all &&
@@ -910,9 +910,6 @@ delete from [Cookie] where 1;";
 				MenuItem menu_item = sender as MenuItem;
 				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			}
-
-			if (list_view.SelectedItems.Count == 0)
-				return;
 
 			if (!Message_box.Show("Are you sure to delete?"))
 				return;
