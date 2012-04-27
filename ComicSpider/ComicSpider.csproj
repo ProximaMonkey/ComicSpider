@@ -101,6 +101,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Class\AlphanumComparator.cs" />
     <Compile Include="Class\Cookie_pool.cs" />
     <Compile Include="Class\ListViewDragDropManager\DragAdorner.cs" />
     <Compile Include="Class\FolderBrowserDialogEx.cs">
@@ -110,6 +111,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Class\ListViewDragDropManager\ListViewDragDropManager.cs" />
+    <Compile Include="Class\Lua_controller.cs" />
     <Compile Include="Class\Main_settings.cs" />
     <Compile Include="Class\ListViewDragDropManager\MouseUtilities.cs" />
     <Compile Include="Class\Task_manager.cs" />
@@ -232,7 +234,7 @@
     <Content Include="Lib\WPFToolkit.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Asset\jquery.js">
+    <None Include="Asset\lib.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Asset\layout.css">

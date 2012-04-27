@@ -116,7 +116,7 @@ comic_spider = {
 
 		is_create_view_page = true,
 
-		is_indexed_file_name = true,
+		is_auto_format_name = true,
 
 		init = function()
 		end,
@@ -142,6 +142,37 @@ comic_spider = {
 	},
 
 	-- A sample english manga site. You can follow code below to parse another site.
+	['* Manga Fox'] = {
+		home = 'http://mangafox.me/directory/',
+
+		hosts = { 'mangafox.me', 'mfcdn.net' },
+
+		get_volumes = function()
+			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
+			lc:fill_list([[<a.+?href="(?<url>.+?)".+?class="tips".*?>(?<name>.+?)</a>]])
+			if info_list.Count == 0 then
+				src_info.Name = lc:find([[<a.+?id="back">(?<find>.+?) Manga</a>]])
+				vol_name = lc:find([[<title>.+? - Read (?<find>.+?) Online - .+?</title>]])
+				lc:add(src_info.Url, 0, vol_name, src_info)
+			end
+			info_list:Reverse()
+		end,
+
+		get_pages = function()
+			html = lc:find([[change_page(?<find>[\s\S]+?)/select>]])
+			lc:fill_list(
+				[[value="(?<url>[0-9]*[1-9])"]],
+				function(i, gs)
+					url = src_info.Url:gsub('%d+%.html', '') .. gs['url'].Value .. '.html'
+				end
+			)
+		end,
+
+		get_files = function()
+			lc:fill_list([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]])
+		end,
+	},
+
 	['* Manga Here'] = {
 		home = 'http://www.mangahere.com/',
 
@@ -155,11 +186,7 @@ comic_spider = {
 				{
 					[[class="detail_list"[\s\S]+?/ul]],
 					[[<a class="color_0077" href="(?<url>.+?)".*?>(?<name>[\s\S]+?)</a>]]
-				},
-				function()
-					name = name:gsub(src_info.Name:gsub('%p', '%%%1'), '')
-					name = lc:format_for_number_sort(name)
-				end
+				}
 			)
 			-- If can't find volume list, then treat it as a volume page, not the index of the comic.
 			if info_list.Count == 0 then
@@ -194,8 +221,7 @@ comic_spider = {
 				{
 					[[<div class="cartoon_online_border"[\s\S]+?<div]],
 					[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
-				},
-				function() name = lc:format_for_number_sort(name) end
+				}
 			)
 			-- 如果没有发现列表，则认为这个url指向的是卷地址，而不是主目录地址。
 			if info_list.Count == 0 then
@@ -228,7 +254,7 @@ comic_spider = {
 		hosts = { 'pixiv.net' },
 
 		is_create_view_page = false,
-		is_indexed_file_name = false,
+		is_auto_format_name = false,
 
 		init = function()
 			-- Login first
@@ -266,7 +292,7 @@ comic_spider = {
 		hosts = { 'yande.re', 'konachan.com', 'donmai.us', 'behoimi.org', 'nekobooru.net', 'sankakucomplex.com', 'sankakustatic.com' },
 
 		is_create_view_page  = false,
-		is_indexed_file_name = false,
+		is_auto_format_name = false,
 
 		get_volumes = function(self)
 			src_info.Name = src_info.Url:find('yande.re') and 'Moe imouto' or 'Danbooru sites'

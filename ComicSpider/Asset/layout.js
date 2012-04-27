@@ -11,6 +11,7 @@ var img_load_step = 1;
 
 var win = $(window);
 var doc;
+var volume_list = [];
 
 win.load(function()
 {
@@ -76,51 +77,20 @@ function init_navigator()
 	});
 
 	var path = decodeURIComponent(location);
-	var m = path.match(/(?:(\d+)[^\d]+?)$/);
-
-	if (m === null) return;
-
-	var num_len = m[1].length;
-	var pre_num = pad(parseInt(m[1], 10) - 1, num_len);
-	var next_num = pad(parseInt(m[1], 10) + 1, num_len);
-
-	// If path is like "vol 10.5"
-	if (path.indexOf('.' + m[1]) > 0)
+	volume_list.alphanumSort(false);
+	var i  = 0;
+	for (; i < volume_list.length; i++)
 	{
-		m = path.match(/(?:(\d+)\.(\d+)[^\d]+?)$/);
-
-		if (m === null) return;
-
-		num_len = m[1].length + m[2].length + 1;
-		if (m[2] == '5')
-		{
-			pre_num = m[1];
-			next_num = pad(parseInt(m[1], 10) + 1, m[1].length);
-		}
-		else
-		{
-			alert('Auto navigation failed.');
-			return;
-		}
+		if(path.indexOf(volume_list[i]) >= 0)
+			break;
 	}
 
 	$('.btn.previous').attr('href',
-		path.slice(0, m.index) + pre_num + path.slice(m.index + num_len)
+		i > 0 ? volume_list[i - 1] : 'javascript:alert("This is the first volume.")'
 	);
 	$('.btn.next').attr('href',
-		path.slice(0, m.index) + next_num + path.slice(m.index + num_len)
+		i < volume_list.length - 1 ? volume_list[i + 1] : 'javascript:alert("This is the last volume.")'
 	);
-
-	function pad(num, n)
-	{
-		var len = num.toString().length;
-		while (len < n)
-		{
-			num = '0' + num;
-			len++;
-		}
-		return num;
-	}
 }
 
 var img_count = 0;

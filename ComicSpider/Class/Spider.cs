@@ -9,8 +9,8 @@ using System.Threading;
 using System.Web;
 using ComicSpider;
 using ComicSpider.UserTableAdapters;
-using LuaInterface;
 using System.Text;
+using LuaInterface;
 
 namespace ys
 {
@@ -64,6 +64,7 @@ namespace ys
 
 			stopped = false;
 
+			Manager.Start_monitor();
 			Manager.Reset_failed_items();
 
 			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
@@ -84,8 +85,9 @@ namespace ys
 		public void Delete_display_pages(string root_dir)
 		{
 			List<string> old_files = new List<string>();
+			old_files.AddRange(Directory.GetFiles(root_dir, "index.js", SearchOption.AllDirectories));
 			old_files.AddRange(Directory.GetFiles(root_dir, "layout.js", SearchOption.AllDirectories));
-			old_files.AddRange(Directory.GetFiles(root_dir, "jquery.js", SearchOption.AllDirectories));
+			old_files.AddRange(Directory.GetFiles(root_dir, "lib.js", SearchOption.AllDirectories));
 			old_files.AddRange(Directory.GetFiles(root_dir, "layout.css", SearchOption.AllDirectories));
 			old_files.AddRange(Directory.GetFiles(root_dir, "index.html", SearchOption.AllDirectories));
 			foreach (var item in old_files)
@@ -97,18 +99,42 @@ namespace ys
 		{
 			Delete_display_pages(root_dir);
 
-			foreach (var comic_dir in Directory.GetDirectories(root_dir))
-			{
-				string[] volume_dirs = Directory.GetDirectories(comic_dir);
-				if (volume_dirs.Length == 0)
-				{
-					Create_display_page(comic_dir);
-					continue;
-				}
+			StreamWriter sw;
 
-				foreach (var volume_dir in volume_dirs)
+			var comic_dirs = Directory.GetDirectories(root_dir);
+
+			if (comic_dirs.Length > 0)
+			{
+				if (Directory.GetDirectories(comic_dirs[0]).Length == 0)
 				{
-					Create_display_page(volume_dir);
+					lock (index_file_lock)
+					{
+						sw = new StreamWriter(ys.Common.Combine_path(root_dir, "index.js"), true, Encoding.UTF8);
+						foreach (var vol_dir in comic_dirs)
+						{
+							sw.WriteLine("volume_list.push('" + vol_dir.Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
+							Create_display_page(vol_dir);
+						}
+						sw.Close();
+					}
+				}
+				else
+				{
+					foreach (var comic_dir in comic_dirs)
+					{
+						lock (index_file_lock)
+						{
+							sw = new StreamWriter(ys.Common.Combine_path(comic_dir, "index.js"), true, Encoding.UTF8);
+							var volume_dirs = Directory.GetDirectories(comic_dir);
+
+							foreach (var vol_dir in volume_dirs)
+							{
+								sw.WriteLine("volume_list.push('" + vol_dir.Replace('\\', '/').Replace("'", "\\'") + "/index.html')");
+								Create_display_page(vol_dir);
+							}
+							sw.Close();
+						}
+					}
 				}
 			}
 		}
@@ -130,7 +156,7 @@ namespace ys
 			if (!File.Exists(Path.Combine(parent_dir, "layout.js")))
 			{
 				File.Copy(@"Asset\layout.js", Path.Combine(parent_dir, "layout.js"), true);
-				File.Copy(@"Asset\jquery.js", Path.Combine(parent_dir, "jquery.js"), true);
+				File.Copy(@"Asset\lib.js", Path.Combine(parent_dir, "lib.js"), true);
 				File.Copy(@"Asset\layout.css", Path.Combine(parent_dir, "layout.css"), true);
 			}
 
@@ -149,6 +175,9 @@ namespace ys
 			sw.Close();
 		}
 
+		public static bool Is_script_loaded;
+		public static string Lua_script;
+
 		/***************************** Private ********************************/
 
 		private bool stopped;
@@ -160,26 +189,25 @@ namespace ys
 		private const string thread_type_File_list_getter = "File_list_getter";
 		private const string thread_type_File_downloader = "File_downloader";
 
+		private object index_file_lock = new object();
+
 		private List<Website_info> supported_websites;
 
 		private List<string> file_types;
 
-		private static bool script_loaded;
-		private static string lua_script;
-
 		private void Async_load_lua_script()
 		{
-			script_loaded = false;
+			Is_script_loaded = false;
 
 			Thread thread = new Thread(new ThreadStart(() =>
 			{
 				file_types = new List<string>();
 				supported_websites = new List<Website_info>();
-				lua_script = "";
+				Lua_script = "";
 
 				try
 				{
-					lua_script = File.ReadAllText(@"comic_spider.lua");
+					Lua_script = File.ReadAllText(@"comic_spider.lua");
 
 					Lua_controller lua = new Lua_controller(false);
 
@@ -210,7 +238,7 @@ namespace ys
 
 						// Get remote script
 						string loaded_script = Load_remote_script(url);
-						lua_script += '\n' + loaded_script;
+						Lua_script += '\n' + loaded_script;
 
 						if (loaded_script == null)
 							Report("Failed to load remote script: " + url);
@@ -267,7 +295,7 @@ namespace ys
 					System.Windows.MessageBox.Show(ex.Message);
 				}
 
-				script_loaded = true;
+				Is_script_loaded = true;
 
 				App_analyse();
 			}));
@@ -444,6 +472,12 @@ namespace ys
 
 			if (root.Count > 0)
 			{
+				foreach (var c in Path.GetInvalidFileNameChars())
+				{
+					root.Name = root.Name.Replace(c, ' ');
+				}
+				root.Path = Path.Combine(Main_settings.Instance.Root_dir, root.Name);
+
 				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
 				Dashboard.Instance.Dispatcher.Invoke(
 					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
@@ -500,26 +534,28 @@ namespace ys
 						);
 
 						#region Create folder
-						string dir_path = "";
+
 
 						foreach (var c in Path.GetInvalidFileNameChars())
 						{
-							vol_info.Parent.Name = vol_info.Parent.Name.Replace(c, ' ');
+							vol_info.Name = vol_info.Name.Replace(c, ' ');
 						}
 
-						dir_path = ys.Common.Combine_path(
-							Main_settings.Instance.Root_dir,
-							vol_info.Parent.Name,
-							vol_info.Name);
+						vol_info.Path = Path.Combine(vol_info.Parent.Path, vol_info.Name);
 
-						vol_info.Path = dir_path;
-
-						if (!Directory.Exists(dir_path))
+						if (!Directory.Exists(vol_info.Path))
 						{
 							try
 							{
-								Directory.CreateDirectory(dir_path);
-								Report("Create dir: {0}", dir_path);
+								Directory.CreateDirectory(vol_info.Path);
+								Report("Create dir: {0}", vol_info.Path);
+
+								lock (index_file_lock)
+								{
+									StreamWriter sw = new StreamWriter(Path.Combine(vol_info.Parent.Path, "index.js"), true, Encoding.UTF8);
+									sw.WriteLine("volume_list.push('" + vol_info.Path.Replace('\\', '/').Replace("'", "\\'") + "/index.html')");
+									sw.Close();
+								}
 							}
 							catch (ThreadAbortException)
 							{
@@ -532,6 +568,7 @@ namespace ys
 								);
 							}
 						}
+
 						#endregion
 					}
 					else
@@ -589,7 +626,10 @@ namespace ys
 						}
 
 						if (page_info.Count == 0)
+						{
+							page_info.State = Web_resource_state.Failed;
 							Report("No file info found in " + page_info.Url);
+						}
 					}
 				}
 				catch (ThreadAbortException)
@@ -689,30 +729,24 @@ namespace ys
 					Website_info website = get_website(host);
 
 					string file_path = string.Empty;
-					bool? is_indexed_file_name = true;
+					bool? is_auto_format_name = true;
 					bool? is_create_view_page = true;
 
 					string name;
-					string dir = "";
-					Web_resource_info parent = file_info.Parent;
-					while ((parent = parent.Parent) != null)
-					{
-						dir = Path.Combine(parent.Name, dir);
-					}
-					lua_c["dir"] = ys.Common.Combine_path(Main_settings.Instance.Root_dir, dir);
+					lua_c["dir"] = file_info.Parent.Parent.Path;
 
 					if (file_info.Parent.Parent.Name != Raw_file_folder)
 					{
 						is_create_view_page = lua_c.DoString(
 							string.Format("return comic_spider['{0}']['is_create_view_page']", website.Name)
 						)[0] as bool?;
-						is_indexed_file_name = lua_c.DoString(
-							string.Format("return comic_spider['{0}']['is_indexed_file_name']", website.Name)
+						is_auto_format_name = lua_c.DoString(
+							string.Format("return comic_spider['{0}']['is_auto_format_name']", website.Name)
 						)[0] as bool?;
-						is_indexed_file_name = is_indexed_file_name == null ? true : is_indexed_file_name;
+						is_auto_format_name = is_auto_format_name == null ? true : is_auto_format_name;
 						is_create_view_page = is_create_view_page == null ? true : is_create_view_page;
 
-						if (is_indexed_file_name == true)
+						if (is_auto_format_name == true)
 						{
 							lua_c["name"] = string.Format("{0:D3}", file_info.Parent.Index + 1);
 						}
@@ -747,7 +781,7 @@ namespace ys
 						name = name.Replace(c, ' ');
 					}
 
-					file_path = ys.Common.Combine_path(lua_c.GetString("dir"), name);
+					file_path = Path.Combine(lua_c.GetString("dir"), name);
 
 					#endregion
 
@@ -763,12 +797,11 @@ namespace ys
 
 					int downloaded = file_info.Parent.Parent.Downloaded;
 
-					//Report("{0} {1}: {2} / {3} , Downloaded: {4}",
-					//    file_info.Parent.Parent.Parent.Name,
-					//    file_info.Parent.Parent.Name,
-					//    downloaded,
-					//    file_info.Parent.Parent.Count,
-					//    file_path);
+					Report("{0} {1}: {2} / {3}",
+						file_info.Parent.Parent.Parent.Name,
+						file_info.Parent.Parent.Name,
+						downloaded,
+						file_info.Parent.Parent.Count);
 
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
@@ -808,6 +841,7 @@ namespace ys
 					if (file_info != null)
 					{
 						file_info.Parent.State = Web_resource_state.Failed;
+						file_info.Parent.Speed = 0;
 						Log_error(ex, file_info.Url);
 					}
 
@@ -844,7 +878,7 @@ namespace ys
 
 			try
 			{
-				#region Lua lua_script controller
+				#region Lua Lua_script controller
 
 				Website_info website = get_website(host);
 
@@ -877,6 +911,13 @@ namespace ys
 
 					Cookie_pool.Instance.Update(host, wc.ResponseHeaders["Set-Cookie"]);
 
+					bool? is_auto_format_name = true;
+					is_auto_format_name = lua_c.DoString(
+						string.Format("return comic_spider['{0}']['is_auto_format_name']", website.Name)
+					)[0] as bool?;
+					is_auto_format_name = is_auto_format_name == null ? true : is_auto_format_name;
+					lua_c["is_auto_format_name"] = is_auto_format_name;
+
 					foreach (var func in func_list)
 					{
 						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", website.Name, func));
@@ -905,256 +946,7 @@ namespace ys
 			return info_list;
 		}
 
-		private class Lua_controller : Lua
-		{
-			public Lua_controller(bool wait_script_loading = true)
-			{
-				while (wait_script_loading && !Comic_spider.script_loaded)
-				{
-					Thread.Sleep(300);
-				}
-
-				this["lc"] = this;
-
-				main = MainWindow.Main;
-				if (Dashboard.Is_initialized) dashboard = Dashboard.Instance;
-				settings = Main_settings.Instance;
-
-				this.DoString(Comic_spider.lua_script);
-			}
-
-			public MainWindow main;
-			public Dashboard dashboard;
-			public Main_settings settings;
-
-			public void echo(string info)
-			{
-				try
-				{
-					Console.WriteLine(info);
-					Dashboard.Instance.Dispatcher.Invoke(
-						new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress),
-						info
-					);
-				}
-				catch
-				{
-				}
-			}
-
-			public string format_for_number_sort(string str, int length = 3)
-			{
-				return ys.Common.Format_for_number_sort(str, length);
-			}
-
-			public string find(string pattern)
-			{
-				Match m = Regex.Match(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
-				if (!string.IsNullOrEmpty(m.Groups["find"].Value))
-					return m.Groups["find"].Value;
-				else if (!string.IsNullOrEmpty(m.Groups[1].Value))
-					return m.Groups[1].Value;
-				else
-					return m.Groups[0].Value;
-			}
-
-			public void fill_list(string pattern, LuaFunction step = null)
-			{
-				Web_resource_info src_info = this["src_info"] as Web_resource_info;
-				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
-				MatchCollection mc = Regex.Matches(this.GetString("html"), pattern, RegexOptions.IgnoreCase);
-				for (var i = 0; i < mc.Count; i++)
-				{
-					this["url"] = mc[i].Groups["url"].Value;
-					this["name"] = mc[i].Groups["name"].Value.Trim();
-
-					if (step != null)
-						(step as LuaFunction).Call(i, mc[i].Groups);
-
-					if (string.IsNullOrEmpty(this.GetString("url")))
-						continue;
-					
-					list.Add(
-						new Web_resource_info(
-							this.GetString("url"),
-							i,
-							this.GetString("name"),
-							"",
-							src_info
-						)
-					);
-				}
-			}
-			public void fill_list(LuaTable patterns, LuaFunction step = null)
-			{
-				Web_resource_info src_info = this["src_info"] as Web_resource_info;
-				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
-				MatchCollection mc;
-				string all_sections = this.GetString("html");
-
-				for (int i = 1; i < patterns.Values.Count; i++)
-				{
-					string sections = string.Empty;
-					mc = Regex.Matches(all_sections, patterns[i] as string, RegexOptions.IgnoreCase);
-					foreach (Match m in mc)
-					{
-						sections += '\n' + m.Groups[0].Value;
-					}
-					all_sections = sections;
-				}
-
-				mc = Regex.Matches(all_sections, patterns[patterns.Values.Count] as string, RegexOptions.IgnoreCase);
-				for (var i = 0; i < mc.Count; i++)
-				{
-					this["url"] = mc[i].Groups["url"].Value;
-					this["name"] = mc[i].Groups["name"].Value.Trim();
-
-					if (step != null)
-						(step as LuaFunction).Call(i, mc[i].Groups);
-
-					if (string.IsNullOrEmpty(this.GetString("url")))
-						continue;
-					
-					list.Add(
-						new Web_resource_info(
-							this.GetString("url"),
-							i,
-							this.GetString("name"),
-							"",
-							src_info
-						)
-					);
-				}
-			}
-			public void fill_list(Newtonsoft.Json.Linq.JArray arr, LuaFunction step = null)
-			{
-				Web_resource_info src_info = this["src_info"] as Web_resource_info;
-				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
-				for (int i = 0; i < arr.Count; i++)
-				{
-					this["url"] = arr[i].ToString();
-					this["name"] = Path.GetFileName(this.GetString("url")).Trim();
-
-					if (step != null)
-						(step as LuaFunction).Call(i, arr[i].ToString());
-
-					if (string.IsNullOrEmpty(this.GetString("url")))
-						continue;
-					
-					list.Add(
-						new Web_resource_info(
-							this.GetString("url"),
-							i,
-							this.GetString("name"),
-							"",
-							src_info
-						)
-					);
-				}
-			}
-			public void xfill_list(string selector, LuaFunction step)
-			{
-				Web_resource_info src_info = this["src_info"] as Web_resource_info;
-				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
-
-				HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-				doc.LoadHtml(this.GetString("html"));
-
-				HtmlAgilityPack.HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes(selector);
-
-				if (nodes == null) return;
-
-				this["name"] = string.Empty;
-
-				for (int i = 0; i < nodes.Count; i++)
-				{
-					if (step != null)
-						(step as LuaFunction).Call(i, nodes[i]);
-
-					if (string.IsNullOrEmpty(this.GetString("url")))
-						continue;
-					else
-					{
-						if (!string.IsNullOrEmpty(src_info.Name))
-							this["name"] = this.GetString("name").Replace(src_info.Name, "").Trim();
-					}
-
-					list.Add(
-						new Web_resource_info(
-							this.GetString("url"),
-							i,
-							this.GetString("name"),
-							"",
-							src_info
-						)
-					);
-				}
-			}
-
-			public void add(string url, int index, string name, Web_resource_info parent = null)
-			{
-				if (string.IsNullOrEmpty(url))
-					return;
-
-				List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
-
-				list.Add(new Web_resource_info(
-					url,
-					index,
-					name,
-					"",
-					parent)
-				);
-			}
-
-			public int levenshtein_distance(string s, string t)
-			{
-				return ys.Common.LevenshteinDistance(s, t);
-			}
-
-			public object json_decode(string input)
-			{
-				return Newtonsoft.Json.JsonConvert.DeserializeObject(input);
-			}
-
-			public Web_client web_post(string url, LuaTable dict)
-			{
-				Dictionary<string, string> info = new Dictionary<string, string>();
-				foreach (string key in dict.Keys)
-				{
-					info.Add(key, dict[key] as string);
-				}
-				return Web_client.Post(url, info);
-			}
-
-			public void login(string host)
-			{
-				Web_client wc = new Web_client();
-				string cookie = wc.DownloadString(
-					"http://comicspider.sinaapp.com/service/?login=" + Uri.EscapeUriString(host)
-				);
-				Cookie_pool.Instance.Update(host, cookie);
-			}
-		}
-
-		[Serializable]
-		private class Lua_script
-		{
-			public Lua_script(string script, string hash)
-			{
-				Script = script;
-				ETag = hash;
-			}
-
-			public string Script { get; set; }
-			public string ETag { get; set; }
-			public DateTime Date { get; set; }
-		}
-
 		private class Stop_exception : Exception
-		{
-
-		}
-
+		{ }
 	}
 }

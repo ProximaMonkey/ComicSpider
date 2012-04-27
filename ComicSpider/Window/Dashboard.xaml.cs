@@ -578,19 +578,16 @@ delete from [Cookie] where 1;";
 			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
 			bg_worker.DoWork += (oo, ee) =>
 			{
-				try
-				{
-					comic_spider.Fix_display_pages(path);
-				}
-				catch (Exception ex)
-				{
-					ee.Result = ex.Message;
-				}
+				comic_spider.Fix_display_pages(path);
 				ee.Result = "Fix display pages completed.";
 			};
 			bg_worker.RunWorkerCompleted += (oo, ee) =>
 			{
-				this.Title = ee.Result as string;
+				if (ee.Error != null)
+					this.Title = ee.Error.Message;
+				else
+					this.Title = ee.Result as string;
+
 				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
 				{
 					try
@@ -621,19 +618,16 @@ delete from [Cookie] where 1;";
 			System.ComponentModel.BackgroundWorker bg_worker = new System.ComponentModel.BackgroundWorker();
 			bg_worker.DoWork += (oo, ee) =>
 			{
-				try
-				{
-					comic_spider.Delete_display_pages(path);
-				}
-				catch (Exception ex)
-				{
-					ee.Result = ex.Message;
-				}
+				comic_spider.Delete_display_pages(path);
 				ee.Result = "Delete display pages completed.";
 			};
 			bg_worker.RunWorkerCompleted += (oo, ee) =>
 			{
-				this.Title = ee.Result as string;
+				if (ee.Error != null)
+					this.Title = ee.Error.Message;
+				else
+					this.Title = ee.Result as string;
+
 				MainWindow.Main.Show_balloon(this.Title, (ooo, eee) =>
 				{
 					try
@@ -731,17 +725,20 @@ delete from [Cookie] where 1;";
 
 			if(item == null) return;
 
-			if (File.Exists(item.Path))
-				System.Diagnostics.Process.Start(item.Path);
-			else
+			if (list_view == volume_list)
 			{
 				string file_path = Path.Combine(item.Path, "index.html");
 				if (File.Exists(file_path))
 					System.Diagnostics.Process.Start(file_path);
 				else
-				{
 					Message_box.Show("No target file found.");
-				}
+			}
+			else
+			{
+				if(item.Count > 0 && File.Exists(item.Path))
+					System.Diagnostics.Process.Start(item.Path);
+				else
+					Message_box.Show("No target file found.");
 			}
 		}
 		private void Open_folder_Click(object sender, RoutedEventArgs e)
@@ -779,7 +776,7 @@ delete from [Cookie] where 1;";
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			foreach (Web_resource_info list_item in list_view.SelectedItems)
 			{
-				System.Diagnostics.Process.Start(list_item.Parent.Url);
+				System.Diagnostics.Process.Start(list_item.Url);
 			}
 		}
 		private void Copy_url_Click(object sender, RoutedEventArgs e)

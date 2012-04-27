@@ -18,14 +18,12 @@ namespace ComicSpider
 			monitor = new System.Timers.Timer();
 			monitor.Interval = 3 * 60 * 1000;
 			monitor.Elapsed += new System.Timers.ElapsedEventHandler(monitor_Elapsed);
+		}
+
+		public void Start_monitor()
+		{
 			monitor.Start();
 		}
-
-		void monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			Reset_failed_items();
-		}
-
 		public void Reset_failed_items()
 		{
 			foreach (var vol in Volumes)
@@ -51,6 +49,8 @@ namespace ComicSpider
 		}
 		public void Stop()
 		{
+			monitor.Stop();
+
 			foreach (var vol in Volumes)
 			{
 				if (vol.State == Web_resource_state.Downloading)
@@ -144,6 +144,11 @@ namespace ComicSpider
 		private object file_lock = new object();
 
 		private System.Timers.Timer monitor;
+
+		void monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			Reset_failed_items();
+		}
 
 		private Web_resource_info Dequeue(Collection<Web_resource_info> volumes)
 		{
