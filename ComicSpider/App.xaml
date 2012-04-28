@@ -31,10 +31,10 @@
 						<VisualState x:Name="mouse_down">
 							<Storyboard>
 								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
-									<SplineColorKeyFrame KeyTime="0:0:0.2" Value="#33FFFFFF"/>
+									<SplineColorKeyFrame KeyTime="0" Value="#33FFFFFF"/>
 								</ColorAnimationUsingKeyFrames>
 								<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="image">
-									<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="2"/>
+									<SplineDoubleKeyFrame KeyTime="0" Value="2"/>
 								</DoubleAnimationUsingKeyFrames>
 							</Storyboard>
 						</VisualState>

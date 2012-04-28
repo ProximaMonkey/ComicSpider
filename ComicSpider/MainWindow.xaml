@@ -89,7 +89,7 @@
 				<VisualState x:Name="mouse_leave">
 					<Storyboard>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.Opacity)" Storyboard.TargetName="border">
-							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0.8"/>
+							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0.7"/>
 						</DoubleAnimationUsingKeyFrames>
 						<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="textBlock">
 							<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
@@ -120,7 +120,7 @@
 			</TransformGroup>
 		</Border.RenderTransform>
 		<Border.Background>
-			<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" Opacity="0.8" />
+			<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" Opacity="0.7" />
 		</Border.Background>
 		<Grid>
 			<Grid.RowDefinitions>

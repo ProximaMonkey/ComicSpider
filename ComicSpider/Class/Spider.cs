@@ -183,7 +183,7 @@ namespace ys
 		private bool stopped;
 
 		private List<Thread> worker_thread_pool;
-		private int worker_cooldown_span = 100;		// millisecond
+		private int worker_cooldown_span = 300;		// millisecond
 
 		private const string thread_type_Page_list_getter = "Page_list_getter";
 		private const string thread_type_File_list_getter = "File_list_getter";
