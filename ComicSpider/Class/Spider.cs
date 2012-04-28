@@ -865,13 +865,25 @@ namespace ys
 			}
 			throw new Exception("No controller found for " + host);
 		}
-		private List<Web_resource_info> Get_info_list_from_html(Lua_controller lua_c, Web_resource_info src_info, params string[] func_list)
+
+		/// <summary>
+		/// Donwload and parse html via lua script controller.
+		/// </summary>
+		/// <param name="lua_c"></param>
+		/// <param name="src_info"></param>
+		/// <param name="func_name_list">Lua function name list</param>
+		/// <returns></returns>
+		private List<Web_resource_info> Get_info_list_from_html(
+			Lua_controller lua_c,
+			Web_resource_info src_info,
+			params string[] func_name_list)
 		{
 			List<Web_resource_info> info_list = new List<Web_resource_info>();
 			string host = ys.Web.Get_host_name(src_info.Url);
 
 			Web_client wc = new Web_client();
 
+			// Set headers
 			if (src_info.Parent == null)
 				wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Url);
 			else
@@ -890,7 +902,7 @@ namespace ys
 				lua_c["info_list"] = info_list;
 
 				bool exists_method = false;
-				foreach (var func in func_list)
+				foreach (var func in func_name_list)
 				{
 					exists_method = lua_c.DoString(
 						string.Format("return comic_spider['{0}']['{1}']", website.Name, func)
@@ -942,7 +954,7 @@ namespace ys
 					is_auto_format_name = is_auto_format_name == null ? true : is_auto_format_name;
 					lua_c["is_auto_format_name"] = is_auto_format_name;
 
-					foreach (var func in func_list)
+					foreach (var func in func_name_list)
 					{
 						lua_c.DoString(string.Format("comic_spider['{0}']:{1}()", website.Name, func));
 					}
