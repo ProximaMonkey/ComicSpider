@@ -5,7 +5,7 @@ April 2012 y.s.
 
 app_info =
 {
-	version = '1.0.0.1',
+	version = '1.0.0.2',
 	notice = 'A newer version of Comic Spider has been found, click here to download.',
 	url = 'https://github.com/downloads/ysmood/ComicSpider/Comic_Spider.zip'
 }
@@ -41,5 +41,50 @@ comic_spider['* Manga Here'] = {
 
 	get_files = function()
 		lc:fill_list([[img src="(?<url>.+?)"[\s\S]+?id="image"[\s\S]+?/>]])
+	end,
+}
+
+comic_spider['* 新动漫'] = {
+	home = 'http://www.xindm.cn/',
+
+	hosts = { 'xindm.cn' },
+
+	charset = 'gb2312',
+
+	get_volumes = function()
+		src_info.Name = lc:find([[<title>.+? >> (?<find>.+?)\[.+?</title>]])
+		lc:xfill_list(
+			"//table/tr/td/tr/td/a[1]",
+			function(i, node)
+				url = node.Attributes['href'].Value
+				name = node.InnerText
+			end
+		)
+		if info_list.Count == 0 then
+			src_info.Name = lc:find([[<title>.+? >> .*? >> .*? >> (?<find>.+?)\[.+? >> .+?</title>]])
+			vol_name = lc:find([[<title>.+? >> .*? >> .*? >> .+? >> (?<find>.+?)</title>]])
+			lc:add(src_info.Url, 0, vol_name, src_info)
+		end
+		info_list:Reverse()
+	end,
+
+	get_pages = function()
+		lc:xfill_list(
+			"//select[@name='page']/option",
+			function(i, node)
+				url = src_info.Url .. '&page=' .. node.Attributes['value'].Value
+			end
+		)
+	end,
+
+	get_files = function()
+		img_hosts = { 'mh', 'mh2' }
+		lc:fill_list(
+			[[id="next".+?src="\n?(?<url>../book.+?)".+?</]],
+			function(i, gs)
+				n = math.random(#img_hosts)
+				url = 'http://' .. img_hosts[n] .. '.xindm.cn' .. gs['url'].Value:sub(3)
+			end
+		)
 	end,
 }

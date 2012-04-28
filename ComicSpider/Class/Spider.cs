@@ -190,6 +190,7 @@ namespace ys
 		private const string thread_type_File_downloader = "File_downloader";
 
 		private object index_file_lock = new object();
+		private object db_lock = new object();
 
 		private List<Website_info> supported_websites;
 
@@ -407,26 +408,29 @@ namespace ys
 
 		private void Log_error(Exception ex, string url = "")
 		{
-			Report(ex.Message + " " + url);
-
-			try
+			lock (db_lock)
 			{
-				ComicSpider.UserTableAdapters.Error_logTableAdapter a = new ComicSpider.UserTableAdapters.Error_logTableAdapter();
-				
-				a.Adapter.UpdateCommand = a.Connection.CreateCommand();
-				a.Adapter.UpdateCommand.CommandText = "insert or replace into Error_log ([Date_time], [Url], [Title], [Detail]) values (@Date_time, @Url, @Title, @Detail)";
-				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Date_time", DateTime.Now);
-				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Url", url);
-				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Title", ex.Message);
-				a.Adapter.UpdateCommand.Parameters.AddWithValue("@Detail", ex.StackTrace);
+				Report(ex.Message + " " + url);
 
-				a.Connection.Open();
-				a.Adapter.UpdateCommand.ExecuteNonQuery();
-				a.Connection.Close();
-			}
-			catch(Exception err)
-			{
-				Report(err.Message);
+				try
+				{
+					ComicSpider.UserTableAdapters.Error_logTableAdapter a = new ComicSpider.UserTableAdapters.Error_logTableAdapter();
+
+					a.Adapter.UpdateCommand = a.Connection.CreateCommand();
+					a.Adapter.UpdateCommand.CommandText = "insert or replace into Error_log ([Date_time], [Url], [Title], [Detail]) values (@Date_time, @Url, @Title, @Detail)";
+					a.Adapter.UpdateCommand.Parameters.AddWithValue("@Date_time", DateTime.Now);
+					a.Adapter.UpdateCommand.Parameters.AddWithValue("@Url", url);
+					a.Adapter.UpdateCommand.Parameters.AddWithValue("@Title", ex.Message);
+					a.Adapter.UpdateCommand.Parameters.AddWithValue("@Detail", ex.StackTrace);
+
+					a.Connection.Open();
+					a.Adapter.UpdateCommand.ExecuteNonQuery();
+					a.Connection.Close();
+				}
+				catch (Exception err)
+				{
+					Report(err.Message);
+				}
 			}
 		}
 		private void Report(string format, params object[] arg)
@@ -726,7 +730,7 @@ namespace ys
 
 					#region Create file name
 
-					Website_info website = get_website(host);
+					Website_info website = get_website_info(host);
 
 					string file_path = string.Empty;
 					bool? is_auto_format_name = true;
@@ -850,7 +854,7 @@ namespace ys
 			}
 		}
 
-		private Website_info get_website(string host)
+		private Website_info get_website_info(string host)
 		{
 			foreach (var site in supported_websites)
 			{
@@ -880,7 +884,7 @@ namespace ys
 			{
 				#region Lua Lua_script controller
 
-				Website_info website = get_website(host);
+				Website_info website = get_website_info(host);
 
 				lua_c["src_info"] = src_info;
 				lua_c["info_list"] = info_list;
@@ -901,15 +905,35 @@ namespace ys
 						website.Is_inited = true;
 					}
 
+					// Get encoding
 					string encoding = lua_c.DoString(
 						string.Format("return comic_spider['{0}']['charset']", website.Name)
 					)[0] as string;
 					wc.Encoding = System.Text.Encoding.GetEncoding(
 						string.IsNullOrEmpty(encoding) ? "utf-8" : encoding);
 
-					lua_c["html"] = wc.DownloadString(src_info.Url);
+					try
+					{
+						lua_c["html"] = wc.DownloadString(src_info.Url);
+						Cookie_pool.Instance.Update(host, wc.ResponseHeaders["Set-Cookie"]);
+					}
+					catch (WebException ex)
+					{
+						var response = (HttpWebResponse)ex.Response;
+						switch (response.StatusCode)
+						{
+							case HttpStatusCode.InternalServerError:
+								lua_c["html"] = new StreamReader(
+									response.GetResponseStream(),
+									wc.Encoding
+								).ReadToEnd();
+								Cookie_pool.Instance.Update(host, response.Headers["Set-Cookie"]);
+								break;
 
-					Cookie_pool.Instance.Update(host, wc.ResponseHeaders["Set-Cookie"]);
+							default:
+								throw ex;
+						}
+					}
 
 					bool? is_auto_format_name = true;
 					is_auto_format_name = lua_c.DoString(

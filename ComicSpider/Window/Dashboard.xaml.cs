@@ -191,8 +191,7 @@ namespace ComicSpider
 			if (Is_all_downloaded) return;
 
 			int all = all_files_count;
-			if (downloaded_files_count == all &&
-				all != 0)
+			if (downloaded_files_count == all)
 			{
 				Is_all_downloaded = true;
 
@@ -202,18 +201,21 @@ namespace ComicSpider
 				btn_start.Content = "Start";
 				working_icon.Hide_working();
 
-				this.Title = "All completed.";
-				MainWindow.Main.Show_balloon(this.Title, (o, e) =>
+				if (all != 0)
 				{
-					try
+					this.Title = "All completed.";
+					MainWindow.Main.Show_balloon(this.Title, (o, e) =>
 					{
-						System.Diagnostics.Process.Start(Main_settings.Instance.Root_dir);
-					}
-					catch (Exception ex)
-					{
-						Message_box.Show(ex.Message);
-					}
-				}, true);
+						try
+						{
+							System.Diagnostics.Process.Start(Main_settings.Instance.Root_dir);
+						}
+						catch (Exception ex)
+						{
+							Message_box.Show(ex.Message);
+						}
+					}, true);
+				}
 
 				Auto_shutdown();
 			}
