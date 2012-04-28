@@ -48,7 +48,6 @@ namespace ComicSpider
 
 			request.Timeout = Timeout;
 			request.AllowAutoRedirect = AllowAutoRedirect;
-
 			return request;
 		}
 	}

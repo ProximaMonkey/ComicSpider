@@ -110,14 +110,15 @@
 				<RowDefinition Height="36" />
 				<RowDefinition Height="36" />
 			</Grid.RowDefinitions>
-			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
+			<Button Content="Get list" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
 			<Button Margin="5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
 			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
 
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">
-				<TextBlock Margin="3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F"/>
-				<TextBox x:Name="txt_thread" Margin="2" Width="50" HorizontalContentAlignment="Center" PreviewTextInput="Thread_PreviewTextInput" Text="3" Background="#BFFFFFFF"/>
+				<TextBlock Margin="3" VerticalAlignment="Center" Text="Max speed" Foreground="#FF26335F"/>
+				<TextBox x:Name="txt_max_speed" Margin="2" Width="55" ToolTip="zero means no limit" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="0" Background="#BFFFFFFF"/>
+				<TextBlock Margin="3" VerticalAlignment="Center" Text="KB/s" Foreground="#FF26335F"/>
 			</StackPanel>
 			<ComboBox x:Name="cb_supported_websites" Grid.Column="2" Grid.ColumnSpan="2" Margin="5" Background="#BFFFFFFF" BorderBrush="#7D767676" Padding="10,4,4,0" SelectionChanged="cb_supported_websites_SelectionChanged">
 				<ComboBoxItem Content="open supported website" IsEnabled="False" IsSelected="True"></ComboBoxItem>
@@ -139,7 +140,9 @@
 			<Button Content="Del display pages" ToolTip="delete all the auto create a html pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Click="btn_del_display_pages_Click" />
 			<Button Content="Controller" ToolTip="edit lua controller script" x:Name="btn_controller" Margin="5" Padding="5,0" Click="btn_controller_Click" />
 			<Button Content="Help" x:Name="btn_help" Margin="5" Padding="5,0" Click="btn_help_Click" />
-			<CheckBox Content="Auto Shutdown" ToolTip="auto shutdown computer when all downloaded" x:Name="cb_auto_shutdown" Margin="10,0" VerticalAlignment="Center" />
+			<TextBlock Margin="3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F"/>
+			<TextBox x:Name="txt_thread" Margin="2" Width="50" VerticalAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="3" Background="#BFFFFFFF"/>
+			<CheckBox Content="Auto shutdown" ToolTip="auto shutdown computer when all downloaded" x:Name="cb_auto_shutdown" Margin="10,0" VerticalAlignment="Center" />
 		</StackPanel>
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>

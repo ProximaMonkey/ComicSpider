@@ -134,13 +134,14 @@ namespace ComicSpider
 		{
 			Main_settings.Instance.Main_url = txt_main_url.Text;
 			Main_settings.Instance.Root_dir = txt_dir.Text;
+			Main_settings.Instance.Max_download_speed = int.Parse(txt_max_speed.Text);
 
 			if (txt_thread.Text == "0")
 			{
 				Message_box.Show("Thread number should greater than zero.");
 				txt_thread.Text = "1";
 			}
-			Main_settings.Instance.Thread_count = txt_thread.Text;
+			Main_settings.Instance.Thread_count = int.Parse(txt_thread.Text);
 		}
 		public void Save_all()
 		{
@@ -312,7 +313,8 @@ namespace ComicSpider
 
 			txt_main_url.Text = Main_settings.Instance.Main_url;
 			txt_dir.Text = Main_settings.Instance.Root_dir;
-			txt_thread.Text = Main_settings.Instance.Thread_count;
+			txt_thread.Text = Main_settings.Instance.Thread_count.ToString();
+			txt_max_speed.Text = Main_settings.Instance.Max_download_speed.ToString();
 
 			comic_spider.Manager.Stop();
 
@@ -984,7 +986,7 @@ delete from [Cookie] where 1;";
 		{
 			MainWindow.Main.Help(null, null);
 		}
-		private void Thread_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+		private void Number_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 		{
 			try
 			{

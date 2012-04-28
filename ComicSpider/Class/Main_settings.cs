@@ -30,21 +30,23 @@ namespace ComicSpider
 		{
 			Main_url = string.Empty;
 			Root_dir = string.Empty;
-			Thread_count = "3";
+			Thread_count = 3;
 			Is_auto_begin = true;
 			Is_silent = false;
 			Max_console_line = 500;
+			Max_download_speed = 0;
 			clear_cache_date = DateTime.Now;
 		}
 
 		public string Main_url { get; set; }
 		public string Root_dir { get; set; }
-		public string Thread_count { get; set; }
+		public int Thread_count { get; set; }
 
 		public bool Is_auto_begin { get; set; }
 		public bool Is_silent { get; set; }
 
 		public int Max_console_line { get; set; }
+		public int Max_download_speed { get; set; } // unit: KB/s
 
 		public string App_version { get; set; }
 
@@ -55,7 +57,6 @@ namespace ComicSpider
 				return DateTime.Now.Subtract(clear_cache_date).TotalDays > 30;
 			}
 		}
-
 
 		private DateTime clear_cache_date { get; set; }
 	}

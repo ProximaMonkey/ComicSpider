@@ -42,6 +42,7 @@ namespace ys
 				}
 			}
 			worker_thread_pool.Clear();
+			working_counter = 0;
 
 			Report("Downloading stopped.");
 		}
@@ -69,13 +70,12 @@ namespace ys
 
 			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
 
-			int worker_num = int.Parse(Main_settings.Instance.Thread_count);
-			
-			for (int i = 0; i < worker_num / 6 + 1; i++)
+			int worker_num = Main_settings.Instance.Thread_count;
+
+			for (int i = 0; i < worker_num / 3 + 1; i++)
 			{
 				Add_worker(new ThreadStart(Get_file_list), thread_type_File_list_getter + i);
 			}
-
 			for (int i = 0; i < worker_num; i++)
 			{
 				Add_worker(new ThreadStart(Download_file), thread_type_File_downloader + i);
@@ -183,7 +183,8 @@ namespace ys
 		private bool stopped;
 
 		private List<Thread> worker_thread_pool;
-		private int worker_cooldown_span = 300;		// millisecond
+		private int worker_cooldown_span = 300;			// millisecond
+		private int working_counter = 0;				// count the distance between producer and comsumer
 
 		private const string thread_type_Page_list_getter = "Page_list_getter";
 		private const string thread_type_File_list_getter = "File_list_getter";
@@ -208,7 +209,7 @@ namespace ys
 
 				try
 				{
-					Lua_script = File.ReadAllText(@"comic_spider.lua");
+					Lua_script = File.ReadAllText(@"comic_spider.lua", System.Text.Encoding.UTF8);
 
 					Lua_controller lua = new Lua_controller(false);
 
@@ -353,17 +354,24 @@ namespace ys
 			}
 			else
 			{
-				string loaded_script = wc.DownloadString(url);
+				try
+				{
+					string loaded_script = wc.DownloadString(url);
 
-				lua_script = new Lua_script(
-					loaded_script,
-					wc.ResponseHeaders["ETag"]
-				);
+					lua_script = new Lua_script(
+						loaded_script,
+						wc.ResponseHeaders["ETag"]
+					);
 
-				kv_adpter.Insert(
-					url,
-					ys.Common.ObjectToByteArray(lua_script)
-				);
+					kv_adpter.Insert(
+						url,
+						ys.Common.ObjectToByteArray(lua_script)
+					);
+				}
+				catch (Exception ex)
+				{
+					Report(ex.Message);
+				}
 			}
 
 			kv_adpter.Connection.Close();
@@ -508,6 +516,12 @@ namespace ys
 			{
 				try
 				{
+					if (working_counter > worker_thread_pool.Count)
+					{
+						Thread.Sleep(worker_cooldown_span);
+						continue;
+					}
+
 					vol_info = null;
 					vol_info = Manager.Volumes_dequeue();
 					if (vol_info == null)
@@ -604,6 +618,12 @@ namespace ys
 			{
 				try
 				{
+					if (working_counter > worker_thread_pool.Count)
+					{
+						Thread.Sleep(worker_cooldown_span);
+						continue;
+					}
+
 					page_info = null;
 					page_info = Manager.Pages_dequeue();
 					if (page_info == null)
@@ -614,8 +634,6 @@ namespace ys
 
 					if (stopped)
 						return;
-					if (page_info.State == Web_resource_state.Downloaded)
-						continue;
 
 					if (page_info.Count == 0)
 					{
@@ -633,6 +651,10 @@ namespace ys
 						{
 							page_info.State = Web_resource_state.Failed;
 							Report("No file info found in " + page_info.Url);
+						}
+						else
+						{
+							Interlocked.Increment(ref working_counter);
 						}
 					}
 				}
@@ -657,7 +679,6 @@ namespace ys
 			Lua_controller lua_c = new Lua_controller();
 			int time_out = 30 * 1000;
 			byte[] buffer = new byte[1024 * 10];
-			DateTime timestamp = DateTime.Now;
 
 			while (!stopped)
 			{
@@ -690,10 +711,13 @@ namespace ys
 					#region Download Stream
 
 					WebResponse response = request.GetResponse();
-					Stream remote_stream = response.GetResponseStream();
-					remote_stream.ReadTimeout = time_out;
+
 					if (response.Headers["Content-Type"].Contains("html"))
 						throw new Exception("Remote sever error: download file failed.");
+
+					// Init response stream
+					Stream remote_stream = response.GetResponseStream();
+					remote_stream.ReadTimeout = time_out;
 
 					file_info.Parent.Size = (double)response.ContentLength / 1024.0 / 1024.0;
 
@@ -701,6 +725,8 @@ namespace ys
 					int total_recieved_bytes = 0;
 					int current_recieved_bytes = 0;
 					int speed_recorder = 0;
+					DateTime timestamp = DateTime.Now;
+					double max_speed = (double)Main_settings.Instance.Max_download_speed / (double)Main_settings.Instance.Thread_count;
 					do
 					{
 						if (stopped ||
@@ -715,11 +741,21 @@ namespace ys
 						// Report state may take up lots of resources.
 						total_recieved_bytes += current_recieved_bytes;
 						speed_recorder += current_recieved_bytes;
-						double time_span = (DateTime.Now - timestamp).TotalSeconds;
-						if (time_span > 0.5)
+						double time_span = (DateTime.Now - timestamp).TotalMilliseconds;
+						double speed = (double)speed_recorder / time_span / 1.024;
+
+						// Control the max speed
+						if (max_speed > 0 && speed > max_speed)
+						{
+							double cool_down = (double)speed_recorder / max_speed - time_span;
+							if (cool_down > 0)
+								Thread.Sleep((int)(cool_down));
+						}
+
+						if (time_span > 500)
 						{
 							timestamp = DateTime.Now;
-							file_info.Parent.Speed = (double)speed_recorder / time_span / 1024.0;
+							file_info.Parent.Speed = speed;
 							file_info.Parent.Progress = (double)total_recieved_bytes / (double)response.ContentLength * 100.0;
 							speed_recorder = 0;
 						}
@@ -831,6 +867,8 @@ namespace ys
 							Dashboard.Instance.Report_main_progress
 						)
 					);
+
+					Interlocked.Decrement(ref working_counter);
 				}
 				catch (ThreadAbortException)
 				{ }

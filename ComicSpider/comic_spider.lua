@@ -138,7 +138,7 @@ comic_spider = {
 
 	-- Project home
 	['-- Comic Spider Project --'] = {
-		home = 'https://github.com/ysmood/ComicSpider',
+		home = 'http://github.com/ysmood/ComicSpider',
 	},
 
 	-- A sample english manga site. You can follow code below to parse another site.
