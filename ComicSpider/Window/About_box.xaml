@@ -22,7 +22,7 @@
 		</StackPanel>
 		<TextBlock Grid.Row="2" FontSize="13" Margin="5,0" Text="A tool for downloading and viewing online images." TextWrapping="WrapWithOverflow" Foreground="#FF343434" />
 		<StackPanel Margin="5" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button Width="60" IsDefault="True" Click="btn_ok_Click">OK</Button>
+			<Button Width="60" IsDefault="True" Click="btn_ok_Click" IsCancel="True">OK</Button>
 		</StackPanel>
 	</Grid>
 </Window>
