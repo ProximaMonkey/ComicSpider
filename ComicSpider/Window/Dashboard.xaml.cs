@@ -104,6 +104,12 @@ namespace ComicSpider
 		{
 			Main_settings.Instance.Main_url = txt_main_url.Text;
 			Main_settings.Instance.Root_dir = txt_dir.Text;
+
+			if (txt_thread.Text == "0")
+			{
+				Message_box.Show("Thread number should greater than zero.");
+				txt_thread.Text = "1";
+			}
 			Main_settings.Instance.Thread_count = txt_thread.Text;
 		}
 		public void Save_all()

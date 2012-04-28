@@ -70,8 +70,8 @@ namespace ys
 			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
 
 			int worker_num = int.Parse(Main_settings.Instance.Thread_count);
-
-			for (int i = 0; i < worker_num / 3 + 1; i++)
+			
+			for (int i = 0; i < worker_num / 6 + 1; i++)
 			{
 				Add_worker(new ThreadStart(Get_file_list), thread_type_File_list_getter + i);
 			}
