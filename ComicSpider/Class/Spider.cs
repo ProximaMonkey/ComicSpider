@@ -129,7 +129,7 @@ namespace ys
 
 							foreach (var vol_dir in volume_dirs)
 							{
-								sw.WriteLine("volume_list.push('" + vol_dir.Replace('\\', '/').Replace("'", "\\'") + "/index.html')");
+								sw.WriteLine("volume_list.push('" + vol_dir.Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
 								Create_display_page(vol_dir);
 							}
 							sw.Close();
@@ -557,7 +557,7 @@ namespace ys
 								lock (index_file_lock)
 								{
 									StreamWriter sw = new StreamWriter(Path.Combine(vol_info.Parent.Path, "index.js"), true, Encoding.UTF8);
-									sw.WriteLine("volume_list.push('" + vol_info.Path.Replace('\\', '/').Replace("'", "\\'") + "/index.html')");
+									sw.WriteLine("volume_list.push('" + vol_info.Path.Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
 									sw.Close();
 								}
 							}

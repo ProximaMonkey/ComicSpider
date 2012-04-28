@@ -610,6 +610,7 @@ delete from [Cookie] where 1;";
 				btn.IsEnabled = true;
 				working_icon.Hide_working();
 			};
+			this.Title = "Fixing display pages...";
 			bg_worker.RunWorkerAsync();
 		}
 		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
@@ -650,6 +651,7 @@ delete from [Cookie] where 1;";
 				btn.IsEnabled = true;
 				working_icon.Hide_working();
 			};
+			this.Title = "Deleting display pages...";
 			bg_worker.RunWorkerAsync();
 		}
 
