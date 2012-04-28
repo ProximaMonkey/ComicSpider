@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ComicSpider.Message_box"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		Title="Message Box" Height="150" Width="260" Icon="/Comic%20Spider;component/Images/y.s.ico" WindowStartupLocation="CenterScreen" Topmost="True">
+		Title="Comic Spider" Height="150" Width="260" Icon="/Comic%20Spider;component/Images/y.s.ico" WindowStartupLocation="CenterScreen" Topmost="True">
 	<Window.Background>
 		<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
 	</Window.Background>

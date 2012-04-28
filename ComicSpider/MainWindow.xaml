@@ -49,6 +49,7 @@
 			<MenuItem Header="_Topmost" x:Name="cb_topmost" Click="cb_topmost_Click" IsCheckable="True" IsChecked="True" InputGestureText="T"></MenuItem>
 			<MenuItem Header="S_ilent" x:Name="cb_is_slient" Click="cb_is_slient_Click" IsCheckable="True" InputGestureText="I"></MenuItem>
 			<MenuItem Header="_Help" Click="Help" InputGestureText="F1"></MenuItem>
+			<MenuItem Header="_About" Click="About"></MenuItem>
 			<MenuItem Header="_Close" Click="Close"></MenuItem>
 		</ContextMenu>
 	</Window.Resources>

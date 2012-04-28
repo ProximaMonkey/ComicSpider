@@ -310,6 +310,10 @@ namespace ComicSpider
 		{
 			this.Close();
 		}
+		private void About(object sender, RoutedEventArgs e)
+		{
+			new About_box().Show();
+		}
 		private void Close(object sender, RoutedEventArgs e)
 		{
 			if (this.Visibility != System.Windows.Visibility.Visible)

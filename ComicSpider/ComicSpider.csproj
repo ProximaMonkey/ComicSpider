@@ -133,6 +133,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>User.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Window\About_box.xaml.cs">
+      <DependentUpon>About_box.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Window\Dashboard.xaml.cs">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
@@ -162,6 +165,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Window\About_box.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Window\Dashboard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
