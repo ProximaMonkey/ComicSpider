@@ -539,13 +539,13 @@ namespace ys
 
 						#region Create folder
 
-
 						foreach (var c in Path.GetInvalidFileNameChars())
 						{
 							vol_info.Name = vol_info.Name.Replace(c, ' ');
 						}
 
-						vol_info.Path = Path.Combine(vol_info.Parent.Path, vol_info.Name);
+						if (string.IsNullOrEmpty(vol_info.Path))
+							vol_info.Path = Path.Combine(vol_info.Parent.Path, vol_info.Name);
 
 						if (!Directory.Exists(vol_info.Path))
 						{
@@ -739,7 +739,11 @@ namespace ys
 					string name;
 					lua_c["dir"] = file_info.Parent.Parent.Path;
 
-					if (file_info.Parent.Parent.Name != Raw_file_folder)
+					if (file_info.Parent.Parent.Name == Raw_file_folder)
+					{
+						name = HttpUtility.UrlDecode(Path.GetFileName(file_info.Url));
+					}
+					else
 					{
 						is_create_view_page = lua_c.DoString(
 							string.Format("return comic_spider['{0}']['is_create_view_page']", website.Name)
@@ -773,10 +777,6 @@ namespace ys
 							)
 						);
 						name = lua_c.GetString("name") + lua_c.GetString("ext");
-					}
-					else
-					{
-						name = HttpUtility.UrlDecode(Path.GetFileName(file_info.Url));
 					}
 
 					// Remove invalid char
@@ -972,11 +972,13 @@ namespace ys
 			catch (LuaException ex)
 			{
 				Report("Lua exception: " + ex.Message);
+				wc.Dispose();
 			}
 			catch (Exception ex)
 			{
 				Log_error(ex, src_info.Url);
 				Thread.Sleep(worker_cooldown_span);
+				wc.Dispose();
 			}
 
 			return info_list;

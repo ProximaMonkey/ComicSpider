@@ -148,6 +148,12 @@ namespace ComicSpider
 		void monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			Reset_failed_items();
+
+			if (Dashboard.Instance.Is_all_failed)
+			{
+				Dashboard.Instance.Stop();
+				Dashboard.Instance.Start();
+			}
 		}
 
 		private Web_resource_info Dequeue(Collection<Web_resource_info> volumes)

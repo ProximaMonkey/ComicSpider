@@ -10,19 +10,23 @@
 <UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Over view">
-		<param name="Local" value="contents\0-comic-spider.html">
+		<param name="Local" value="contents\comic-spider.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="FAQ">
+		<param name="Local" value="contents\faq.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Window">
-		<param name="Local" value="contents\1-window.html">
+		<param name="Local" value="contents\window.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Lua API">
-		<param name="Local" value="contents\2-lua-api.html">
+		<param name="Local" value="contents\lua-api.html">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Update Log">
-		<param name="Local" value="contents\3-update_log.html">
+		<param name="Local" value="contents\update_log.html">
 		</OBJECT>
 </UL>
 </BODY></HTML>

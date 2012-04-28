@@ -68,6 +68,32 @@ namespace ComicSpider
 		}
 
 		public bool Is_all_downloaded { get; set; }
+		public bool Is_all_failed
+		{
+			get
+			{
+				int count = 0;
+				foreach (var vol in comic_spider.Manager.Volumes)
+				{
+					if (vol.State == Web_resource_state.Failed &&
+						vol.Count == 0)
+					{
+						count++;
+						continue;
+					}
+
+					foreach (var page in vol.Children)
+					{
+						if (page.State == Web_resource_state.Failed)
+						{
+							count++;
+						}
+					}
+				}
+				return count == (all_files_count - downloaded_files_count) &&
+					count > 0;
+			}
+		}
 
 		public new void Show()
 		{
@@ -97,6 +123,10 @@ namespace ComicSpider
 		}
 
 		public void Start()
+		{
+			btn_start_Click(null, null);
+		}
+		public void Stop()
 		{
 			btn_start_Click(null, null);
 		}

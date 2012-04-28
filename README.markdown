@@ -39,7 +39,18 @@ April 2012 y.s.
 * Multithread and fast. 
 * Has an easy to use Lua programmable interface. 
 * Not only comic images, it can be easily modified into a complex downloader. 
-* Support remote script controller which means you can always get the latest parser without updating the program. 
+* Support remote script controller which means you can always get the latest parser without updating the program.
+
+# FAQ
+
+* ### How to use the program?
+
+   Please watch the [Video Demo](http://js.tudouui.com/bin/player2/olc_1.swf?iid=126173758&swfPath=http://js.tudouui.com/bin/player2/olm_8.swf&adSourceId=81000&autoPlay=false&listType=0&rurl=&resourceId=110337721_04_05_99&rpid=110337721&autostart=false&snap_pic=http%3A%2F%2Fi1.tdimg.com%2F126%2F173%2F758%2Fw.jpg&code=Cm3deG4DLak&tag=comic+%2Cdemo%2Ctool&title=Comic+Spider+Demonstration&mediaType=vi&totalTime=162160&hdType=1&hasPassword=0&nWidth=800&isOriginal=1&channelId=99&nHeight=450&banPublic=false&uid=110337721&juid=016qgpe8mj2pqm&aopRate=0.001)
+
+* ### 中文界面？
+
+   軟體的主要使用無需刻意理解界面中的文字。將想要的資源拖拽到面板中即為全部所需操作。
+   複雜的細節設定是對有更高靈活度需求的用戶設計的。
 
 # For developers
 

@@ -5,5 +5,14 @@
 <!-- Sitemap 1.0 -->
 </HEAD><BODY>
 <UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="FAQ">
+		<param name="Name" value="FAQ">
+		<param name="Local" value="contents\faq.html">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Video Demo">
+		<param name="Local" value="contents\comic-spider.html#video_demo">
+		</OBJECT>
 </UL>
 </BODY></HTML>
