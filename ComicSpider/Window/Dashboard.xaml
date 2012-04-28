@@ -102,7 +102,7 @@
 		</Grid.RowDefinitions>
 		<Grid Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="65" />
+				<ColumnDefinition Width="80" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="180" />
 			</Grid.ColumnDefinitions>
@@ -110,9 +110,9 @@
 				<RowDefinition Height="36" />
 				<RowDefinition Height="36" />
 			</Grid.RowDefinitions>
-			<TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FF26335F" Text="Main url"/>
+			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
-			<Button Margin="5,5,0,5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
+			<Button Margin="5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
 			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
 
 			<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="5">
@@ -124,7 +124,6 @@
 			</ComboBox>
 		</Grid>
 		<StackPanel Orientation="Horizontal" Grid.Row="1">
-			<Button Content="Get List" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 			<Button Content="Start" x:Name="btn_start" IsEnabled="False" Click="btn_start_Click" Margin="5" Padding="5,0" Width="60" >
 				<Button.Background>
 					<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
