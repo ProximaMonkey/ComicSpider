@@ -63,7 +63,7 @@ namespace ComicSpider
 				else
 					MainWindow.Main.Taskbar.ChangeProcessValue((ulong)count, (ulong)all);
 
-				return string.Format("{0}%   {1} / {2}", count * 100 / all, count, all);
+				return string.Format("{0}%   {1} / {2}", all == 0 ? 0 : count * 100 / all, count, all);
 			}
 		}
 
