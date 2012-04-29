@@ -356,7 +356,7 @@ namespace ComicSpider
 
 		WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info> volume_drag_drop_manager;
 
-		private string Get_direcotry(string info)
+		private string Get_direcotry(string info, string init_path = null)
 		{
 			string path = null;
 
@@ -365,7 +365,10 @@ namespace ComicSpider
 
 			var dialog = new Ionic.Utils.FolderBrowserDialogEx();
 			dialog.ShowFullPathInEditBox = true;
-			dialog.SelectedPath = txt_dir.Text;
+			if (init_path == null)
+				dialog.SelectedPath = txt_dir.Text;
+			else
+				dialog.SelectedPath = init_path;
 			dialog.Description = info;
 			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK &&
 				Directory.Exists(dialog.SelectedPath))
@@ -607,7 +610,10 @@ delete from [Cookie] where 1;";
 
 		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			string path = Get_direcotry("Selet the root folder for opertion");
+			string path = Get_direcotry(
+				"Selet the root folder for opertion",
+				Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
+			);
 			if (string.IsNullOrEmpty(path)) return;
 
 			Control btn = sender as Control;
@@ -647,7 +653,10 @@ delete from [Cookie] where 1;";
 		}
 		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			string path = Get_direcotry("Selet the root folder for opertion");
+			string path = Get_direcotry(
+				"Selet the root folder for opertion",
+				Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
+			);
 			if (string.IsNullOrEmpty(path))
 				return;
 
@@ -773,11 +782,11 @@ delete from [Cookie] where 1;";
 				if (File.Exists(file_path))
 					System.Diagnostics.Process.Start(file_path);
 				else
-					Message_box.Show("No target file found.");
+					Message_box.Show("No view page found. Please wait a volume downloaded or fix the view page manually.");
 			}
 			else
 			{
-				if(item.Count > 0 && File.Exists(item.Path))
+				if(File.Exists(item.Path))
 					System.Diagnostics.Process.Start(item.Path);
 				else
 					Message_box.Show("No target file found.");

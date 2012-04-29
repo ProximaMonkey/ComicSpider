@@ -261,37 +261,61 @@ namespace ComicSpider
 				Message_box.Show(ex.Message);
 			}
 		}
+
 		private void View_volume(object sender, RoutedEventArgs e)
 		{
-			var list = Dashboard.Instance.volume_list.Items;
-			Web_resource_info list_item = null;
-			for (int i = list.Count - 1; i > -1; i--)
-			{
-				if ((list[i] as Web_resource_info).State == Web_resource_state.Downloaded)
-				{
-					list_item = list[i] as Web_resource_info;
-					string path = "";
-					Web_resource_info parent = list_item;
-					while ((parent = parent.Parent) != null)
-					{
-						path = Path.Combine(parent.Name, path);
-					}
-					path = Path.Combine(Main_settings.Instance.Root_dir, path);
+			var item = cb_view_pages.SelectedItem as Web_resource_info;
+			string file_path = string.Empty;
 
-					string file_path = Path.Combine(Path.Combine(path, list_item.Name), "index.html");
-					if (File.Exists(file_path))
-						System.Diagnostics.Process.Start(file_path);
-					else
-						Message_box.Show("No view page found.");
-					break;
+			if (item == null)
+			{
+				try_open_view_page();
+			}
+			else
+			{
+				file_path = Path.Combine(item.Path, "index.html");
+				if (File.Exists(file_path))
+				{
+					System.Diagnostics.Process.Start(file_path);
+					return;
+				}
+				else
+				{
+					try_open_view_page();
 				}
 			}
-
-			if (list_item == null)
-			{
-				Message_box.Show("No view page found.");
-			}
 		}
+		private void cb_view_pages_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var item = cb_view_pages.SelectedItem as Web_resource_info;
+			string file_path = Path.Combine(item.Path, "index.html");
+			if (File.Exists(file_path))
+			{
+				System.Diagnostics.Process.Start(file_path);
+				return;
+			}
+			Message_box.Show("No view page found. Please wait a volume downloaded or fix the view page manually.");
+		}
+		private bool try_open_view_page()
+		{
+			var list = Dashboard.Instance.volume_list.Items;
+			for (int i = list.Count - 1; i > -1; i--)
+			{
+				string file_path = Path.Combine((list[i] as Web_resource_info).Path, "index.html");
+				if (File.Exists(file_path))
+				{
+					System.Diagnostics.Process.Start(file_path);
+					return true;
+				}
+			}
+			Message_box.Show("No view page found. Please wait a volume downloaded or fix the view page manually.");
+			return false;
+		}
+		private void cb_view_pages_DropDownOpened(object sender, EventArgs e)
+		{
+			cb_view_pages.ItemsSource = Dashboard.Instance.volume_list.ItemsSource;
+		}
+
 		private void btn_dashboard_Click(object sender, RoutedEventArgs e)
 		{
 			Dashboard.Instance.Show();
