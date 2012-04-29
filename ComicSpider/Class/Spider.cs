@@ -279,7 +279,7 @@ namespace ys
 					supported_websites.Sort((x, y) => { return x.Name.CompareTo(y.Name); });
 
 					Dashboard.Instance.Dispatcher.Invoke(
-						new Dashboard.Show_supported_sites_delegate(Dashboard.Instance.Show_supported_sites),
+						new MainWindow.Show_supported_sites_delegate(MainWindow.Main.Show_supported_sites),
 						supported_websites
 					);
 				}

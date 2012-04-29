@@ -245,18 +245,21 @@
 					</Grid.RowDefinitions>
 					
 					<Button x:Name="btn_view" Content="View" Margin="5" ToolTip="view the latest downloaded view page" Click="View_volume" Padding="1,1,5,1"></Button>
-					<ComboBox x:Name="cb_view_pages" Margin="5" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_view_pages_SelectionChanged" DropDownOpened="cb_view_pages_DropDownOpened">
+					<ComboBox x:Name="cb_view_pages" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_view_pages_SelectionChanged" DropDownOpened="cb_view_pages_DropDownOpened" MaxDropDownHeight="600">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal" Visibility="{Binding Is_visibile}" >
-									<TextBlock Margin="3" Text="{Binding Parent.Name}"></TextBlock>
-									<TextBlock Margin="3" Text="{Binding Name}"></TextBlock>
+									<TextBlock Text="{Binding Parent.Name}"></TextBlock>
+									<TextBlock Margin="6,0" Text="{Binding Name}"></TextBlock>
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
 
-					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" IsDefault="True" />
+					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Detail" Click="btn_dashboard_Click" Margin="5" IsDefault="True" Padding="1,1,5,1" />
+					<ComboBox x:Name="cb_supported_websites" Margin="6" Width="18" Grid.Row="1" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_websites_SelectionChanged" DropDownOpened="cb_websites_DropDownOpened" MaxDropDownHeight="600">
+						<ComboBoxItem Content="open supported website" IsEnabled="False" IsSelected="True"></ComboBoxItem>
+					</ComboBox>
 				</Grid>
 			</Grid>
 

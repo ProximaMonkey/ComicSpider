@@ -194,20 +194,6 @@ namespace ComicSpider
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
-		public delegate void Show_supported_sites_delegate(List<Website_info> list);
-		public void Show_supported_sites(List<Website_info> list)
-		{
-			var label = cb_supported_websites.Items[0];
-			cb_supported_websites.Items.Clear();
-			cb_supported_websites.Items.Add(label);
-			cb_supported_websites.SelectedIndex = 0;
-			foreach (var item in list)
-			{
-				cb_supported_websites.Items.Add(
-					new ComboBoxItem() { Content = item.Name, Tag = item.Home });
-			}
-		}
-
 		public delegate void Report_progress_delegate(string info);
 		public void Report_progress(string info)
 		{
@@ -799,29 +785,24 @@ delete from [Cookie] where 1;";
 		{
 			MenuItem menu_item = sender as MenuItem;
 			ListView list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
-			try
-			{
-				foreach (Web_resource_info list_item in list_view.SelectedItems)
-				{
-					string path = "";
-					Web_resource_info parent = list_item;
-					while ((parent = parent.Parent) != null)
-					{
-						path = Path.Combine(parent.Name, path);
-					}
-					path = Path.Combine(Main_settings.Instance.Root_dir, path);
 
-					string item_dir = Path.Combine(path, list_item.Name);
-					if (Directory.Exists(item_dir))
-						System.Diagnostics.Process.Start(item_dir);
-					else
-						System.Diagnostics.Process.Start(path);
+			foreach (Web_resource_info item in list_view.SelectedItems)
+			{
+				if (Directory.Exists(item.Path))
+				{
+					System.Diagnostics.Process.Start(item.Path);
 					break;
 				}
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message);
+				else if (File.Exists(item.Path))
+				{
+					System.Diagnostics.Process.Start("explorer.exe", "/select," + item.Path);
+					break;
+				}
+				else
+				{
+					Message_box.Show("Item doesn't exist.");
+					break;
+				}
 			}
 		}
 		private void Open_url_Click(object sender, RoutedEventArgs e)
@@ -1058,23 +1039,6 @@ delete from [Cookie] where 1;";
 			View_Click(sender, null);
 		}
 
-		private void cb_supported_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
-
-			if (item == null ||
-				string.IsNullOrEmpty(item.Tag as string))
-				return;
-			try
-			{
-				System.Diagnostics.Process.Start(item.Tag as string);
-			}
-			catch (Exception ex)
-			{
-				Message_box.Show(ex.Message);
-			}
-			cb_supported_websites.SelectedIndex = 0;
-		}
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
 		{
 			GridViewColumnHeader header = e.OriginalSource as GridViewColumnHeader;

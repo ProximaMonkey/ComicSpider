@@ -28,6 +28,7 @@ using ys;
 using System.Windows.Controls;
 using System.Linq;
 using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace ComicSpider
 {
@@ -172,6 +173,22 @@ namespace ComicSpider
 			}
 		}
 
+		/**************** Delegate ****************/
+
+		public delegate void Show_supported_sites_delegate(List<Website_info> list);
+		public void Show_supported_sites(List<Website_info> list)
+		{
+			var label = cb_supported_websites.Items[0];
+			cb_supported_websites.Items.Clear();
+			cb_supported_websites.Items.Add(label);
+			cb_supported_websites.SelectedIndex = 0;
+			foreach (var item in list)
+			{
+				cb_supported_websites.Items.Add(
+					new ComboBoxItem() { Content = item.Name, Tag = item.Home });
+			}
+		}
+
 		public delegate void Show_update_info_delegate(string info, string downlaod_page);
 		public void Show_update_info(string info, string downlaod_page)
 		{
@@ -259,6 +276,31 @@ namespace ComicSpider
 			catch (Exception ex)
 			{
 				Message_box.Show(ex.Message);
+			}
+		}
+
+		private void cb_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
+
+			if (item == null ||
+				string.IsNullOrEmpty(item.Tag as string))
+				return;
+			try
+			{
+				System.Diagnostics.Process.Start(item.Tag as string);
+			}
+			catch (Exception ex)
+			{
+				Message_box.Show(ex.Message);
+			}
+		}
+		private void cb_websites_DropDownOpened(object sender, EventArgs e)
+		{
+			if (!Dashboard.Is_initialized)
+			{
+				var d = Dashboard.Instance;
+				cb_supported_websites.Items.Add("Loading parser...");
 			}
 		}
 

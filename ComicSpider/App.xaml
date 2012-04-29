@@ -244,7 +244,8 @@
 								<Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="Transparent" MaxHeight="{TemplateBinding MaxDropDownHeight}" Margin="0,0,-64,0" MinWidth="80">
 									<Border x:Name="DropDownBorder" BorderBrush="#7F414141" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" CornerRadius="3">
 										<ScrollViewer CanContentScroll="true">
-											<ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+											<ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+											</ItemsPresenter>
 										</ScrollViewer>
 									</Border>
 								</Microsoft_Windows_Themes:SystemDropShadowChrome>
@@ -280,6 +281,30 @@
 					<Setter Property="Template" Value="{StaticResource ComboBoxEditableTemplate}"/>
 				</Trigger>
 			</Style.Triggers>
+		</Style>
+		<Style TargetType="{x:Type ComboBoxItem}">
+			<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+			<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+			<Setter Property="Padding" Value="3,0,3,0"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ComboBoxItem}">
+						<Border x:Name="Bd" Margin="1" Padding="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true" CornerRadius="3">
+							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsHighlighted" Value="true">
+								<Setter Property="Background" TargetName="Bd" Value="#A1D1FF"/>
+								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+							</Trigger>
+							<Trigger Property="IsEnabled" Value="false">
+								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 	</Application.Resources>
 </Application>
