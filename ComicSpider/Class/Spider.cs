@@ -43,7 +43,6 @@ namespace ys
 			}
 			worker_thread_pool.Clear();
 			page_distance = 0;
-			volume_distance = 0;
 
 			Report("Downloading stopped.");
 		}
@@ -69,9 +68,9 @@ namespace ys
 			Manager.Start_monitor();
 			Manager.Reset_failed_items();
 
+			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
 			for (int i = 0; i < Main_settings.Instance.Thread_count; i++)
 			{
-				Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter + i);
 				Add_worker(new ThreadStart(Get_file_list), thread_type_File_list_getter + i);
 				Add_worker(new ThreadStart(Download_file), thread_type_File_downloader + i);
 			}
@@ -181,7 +180,6 @@ namespace ys
 		private int worker_cooldown_span = 300;			// millisecond
 
 		private int page_distance = 0;					// count the distance between page producer and comsumer
-		private int volume_distance = 0;				// count the distance between volume producer and comsumer
 
 		private const string thread_type_Page_list_getter = "Page_list_getter";
 		private const string thread_type_File_list_getter = "File_list_getter";
@@ -513,12 +511,6 @@ namespace ys
 			{
 				try
 				{
-					if (volume_distance > Main_settings.Instance.Thread_count)
-					{
-						Thread.Sleep(worker_cooldown_span);
-						continue;
-					}
-
 					vol_info = null;
 					vol_info = Manager.Volumes_dequeue();
 					if (vol_info == null)
@@ -542,8 +534,6 @@ namespace ys
 
 					if (vol_info.Count > 0)
 					{
-						Interlocked.Increment(ref volume_distance);
-
 						Dashboard.Instance.Dispatcher.Invoke(
 							new Dashboard.Report_main_progress_delegate(
 								Dashboard.Instance.Report_main_progress
@@ -845,7 +835,6 @@ namespace ys
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
 						file_info.Parent.Parent.State = Web_resource_state.Downloaded;
-						Interlocked.Decrement(ref volume_distance);
 
 						if (is_create_view_page == true)
 						{
@@ -867,8 +856,6 @@ namespace ys
 							Dashboard.Instance.Report_main_progress
 						)
 					);
-
-					Interlocked.Decrement(ref page_distance);
 				}
 				catch (ThreadAbortException)
 				{ }
@@ -889,6 +876,8 @@ namespace ys
 
 					Thread.Sleep(worker_cooldown_span);
 				}
+
+				Interlocked.Decrement(ref page_distance);
 			}
 		}
 
