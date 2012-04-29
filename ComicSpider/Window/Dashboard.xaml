@@ -24,13 +24,14 @@
 			  Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
 			</DockPanel>
 		</DataTemplate>
-		<ContextMenu x:Key="view_list_menu">
+		<ContextMenu x:Key="view_list_menu" Opened="ContextMenu_Opened">
 			<MenuItem Header="View" Click="View_Click" />
 			<MenuItem Header="Open folder" Click="Open_folder_Click" />
 			<MenuItem Header="Open Url" Click="Open_url_Click" />
 			<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 			<MenuItem Header="Resume item(s)" Click="Resume_items_Click" />
 			<MenuItem Header="Pause item(s)" Click="Pause_items_Click" />
+			<MenuItem Header="Delete with folder(s)" Click="Delete_with_folder_Click" />
 			<MenuItem Header="Delete downloaded" Click="Delete_downloaded_Click" />
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
@@ -203,7 +204,7 @@
 					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite admin tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
 					<Button Content="Close" Grid.Column="2" Click="btn_logs_Click" />
 				</Grid>
-				<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Grid.Row="1" />
+				<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" Grid.Row="1" TextWrapping="Wrap" />
 			</Grid>
 		</Border>
 	</Grid>

@@ -52,6 +52,54 @@
 			<MenuItem Header="_About" Click="About"></MenuItem>
 			<MenuItem Header="_Close" Click="Close"></MenuItem>
 		</ContextMenu>
+		<ControlTemplate x:Key="Button_minizie_template" TargetType="{x:Type Button}">
+			<Border x:Name="border" Background="#0CFFFFFF" CornerRadius="3">
+				<VisualStateManager.VisualStateGroups>
+					<VisualStateGroup x:Name="VisualStateGroup">
+						<VisualStateGroup.Transitions>
+							<VisualTransition GeneratedDuration="0"/>
+						</VisualStateGroup.Transitions>
+						<VisualState x:Name="mouse_enter">
+							<Storyboard>
+								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+									<SplineColorKeyFrame KeyTime="0:0:0.3" Value="#BFFFFFFF"/>
+								</ColorAnimationUsingKeyFrames>
+								<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="image">
+									<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="-1" KeySpline="0.29,0.64,1,1"/>
+								</DoubleAnimationUsingKeyFrames>
+							</Storyboard>
+						</VisualState>
+						<VisualState x:Name="mouse_leave">
+							<Storyboard>
+								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+									<SplineColorKeyFrame KeyTime="0:0:0.3" Value="#0CFFFFFF"/>
+								</ColorAnimationUsingKeyFrames>
+							</Storyboard>
+						</VisualState>
+						<VisualState x:Name="mouse_down">
+							<Storyboard>
+								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+									<SplineColorKeyFrame KeyTime="0" Value="#33FFFFFF"/>
+								</ColorAnimationUsingKeyFrames>
+								<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="image">
+									<SplineDoubleKeyFrame KeyTime="0" Value="1"/>
+								</DoubleAnimationUsingKeyFrames>
+							</Storyboard>
+						</VisualState>
+					</VisualStateGroup>
+				</VisualStateManager.VisualStateGroups>
+				<Image x:Name="image" Width="16" Height="16" Source="Images/minimize.png" RenderTransformOrigin="0.5,0.5">
+					<Image.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</Image.RenderTransform>
+				</Image>
+			</Border>
+		</ControlTemplate>
 	</Window.Resources>
 	<Window.Triggers>
 		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
@@ -131,11 +179,26 @@
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="36"/>
 					<ColumnDefinition/>
-					<ColumnDefinition Width="36"/>
+					<ColumnDefinition Width="26"/>
+					<ColumnDefinition Width="26"/>
+					<ColumnDefinition Width="5"/>
 				</Grid.ColumnDefinitions>
 				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" />
 				<TextBlock x:Name="txt_title" Text="Comic Spider" ToolTip="{Binding Path=Text, ElementName=txt_title}" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" d:LayoutOverrides="GridBox" FontFamily="Segoe UI" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
-				<Button x:Name="btn_close" ToolTip="Close" Margin="3" Grid.Column="2" Click="btn_close_Click" Template="{DynamicResource Button_close_template}">
+				<Button x:Name="btn_minimize" IsCancel="True" ToolTip="Minimize, hotkey : Win + C or Esc" Grid.Column="2" Click="btn_hide_Click" Template="{DynamicResource Button_minizie_template}" Margin="0,3">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="MouseLeave">
+							<ic:GoToStateAction TargetName="btn_minimize" StateName="mouse_leave"/>
+						</i:EventTrigger>
+						<i:EventTrigger EventName="MouseEnter">
+							<ic:GoToStateAction TargetName="btn_minimize" StateName="mouse_enter"/>
+						</i:EventTrigger>
+						<i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+							<ic:GoToStateAction TargetName="btn_minimize" StateName="mouse_down"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+				<Button x:Name="btn_close" ToolTip="Close" Grid.Column="3" Click="btn_close_Click" Template="{DynamicResource Button_close_template}" Margin="0,3">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseLeave">
 							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_leave"/>
@@ -146,7 +209,8 @@
 						<i:EventTrigger EventName="PreviewMouseLeftButtonDown">
 							<ic:GoToStateAction TargetName="btn_close" StateName="mouse_down"/>
 						</i:EventTrigger>
-					</i:Interaction.Triggers></Button>
+					</i:Interaction.Triggers>
+				</Button>
 			</Grid>
 			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
@@ -174,12 +238,12 @@
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>
 					</StackPanel>
 				</Grid>
-				<Grid Grid.Column="1" Margin="10" d:IsLocked="True">
+				<Grid Grid.Column="1" Margin="10">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					<Button x:Name="btn_hide" ToolTip="hotkey : Win + C or Esc" Content="Hide" Click="btn_hide_Click" Margin="5" IsCancel="True" />
+					<Button x:Name="btn_view" Content="View" Margin="5" Click="View_volume" />
 					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Dashboard" Click="btn_dashboard_Click" Margin="5" IsDefault="True" />
 				</Grid>
 			</Grid>

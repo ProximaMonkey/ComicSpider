@@ -226,6 +226,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Images\ys_16.png" />
+    <Resource Include="Images\minimize.png" />
     <Content Include="Lib\HtmlAgilityPack.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
