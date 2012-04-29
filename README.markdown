@@ -65,6 +65,8 @@ Techniques required
 * html5, css3, js, jQuery
 * Lua
 
+![Dashboard](https://raw.github.com/ysmood/ComicSpider/master/Documentation/contents/img/snap/dashboard.png)
+
 ### Spider main work flow
 
 There are three main task queues:
