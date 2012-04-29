@@ -9,13 +9,4 @@ function frame()
 	$('#footer').append(
 		'April 2012 y.s.<br>'
 	);
-
-	var index = location.href.substr(location.href.lastIndexOf('/') + 1,1);
-	$('h1').prepend(index + '.');
-	$('h2').each(
-		function (i)
-		{
-			$(this).prepend(index + '.' + i + '.');
-		}
-	);
 }
