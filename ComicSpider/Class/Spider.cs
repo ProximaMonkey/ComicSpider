@@ -513,7 +513,7 @@ namespace ys
 			{
 				try
 				{
-					if (volume_distance > worker_thread_pool.Count)
+					if (volume_distance > Main_settings.Instance.Thread_count)
 					{
 						Thread.Sleep(worker_cooldown_span);
 						continue;
@@ -617,7 +617,7 @@ namespace ys
 			{
 				try
 				{
-					if (page_distance > worker_thread_pool.Count)
+					if (page_distance > Main_settings.Instance.Thread_count)
 					{
 						Thread.Sleep(worker_cooldown_span);
 						continue;

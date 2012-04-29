@@ -68,7 +68,7 @@ namespace ComicSpider
 		}
 
 		public bool Is_all_downloaded { get; set; }
-		public bool Is_all_failed
+		public bool Is_all_left_failed
 		{
 			get
 			{

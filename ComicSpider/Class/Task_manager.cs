@@ -145,14 +145,11 @@ namespace ComicSpider
 
 		private System.Timers.Timer monitor;
 
-		void monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			Reset_failed_items();
-
-			if (Dashboard.Instance.Is_all_failed)
+			if (Dashboard.Instance.Is_all_left_failed)
 			{
-				Dashboard.Instance.Stop();
-				Dashboard.Instance.Start();
+				Reset_failed_items();
 			}
 		}
 
