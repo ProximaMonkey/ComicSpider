@@ -291,6 +291,7 @@ namespace ys
 			Hosts = hosts;
 		}
 
+		public object Is_inited_lock = new object();
 		public bool Is_inited = false;
 
 		public string Name { get; set; }

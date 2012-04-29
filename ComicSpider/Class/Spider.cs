@@ -907,17 +907,7 @@ namespace ys
 		{
 			List<Web_resource_info> info_list = new List<Web_resource_info>();
 			string host = ys.Web.Get_host_name(src_info.Url);
-
 			Web_client wc = new Web_client();
-
-			// Set headers
-			if (src_info.Parent == null)
-				wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Url);
-			else
-				wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Parent.Url);
-			string cookie = Cookie_pool.Instance.Get(host);
-			if (!string.IsNullOrEmpty(cookie))
-				wc.Headers["Cookie"] = cookie;
 
 			try
 			{
@@ -938,11 +928,23 @@ namespace ys
 				if (exists_method)
 				{
 					// Init controller
-					if (!website.Is_inited)
+					lock (website.Is_inited_lock)
 					{
-						lua_c.DoString(string.Format("if comic_spider['{0}'].init then comic_spider['{0}']:init() end", website.Name));
-						website.Is_inited = true;
+						if (!website.Is_inited)
+						{
+							lua_c.DoString(string.Format("if comic_spider['{0}'].init then comic_spider['{0}']:init() end", website.Name));
+							website.Is_inited = true;
+						}
 					}
+
+					// Set headers
+					if (src_info.Parent == null)
+						wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Url);
+					else
+						wc.Headers["Referer"] = Uri.EscapeUriString(src_info.Parent.Url);
+					string cookie = Cookie_pool.Instance.Get(host);
+					if (!string.IsNullOrEmpty(cookie))
+						wc.Headers["Cookie"] = cookie;
 
 					// Get encoding
 					string encoding = lua_c.DoString(
