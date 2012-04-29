@@ -42,7 +42,8 @@ namespace ys
 				}
 			}
 			worker_thread_pool.Clear();
-			working_counter = 0;
+			page_distance = 0;
+			volume_distance = 0;
 
 			Report("Downloading stopped.");
 		}
@@ -68,16 +69,10 @@ namespace ys
 			Manager.Start_monitor();
 			Manager.Reset_failed_items();
 
-			Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter);
-
-			int worker_num = Main_settings.Instance.Thread_count;
-
-			for (int i = 0; i < worker_num / 3 + 1; i++)
+			for (int i = 0; i < Main_settings.Instance.Thread_count; i++)
 			{
+				Add_worker(new ThreadStart(Get_page_list), thread_type_Page_list_getter + i);
 				Add_worker(new ThreadStart(Get_file_list), thread_type_File_list_getter + i);
-			}
-			for (int i = 0; i < worker_num; i++)
-			{
 				Add_worker(new ThreadStart(Download_file), thread_type_File_downloader + i);
 			}
 		}
@@ -184,7 +179,9 @@ namespace ys
 
 		private List<Thread> worker_thread_pool;
 		private int worker_cooldown_span = 300;			// millisecond
-		private int working_counter = 0;				// count the distance between producer and comsumer
+
+		private int page_distance = 0;					// count the distance between page producer and comsumer
+		private int volume_distance = 0;				// count the distance between volume producer and comsumer
 
 		private const string thread_type_Page_list_getter = "Page_list_getter";
 		private const string thread_type_File_list_getter = "File_list_getter";
@@ -516,7 +513,7 @@ namespace ys
 			{
 				try
 				{
-					if (working_counter > worker_thread_pool.Count)
+					if (volume_distance > worker_thread_pool.Count)
 					{
 						Thread.Sleep(worker_cooldown_span);
 						continue;
@@ -545,6 +542,8 @@ namespace ys
 
 					if (vol_info.Count > 0)
 					{
+						Interlocked.Increment(ref volume_distance);
+
 						Dashboard.Instance.Dispatcher.Invoke(
 							new Dashboard.Report_main_progress_delegate(
 								Dashboard.Instance.Report_main_progress
@@ -618,7 +617,7 @@ namespace ys
 			{
 				try
 				{
-					if (working_counter > worker_thread_pool.Count)
+					if (page_distance > worker_thread_pool.Count)
 					{
 						Thread.Sleep(worker_cooldown_span);
 						continue;
@@ -654,7 +653,7 @@ namespace ys
 						}
 						else
 						{
-							Interlocked.Increment(ref working_counter);
+							Interlocked.Increment(ref page_distance);
 						}
 					}
 				}
@@ -846,6 +845,7 @@ namespace ys
 					if (downloaded == file_info.Parent.Parent.Count)
 					{
 						file_info.Parent.Parent.State = Web_resource_state.Downloaded;
+						Interlocked.Decrement(ref volume_distance);
 
 						if (is_create_view_page == true)
 						{
@@ -868,7 +868,7 @@ namespace ys
 						)
 					);
 
-					Interlocked.Decrement(ref working_counter);
+					Interlocked.Decrement(ref page_distance);
 				}
 				catch (ThreadAbortException)
 				{ }
