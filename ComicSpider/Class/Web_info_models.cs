@@ -81,20 +81,6 @@ namespace ys
 
 		#region Status
 
-		public System.Windows.Visibility Is_visibile
-		{
-			get
-			{
-				if(string.IsNullOrEmpty(this.Path))
-					return System.Windows.Visibility.Collapsed;
-
-				string file_path = System.IO.Path.Combine(this.Path, "index.html");
-				if (System.IO.File.Exists(file_path))
-					return System.Windows.Visibility.Visible;
-				else
-					return System.Windows.Visibility.Collapsed;
-			}
-		}
 		public Web_resource_state State
 		{
 			get
