@@ -600,14 +600,14 @@ delete from [Cookie] where 1;";
 			if (volume_list.SelectedItem != null)
 			{
 				path = Get_direcotry(
-					"Selet the root folder for opertion",
+					"Select the root folder for opertion",
 					Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
 				);
 			}
 			else
 			{
 				path = Get_direcotry(
-					"Selet the root folder for opertion",
+					"Select the root folder for opertion",
 					txt_dir.Text
 				);
 			}
@@ -655,14 +655,14 @@ delete from [Cookie] where 1;";
 			if (volume_list.SelectedItem != null)
 			{
 				path = Get_direcotry(
-					"Selet the root folder for opertion",
+					"Select the root folder for opertion",
 					Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
 				);
 			}
 			else
 			{
 				path = Get_direcotry(
-					"Selet the root folder for opertion",
+					"Select the root folder for opertion",
 					txt_dir.Text
 				);
 			}
