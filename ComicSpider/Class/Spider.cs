@@ -343,8 +343,11 @@ namespace ys
 				}
 				catch(Exception ex)
 				{
-					if (((System.Net.HttpWebResponse)((((System.Net.WebException)(ex)).Response))).StatusCode != HttpStatusCode.NotModified)
-						Report(ex.Message);
+					var response = ((System.Net.HttpWebResponse)((((System.Net.WebException)(ex)).Response)));
+
+					if (response == null ||
+						response.StatusCode != HttpStatusCode.NotModified)
+						Report(ex.Message + " Try to load local script.");
 				}
 			}
 			else

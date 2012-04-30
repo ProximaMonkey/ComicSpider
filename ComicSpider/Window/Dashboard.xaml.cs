@@ -596,10 +596,22 @@ delete from [Cookie] where 1;";
 
 		public void btn_fix_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			string path = Get_direcotry(
-				"Selet the root folder for opertion",
-				Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
-			);
+			string path;
+			if (volume_list.SelectedItem != null)
+			{
+				path = Get_direcotry(
+					"Selet the root folder for opertion",
+					Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
+				);
+			}
+			else
+			{
+				path = Get_direcotry(
+					"Selet the root folder for opertion",
+					txt_dir.Text
+				);
+			}
+
 			if (string.IsNullOrEmpty(path)) return;
 
 			Control btn = sender as Control;
@@ -639,10 +651,22 @@ delete from [Cookie] where 1;";
 		}
 		public void btn_del_display_pages_Click(object sender, RoutedEventArgs e)
 		{
-			string path = Get_direcotry(
-				"Selet the root folder for opertion",
-				Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
-			);
+			string path;
+			if (volume_list.SelectedItem != null)
+			{
+				path = Get_direcotry(
+					"Selet the root folder for opertion",
+					Directory.GetParent((volume_list.SelectedItem as Web_resource_info).Path).FullName
+				);
+			}
+			else
+			{
+				path = Get_direcotry(
+					"Selet the root folder for opertion",
+					txt_dir.Text
+				);
+			}
+
 			if (string.IsNullOrEmpty(path))
 				return;
 
