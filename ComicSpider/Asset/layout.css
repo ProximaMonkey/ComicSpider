@@ -53,7 +53,8 @@ hr {
 }
 
 #title {
-	margin: 5px;
+	width: 700px;
+	margin: 5px auto;
 	left: 0;
 }
 
@@ -64,4 +65,11 @@ hr {
 	z-index: 5000;
 	text-align: left;
 	padding: 5px 10px;
+}
+
+.navibar-indicator {
+	color: #66C6FF;
+	float: left;
+	padding-right: 10px;
+	font-weight: bold;
 }

@@ -46,14 +46,14 @@ function init_css()
 		$('html').addClass('ie-shadow-fix');
 	}
 
-	$('#navibar').css('right', -205).hover(
+	$('#navibar').css('right', -325).hover(
 		function ()
 		{
 			$(this).stop().animate({ right: 5 }, 'fast');
 		},
 		function ()
 		{
-			$(this).stop().animate({ right: -205 });
+			$(this).stop().animate({ right: -325 });
 		}
 	);
 }
@@ -74,6 +74,14 @@ function init_navigator()
 			$this.text('off');
 			$('.btn.split-page').click();
 		}
+	});
+
+	$('.btn.effect').click(function(){
+		$.fx.off = !$.fx.off;
+		if($.fx.off)
+			$(this).text('on');
+		else
+			$(this).text('off');
 	});
 
 	var path = decodeURIComponent(location);
