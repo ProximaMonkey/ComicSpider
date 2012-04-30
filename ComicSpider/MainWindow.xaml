@@ -249,9 +249,10 @@
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
+									<TextBlock Width="12" Margin="3,0" Text="{Binding State_text}" Foreground="#FF826AD4"></TextBlock>
 									<TextBlock Text="{Binding Parent.Name}"></TextBlock>
 									<TextBlock Margin="3,0" Text="{Binding Name}"></TextBlock>
-									<TextBlock Margin="6,0" Text="{Binding Progress_int_text}" Foreground="#FF826AD4"></TextBlock>
+									<TextBlock Margin="6,0" Text="{Binding Progress_int_text}" Foreground="#FF939393"></TextBlock>
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
