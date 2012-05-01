@@ -225,14 +225,15 @@ namespace ComicSpider
 	[Serializable]
 	public class Lua_script
 	{
-		public Lua_script(string script, string hash)
+		public Lua_script(string script, string hash, string last_modified)
 		{
 			Script = script;
-			ETag = hash;
+			E_tag = hash;
+			Last_modified = last_modified;
 		}
 
 		public string Script { get; set; }
-		public string ETag { get; set; }
-		public DateTime Date { get; set; }
+		public string E_tag { get; set; }
+		public string Last_modified { get; set; }
 	}
 }

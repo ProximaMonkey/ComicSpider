@@ -92,7 +92,7 @@ External objects:
 
 settings = {
 	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
-	requires = { 'https://raw.github.com/ysmood/ComicSpider/master/comic_spider.lua' },
+	requires = { 'http://comicspider.sinaapp.com/parser.lua' },
 
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.zip' },

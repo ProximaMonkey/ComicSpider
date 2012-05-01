@@ -37,13 +37,19 @@ namespace ComicSpider
 			return wc;
 		}
 
+		public HttpWebResponse Response { get; private set; }
+
 		public int Timeout = 15 * 1000;
 		public bool AllowAutoRedirect = true;
+		public string Last_modified = null;
 
 		protected override WebRequest GetWebRequest(Uri address)
 		{
 			HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
 
+			if (!string.IsNullOrEmpty(Last_modified))
+				request.IfModifiedSince = DateTime.Parse(Last_modified);
+			
 			// GZip
 			request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 

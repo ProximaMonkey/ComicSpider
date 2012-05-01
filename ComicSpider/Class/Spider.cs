@@ -235,7 +235,11 @@ namespace ys
 
 						// Get remote script
 						string loaded_script = Load_remote_script(url);
-						Lua_script += '\n' + loaded_script;
+						if (!string.IsNullOrEmpty(loaded_script))
+						{
+							Lua_script += '\n' + loaded_script;
+							lua.DoString(loaded_script);
+						}
 
 						// Check version
 						LuaTable app_info = lua.GetTable("app_info");
@@ -314,16 +318,19 @@ namespace ys
 					{
 						lua_script = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Lua_script;
 						// Chech if has been modified.
-						wc.Headers.Add("If-None-Match", lua_script.ETag);
+						if (!string.IsNullOrEmpty(lua_script.E_tag))
+							wc.Headers["If-None-Match"] = lua_script.E_tag;
+						if (!string.IsNullOrEmpty(lua_script.Last_modified))
+							wc.Last_modified = lua_script.Last_modified;
 					}
 					catch
 					{
-						lua_script = new Lua_script("", "");
 					}
 
 					string loaded_script = wc.DownloadString(url);
 
-					lua_script.ETag = wc.ResponseHeaders["ETag"];
+					lua_script.E_tag = wc.ResponseHeaders["ETag"];
+					lua_script.Last_modified = wc.ResponseHeaders["Last-Modified"];
 					lua_script.Script = loaded_script;
 
 					kv_adpter.Update(
@@ -331,13 +338,14 @@ namespace ys
 						data_reader["Key"] as string,
 						data_reader["Value"] as byte[]
 					);
+
+					Report("Loaded: " + url);
 				}
 				catch(Exception ex)
 				{
 					var response = ((System.Net.HttpWebResponse)((((System.Net.WebException)(ex)).Response)));
-
 					if (response == null ||
-						response.StatusCode != HttpStatusCode.NotModified)
+						response.StatusCode == HttpStatusCode.NotModified)
 						Report("Not Modified, load cache: " + url);
 				}
 			}
@@ -349,7 +357,8 @@ namespace ys
 
 					lua_script = new Lua_script(
 						loaded_script,
-						wc.ResponseHeaders["ETag"]
+						wc.ResponseHeaders["ETag"],
+						wc.ResponseHeaders["Last-Modified"]
 					);
 
 					kv_adpter.Insert(
@@ -367,10 +376,10 @@ namespace ys
 
 			kv_adpter.Connection.Close();
 
-			if (lua_script == null)
-				lua_script = string.Empty;
+			if (lua_script == null || string.IsNullOrEmpty(lua_script.Script))
+				return string.Empty;
 
-			return lua_script;
+			return lua_script.Script;
 		}
 		private void Init_lua_script_watcher()
 		{
