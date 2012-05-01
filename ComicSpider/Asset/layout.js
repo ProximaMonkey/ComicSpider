@@ -53,13 +53,13 @@ function init_css()
 		},
 		function ()
 		{
-			$(this).stop().animate({ right: -350 });
+			$(this).stop().animate({ right: -380 });
 		}
 	);
 	
 	win.one('scroll', function()
 	{
-		$('#navibar').animate({ right: -350 });
+		$('#navibar').animate({ right: -380 });
 	});
 }
 
