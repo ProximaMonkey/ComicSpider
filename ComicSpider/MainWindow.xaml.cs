@@ -255,7 +255,7 @@ namespace ComicSpider
 				Dashboard.Instance.Get_volume_list(url);
 			}
 			else
-				this.Title = "not an available link";
+				this.Title = "It's not a valid link.";
 		}
 
 		private void btn_hide_Click(object sender, RoutedEventArgs e)
