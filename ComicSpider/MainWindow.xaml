@@ -243,7 +243,7 @@
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
-					
+
 					<Button x:Name="btn_view" Content="View" Margin="5" ToolTip="view the latest downloaded view page" Click="View_volume" Padding="1,1,5,1"></Button>
 					<ComboBox x:Name="cb_view_pages" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_view_pages_SelectionChanged" DropDownOpened="cb_view_pages_DropDownOpened" MaxDropDownHeight="600">
 						<ComboBox.ItemTemplate>
@@ -252,7 +252,6 @@
 									<TextBlock Width="12" Margin="3,0" Text="{Binding State_text}" Foreground="#FF826AD4"></TextBlock>
 									<TextBlock Text="{Binding Parent.Name}"></TextBlock>
 									<TextBlock Margin="3,0" Text="{Binding Name}"></TextBlock>
-									<TextBlock Margin="6,0" Text="{Binding Progress_int_text}" Foreground="#FF939393"></TextBlock>
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>

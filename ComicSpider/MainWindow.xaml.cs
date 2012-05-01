@@ -330,6 +330,9 @@ namespace ComicSpider
 		private void cb_view_pages_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var item = cb_view_pages.SelectedItem as Web_resource_info;
+
+			if (item == null) return;
+
 			string file_path = Path.Combine(item.Path, "index.html");
 			if (File.Exists(file_path))
 			{
