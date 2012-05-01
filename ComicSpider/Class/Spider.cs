@@ -237,15 +237,6 @@ namespace ys
 						string loaded_script = Load_remote_script(url);
 						Lua_script += '\n' + loaded_script;
 
-						if (loaded_script == null)
-							Report("Failed to load remote script: " + url);
-						else
-						{
-							Report("Remote script loaded: " + url);
-
-							lua.DoString(loaded_script);
-						}
-
 						// Check version
 						LuaTable app_info = lua.GetTable("app_info");
 						if (app_info != null &&
@@ -347,7 +338,7 @@ namespace ys
 
 					if (response == null ||
 						response.StatusCode != HttpStatusCode.NotModified)
-						Report(ex.Message + " Try to load local script.");
+						Report("Not Modified, load cache: " + url);
 				}
 			}
 			else
@@ -365,19 +356,21 @@ namespace ys
 						url,
 						ys.Common.ObjectToByteArray(lua_script)
 					);
+					Report("Loaded: " + url);
 				}
 				catch (Exception ex)
 				{
 					Report(ex.Message);
+					Report("Failed to load remote script: " + url);
 				}
 			}
 
 			kv_adpter.Connection.Close();
 
 			if (lua_script == null)
-				return null;
-			else
-				return lua_script.Script;
+				lua_script = string.Empty;
+
+			return lua_script;
 		}
 		private void Init_lua_script_watcher()
 		{
