@@ -232,6 +232,9 @@ function auto_resize(page)
 		page = $(this);
 
 	var window_width = win.width();
+
+	if(page.width() < window_width) return;
+
 	var frame = page.parent();
 	var page_num = frame.find('.page_num');
 	var span_fit = $('<span class="resize"> - fit width - </span>');
