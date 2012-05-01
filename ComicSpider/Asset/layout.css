@@ -30,7 +30,7 @@ hr {
 	border: 1px solid #ddd;
 }
 
-.img_frame, #title, #navibar {
+.img_frame, #navibar {
 	background: #fff;
 
 	-webkit-border-radius: 4px;

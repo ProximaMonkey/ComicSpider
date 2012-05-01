@@ -20,7 +20,7 @@ win.load(function()
 	else
 		doc = $('html');
 
-	append_img(img_load_step);
+	append_img(2);
 
 	init_css();
 	init_navigator();
@@ -46,16 +46,21 @@ function init_css()
 		$('html').addClass('ie-shadow-fix');
 	}
 
-	$('#navibar').css('right', -325).hover(
+	$('#navibar').hover(
 		function ()
 		{
 			$(this).stop().animate({ right: 5 }, 'fast');
 		},
 		function ()
 		{
-			$(this).stop().animate({ right: -325 });
+			$(this).stop().animate({ right: -350 });
 		}
 	);
+	
+	win.one('scroll', function()
+	{
+		$('#navibar').animate({ right: -350 });
+	});
 }
 
 function init_navigator()
@@ -334,14 +339,91 @@ function page_control(page)
 	if(!ui_control_inited) doc.keyup(
 		function (e)
 		{
+			if(e.ctrlKey)
+				return;
+
 			switch (e.keyCode)
 			{
-				case 16:
-					doc.stop().animate({ scrollTop: doc.scrollTop() - win.height() });
+				// Q previous volume
+				case 81:
+					$('.btn.previous').click();
 					break;
 
-				case 17:
-					doc.stop().animate({ scrollTop: doc.scrollTop() + win.height() });
+				// W next volume
+				case 87:
+					$('.btn.next').click();
+					break;
+
+				// A auto split switch
+				case 65:
+					$('.btn.auto-split').click();
+					break;
+
+				// S animation switch
+				case 83:
+					$('.btn.effect').click();
+					break;
+
+				// previous page
+				case 90:
+					var distance = 100000;
+					var img_frame;
+					var frames = $('.img_frame');
+					for(var i = 0; i < frames.length; i++)
+					{
+						$this = $(frames[i]);
+						var d = Math.abs($this.offset().top - doc.scrollTop());
+						if(d < distance)
+						{
+							distance = d;
+							img_frame = $this;
+						}
+						else
+						{
+							var top = doc.scrollTop() - img_frame.offset().top;
+							if (top > 0)
+							{
+								doc.stop().animate({ scrollTop: doc.scrollTop() - top - 10 });
+							}
+							else
+							{
+								var bottom = win.height() + top;
+								doc.stop().animate({ scrollTop: doc.scrollTop() - bottom - 40 });
+							}
+							break;
+						}
+					}
+					break;
+
+				// next page
+				case 88:
+					var distance = 100000;
+					var img_frame;
+					var frames = $('.img_frame');
+					for(var i = 0; i < frames.length; i++)
+					{
+						$this = $(frames[i]);
+						var d = Math.abs($this.offset().top - doc.scrollTop());
+						if(d < distance)
+						{
+							distance = d;
+							img_frame = $this;
+						}
+						else
+						{
+							var bottom = img_frame.height() + img_frame.offset().top - win.height() - doc.scrollTop();
+							if (bottom > 0)
+							{
+								doc.stop().animate({ scrollTop: doc.scrollTop() + bottom + 20 });
+							}
+							else
+							{
+								var top = bottom + win.height();
+								doc.stop().animate({ scrollTop: doc.scrollTop() + top + 50 });
+							}
+							break;
+						}
+					}
 					break;
 			}
 		}
