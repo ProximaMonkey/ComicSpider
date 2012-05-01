@@ -307,6 +307,7 @@ namespace ComicSpider
 			volume_list.ItemsSource = comic_spider.Manager.Volumes;
 			volume_drag_drop_manager = new WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info>(volume_list);
 
+			Is_all_downloaded = true;
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
