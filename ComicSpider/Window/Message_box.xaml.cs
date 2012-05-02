@@ -4,7 +4,7 @@ namespace ComicSpider
 {
 	public partial class Message_box : Window
 	{
-		public static bool Show(string msg, string title = "Comic Spider")
+		public static bool Show(string msg, bool show_cancel_button = false, string title = "Comic Spider")
 		{
 			Message_box msg_box = new Message_box(msg, title);
 			
@@ -40,6 +40,7 @@ namespace ComicSpider
 
 		private void btn_cancel_Click(object sender, RoutedEventArgs e)
 		{
+			ok = false;
 			this.Close();
 		}
 	}

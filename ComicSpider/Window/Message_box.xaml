@@ -13,7 +13,7 @@
 		<TextBox x:Name="txtMain" Margin="5" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#62FFFFFF" BorderBrush="{x:Null}" FontSize="14" TextWrapping="Wrap" />
 		<StackPanel Margin="5" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Width="60" Margin="5,0" IsDefault="True" Click="btn_ok_Click">OK</Button>
-			<Button Width="60" Margin="5,0" IsCancel="True" Click="btn_cancel_Click">Cancel</Button>
+			<Button x:Name="btn_cancel" Width="60" Margin="5,0" IsCancel="True" Click="btn_cancel_Click">Cancel</Button>
 		</StackPanel>
 	</Grid>
 </Window>

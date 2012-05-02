@@ -410,7 +410,7 @@ namespace ComicSpider
 
 				if (!Message_box.Show(
 					string.Format("System will be shutdown after {0} seconds, click 'Cancel' to cancel.", time_to_wait)
-					))
+					, true))
 				{
 					System.Diagnostics.Process.Start("cmd", "/c shutdown -a");
 				}
@@ -426,7 +426,7 @@ namespace ComicSpider
 
 			if (volume_table.Count > 0)
 			{
-				var groups = volume_table.GroupBy(v => v.Parent_url);
+				var groups = volume_table.GroupBy(v => v.Parent_name);
 				foreach (var group in groups)
 				{
 					Web_resource_info comic = null;
@@ -944,7 +944,7 @@ delete from [Cookie] where 1;";
 			if (volume_list.SelectedItems.Count == 0)
 				return;
 
-			if (!Message_box.Show("All the files in the folder will be deleted permanently. Are you sure to delete?"))
+			if (!Message_box.Show("All the files in the folder will be deleted permanently. Are you sure to delete?", true))
 				return;
 
 			List<Web_resource_info> selected_list = new List<Web_resource_info>();
@@ -973,25 +973,29 @@ delete from [Cookie] where 1;";
 			if (volume_list.SelectedItems.Count == 0)
 				return;
 
-			if (!Message_box.Show("All the files in the folder will be deleted permanently. Are you sure to delete?"))
+			if (!Message_box.Show("All the files in the folder will be deleted permanently. Are you sure to delete?", true))
 				return;
 
-			List<Web_resource_info> selected_list = new List<Web_resource_info>();
-			foreach (Web_resource_info item in volume_list.SelectedItems)
+			Web_resource_info item = volume_list.SelectedItem as Web_resource_info;
+			try
 			{
-				selected_list.Add(item);
+				List<Web_resource_info> list = new List<Web_resource_info>();
+				foreach (var vol in (from vol in comic_spider.Manager.Volumes
+												   where vol.Url == item.Parent.Url
+												   select vol))
+				{
+					list.Add(vol);
+				}
+
+				foreach (Web_resource_info vol in list)
+				{
+					comic_spider.Manager.Volumes.Remove(vol);
+				}
+				Directory.Delete(Directory.GetParent(item.Path).FullName, true);
 			}
-			foreach (var item in selected_list)
+			catch (Exception ex)
 			{
-				comic_spider.Manager.Volumes.Remove(item);
-				try
-				{
-					Directory.Delete(Directory.GetParent(item.Path).FullName, true);
-				}
-				catch (Exception ex)
-				{
-					this.Title = ex.Message;
-				}
+				this.Title = ex.Message;
 			}
 
 			this.Title = "Item(s) deleted.";
@@ -1013,7 +1017,7 @@ delete from [Cookie] where 1;";
 			if (list_view.SelectedItems.Count == 0)
 				return;
 
-			if (!Message_box.Show("Are you sure to delete?"))
+			if (!Message_box.Show("Are you sure to delete?", true))
 				return;
 
 			if (list_view == volume_list)
@@ -1060,7 +1064,7 @@ delete from [Cookie] where 1;";
 				list_view = (menu_item.Parent as ContextMenu).PlacementTarget as ListView;
 			}
 
-			if (!Message_box.Show("Are you sure to delete?"))
+			if (!Message_box.Show("Are you sure to delete?", true))
 				return;
 
 			var delete_list = new System.Collections.ObjectModel.Collection<Web_resource_info>();
