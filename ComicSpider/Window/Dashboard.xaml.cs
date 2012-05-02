@@ -981,7 +981,7 @@ delete from [Cookie] where 1;";
 			{
 				List<Web_resource_info> list = new List<Web_resource_info>();
 				foreach (var vol in (from vol in comic_spider.Manager.Volumes
-												   where vol.Url == item.Parent.Url
+												   where vol.Parent.Name == item.Parent.Name
 												   select vol))
 				{
 					list.Add(vol);
