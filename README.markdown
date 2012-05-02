@@ -75,23 +75,22 @@ There are three main task queues:
 1. Page info queue
 2. File info queue
 
-Multiply producer and consumer threads will be created to work with these queues.
+Multiply producer and consumer threads will be created to work with these queues(linked lists but behave like queues).
 
-Info producer threads will try to find valuable info, then push file info into file info queue.
-File downloader threads will simply download files in the file info queue.
+Producer threads will try to search pieces of valuable information, then push them into the queues.
+File downloader threads will simply download files via the information queues.
+The spider will act like a normal browser and handle all the Cookies,
+Referer and other basic header information automatically.
 
-Most unpredictable part is the producer part. Every site has is way handle info presentation.
+Most unpredictable part is the producer part. Every site has is way handle information presentation.
 But most sites has a same routine, they has a classic tree with depth 3 and with unknown leaves.
 
 1. Volume list
 2. Page list
 3. File list
 
-They may protect their resource by check request header's Cookie, User-Agent and Referer.
-The spider will do the camouflage work in background automatically.
-
-By default I won't parse the html tree. Because it may take up a lot of resource to handle broken tags or file fragment when the network is bad.
-Regular expression is a more efficient way to ignore all of these unexceptions.
+By default it won't parse the html tree for it may take up a lot of resources to handle broken tags or file fragment when the network is bad.
+Regular expression is a more efficient way to ignore all of these exceptions.
 For example if you want select the javascript fragment in the html, it could be embarrassed to use a xml parser.
 And it really simple for testing regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
 But still you can use XPath to get info, I implemented a lua api for [HtmlAgilityPack](http://htmlagilitypack.codeplex.com/).
