@@ -89,12 +89,12 @@ But most sites has a same routine, they has a classic tree with depth 3 and with
 2. Page list
 3. File list
 
-By default it won't parse the html tree for it may take up a lot of resources to handle broken tags or file fragment when the network is bad.
-Regular expression is a more efficient way to ignore all of these exceptions.
+By default it won't parse the html tree for it may take up a lot of resources to handle broken tags or file fragment when the quality of network connection is poor.
+Regular expression is a more efficient way to ignore all these exceptions.
 For example if you want select the javascript fragment in the html, it could be embarrassed to use a xml parser.
-And it really simple for testing regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
-But still you can use XPath to get info, I implemented a lua api for [HtmlAgilityPack](http://htmlagilitypack.codeplex.com/).
-Because some sites need login to download resource, so I implemented a online login service for some common sites.
+And it's really simple to test regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
+But still you can use XPath to get information, I implemented a lua api for [HtmlAgilityPack](http://htmlagilitypack.codeplex.com/).
+Since login is required to download in some sites, so I implemented a login web service for some famous sites.
 
 ### Detail work flow of producer
 
@@ -107,11 +107,11 @@ Because some sites need login to download resource, so I implemented a online lo
 ### Detail work flow of downloader
 
 1. download file
-2. create a presentation page to present images of each volume
+2. create a presentation page to display images of each volume
 
 ### Auto created presentation page
 
 It has many useful functions for browsing images. Such as auto resize large image and auto split wide image.
-With html5 an animated UI, it will be great to use it browsing image collections, not only mangas.
+With html5 animation, it will be great to use it browsing image collections, not only mangas.
 
 ![View page](https://raw.github.com/ysmood/ComicSpider/master/Documentation/contents/img/snap/view.png)
