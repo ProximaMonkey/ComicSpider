@@ -12,6 +12,8 @@ using ys;
 
 namespace ComicSpider
 {
+	public enum Start_button_state { Start, Stop }
+
 	public partial class Dashboard : Window
 	{
 		/***************************** Public ********************************/
@@ -135,6 +137,7 @@ namespace ComicSpider
 			Main_settings.Instance.Main_url = txt_main_url.Text;
 			Main_settings.Instance.Root_dir = txt_dir.Text;
 			Main_settings.Instance.Max_download_speed = int.Parse(txt_max_speed.Text);
+			Main_settings.Instance.Start_button_enabled = btn_start.IsEnabled;
 
 			if (txt_thread.Text == "0")
 			{
@@ -221,7 +224,7 @@ namespace ComicSpider
 				MainWindow.Main.Taskbar.FlashTaskBar(ys.Win7.FlashOption.FLASHW_ALL);
 
 				comic_spider.Stop(true);
-				btn_start.Content = "Start";
+				btn_start_state = Start_button_state.Start;
 				working_icon.Hide_working();
 
 				if (all != 0)
@@ -273,7 +276,7 @@ namespace ComicSpider
 			}, true);
 
 			comic_spider.Stop(true);
-			btn_start.Content = "Start";
+			btn_start_state = Start_button_state.Start;
 			working_icon.Hide_working();
 		}
 
@@ -338,6 +341,34 @@ namespace ComicSpider
 					count += vol.Downloaded;
 				}
 				return count;
+			}
+		}
+
+		private Start_button_state btn_start_state
+		{
+			get
+			{
+				if ((btn_start.Content as string) == "Start")
+					return Start_button_state.Start;
+				else
+					return Start_button_state.Stop;
+			}
+			set
+			{
+				switch (value)
+				{
+					case Start_button_state.Start:
+						btn_start.Content = "Start";
+						MainWindow.Main.pbar_downloading.Visibility = Visibility.Hidden;
+						break;
+					case Start_button_state.Stop:
+						btn_start.Content = "Stop";
+						MainWindow.Main.pbar_downloading.Visibility = Visibility.Visible;
+						break;
+					default:
+						break;
+				}
+				MainWindow.Main.Start_button.Header = btn_start.Content;
 			}
 		}
 
@@ -714,16 +745,16 @@ delete from [Cookie] where 1;";
 
 			Update_settings();
 
-			if (btn_start.Content.ToString() == "Start")
+			if (btn_start_state == Start_button_state.Start)
 			{
 				Is_all_downloaded = false;
-				btn_start.Content = "Stop";
+				btn_start_state = Start_button_state.Stop;
 				working_icon.Show_working();
 				comic_spider.Async_start();
 			}
 			else
 			{
-				btn_start.Content = "Start";
+				btn_start_state = Start_button_state.Start;
 				comic_spider.Stop();
 				working_icon.Hide_working();
 			}

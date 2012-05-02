@@ -38,6 +38,13 @@ namespace ComicSpider
 		{
 			InitializeComponent();
 
+			sb_show_window = Resources["sb_show_window"] as Storyboard;
+			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
+
+			btn_start = Find_menu_item(this.Resources["main_menu"], "btn_start");
+			cb_is_slient = Find_menu_item(this.Resources["main_menu"], "cb_is_slient");
+			cb_topmost = Find_menu_item(this.Resources["main_menu"], "cb_topmost");
+
 			App.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(Current_DispatcherUnhandledException);
 			App.Current.SessionEnding += new SessionEndingCancelEventHandler(Current_SessionEnding);
 
@@ -52,13 +59,6 @@ namespace ComicSpider
 				+ Main_settings.Instance.App_version
 				+ " April 2012 y.s.";
 			img_logo.ToolTip = this.Title;
-
-			sb_show_window = Resources["sb_show_window"] as Storyboard;
-			sb_hide_window = Resources["sb_hide_window"] as Storyboard;
-
-			btn_start = Find_menu_item(this.Resources["main_menu"], "btn_start");
-			cb_is_slient = Find_menu_item(this.Resources["main_menu"], "cb_is_slient");
-			cb_topmost = Find_menu_item(this.Resources["main_menu"], "cb_topmost");
 
 			Taskbar = new ys.Win7.TaskBar();
 		}
@@ -108,11 +108,8 @@ namespace ComicSpider
 			}
 
 			cb_auto_begin.IsChecked = Main_settings.Instance.Is_auto_begin;
-			foreach (MenuItem item in this.ContextMenu.Items)
-			{
-				if (item.Name == "cb_is_slient")
-					item.IsChecked = Main_settings.Instance.Is_silent;
-			}
+			cb_is_slient.IsChecked = Main_settings.Instance.Is_silent;
+			btn_start.IsEnabled = Main_settings.Instance.Start_button_enabled;
 
 			kv_adpter.Connection.Close();
 

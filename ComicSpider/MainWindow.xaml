@@ -238,20 +238,33 @@
 						<TextBlock x:Name="txt_main_progress" Text="- / -" FontSize="10" Foreground="#FFBB70BE"/>
 					</StackPanel>
 				</Grid>
-				<Grid Grid.Column="1" Margin="10">
+				<Grid Grid.Column="1" Margin="5">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="*" />
+						<RowDefinition Height="6" />
 					</Grid.RowDefinitions>
 
-					<Button x:Name="btn_view" Content="View" Margin="5" ToolTip="view the latest downloaded view page" Click="View_volume" Padding="1,1,5,1"></Button>
+					<ProgressBar x:Name="pbar_downloading" Margin="5,0" Background="#FFDBEAF3" IsIndeterminate="True" Grid.Row="2" >
+						<ProgressBar.Foreground>
+							<SolidColorBrush Color="#FF69D3FF"/>
+						</ProgressBar.Foreground>
+						<ProgressBar.BorderBrush>
+							<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+								<GradientStop Color="#FF99B6CC" Offset="0"/>
+								<GradientStop Color="#FF6C8599" Offset="1"/>
+							</LinearGradientBrush>
+						</ProgressBar.BorderBrush>
+					</ProgressBar>
+
+					<Button x:Name="btn_view" Content="View" Margin="5" ToolTip="view the latest downloaded view page" Click="View_volume" Padding="1,1,5,1"/>
 					<ComboBox x:Name="cb_view_pages" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_view_pages_SelectionChanged" DropDownOpened="cb_view_pages_DropDownOpened" MaxDropDownHeight="600">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Width="12" Margin="3,0" Text="{Binding State_text}" Foreground="#FF826AD4"></TextBlock>
-									<TextBlock Text="{Binding Parent.Name}"></TextBlock>
-									<TextBlock Margin="3,0" Text="{Binding Name}"></TextBlock>
+									<TextBlock Width="12" Margin="3,0" Text="{Binding State_text}" Foreground="#FF826AD4"/>
+									<TextBlock Text="{Binding Parent.Name}"/>
+									<TextBlock Margin="3,0" Text="{Binding Name}"/>
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
@@ -259,7 +272,7 @@
 
 					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Grid.Row="1" Content="Detail" Click="btn_dashboard_Click" Margin="5" IsDefault="True" Padding="1,1,5,1" />
 					<ComboBox x:Name="cb_supported_websites" Margin="6" Width="18" Grid.Row="1" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_websites_SelectionChanged" DropDownOpened="cb_websites_DropDownOpened" MaxDropDownHeight="600">
-						<ComboBoxItem Content="open supported website" IsEnabled="False" IsSelected="True"></ComboBoxItem>
+						<ComboBoxItem Content="open supported website" IsEnabled="False" IsSelected="True"/>
 					</ComboBox>
 				</Grid>
 			</Grid>

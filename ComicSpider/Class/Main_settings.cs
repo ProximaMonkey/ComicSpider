@@ -31,6 +31,7 @@ namespace ComicSpider
 			Main_url = string.Empty;
 			Root_dir = string.Empty;
 			Thread_count = 3;
+			Start_button_enabled = false;
 			Is_auto_begin = true;
 			Is_silent = false;
 			Max_console_line = 500;
@@ -41,6 +42,8 @@ namespace ComicSpider
 		public string Main_url { get; set; }
 		public string Root_dir { get; set; }
 		public int Thread_count { get; set; }
+
+		public bool Start_button_enabled { get; set; }
 
 		public bool Is_auto_begin { get; set; }
 		public bool Is_silent { get; set; }
