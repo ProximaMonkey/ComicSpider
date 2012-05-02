@@ -961,7 +961,36 @@ delete from [Cookie] where 1;";
 				}
 				catch (Exception ex)
 				{
-					Message_box.Show(ex.Message);
+					this.Title = ex.Message;
+				}
+			}
+
+			this.Title = "Item(s) deleted.";
+			Report_main_progress();
+		}
+		private void Delete_with_parent_Click(object sender, RoutedEventArgs e)
+		{
+			if (volume_list.SelectedItems.Count == 0)
+				return;
+
+			if (!Message_box.Show("All the files in the folder will be deleted permanently. Are you sure to delete?"))
+				return;
+
+			List<Web_resource_info> selected_list = new List<Web_resource_info>();
+			foreach (Web_resource_info item in volume_list.SelectedItems)
+			{
+				selected_list.Add(item);
+			}
+			foreach (var item in selected_list)
+			{
+				comic_spider.Manager.Volumes.Remove(item);
+				try
+				{
+					Directory.Delete(Directory.GetParent(item.Path).FullName, true);
+				}
+				catch (Exception ex)
+				{
+					this.Title = ex.Message;
 				}
 			}
 

@@ -376,7 +376,7 @@ function page_control(page)
 					{
 						$this = $(frames[i]);
 						var d = Math.abs($this.offset().top - doc.scrollTop());
-						if(d < distance)
+						if(d < distance && i < frames.length - 1)
 						{
 							distance = d;
 							img_frame = $this;
@@ -407,7 +407,7 @@ function page_control(page)
 					{
 						$this = $(frames[i]);
 						var d = Math.abs($this.offset().top - doc.scrollTop());
-						if(d < distance)
+						if(d < distance && i < frames.length - 1)
 						{
 							distance = d;
 							img_frame = $this;

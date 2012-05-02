@@ -31,8 +31,11 @@
 			<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 			<MenuItem Header="Resume item(s)" Click="Resume_items_Click" />
 			<MenuItem Header="Pause item(s)" Click="Pause_items_Click" />
-			<MenuItem Header="Delete with folder(s)" Click="Delete_with_folder_Click" />
 			<MenuItem Header="Delete downloaded" Click="Delete_downloaded_Click" />
+			<MenuItem Header="Delete with folder(s)">
+				<MenuItem Header="Current folder" Click="Delete_with_folder_Click"></MenuItem>
+				<MenuItem Header="Parent folder(s)" Click="Delete_with_parent_Click"></MenuItem>
+			</MenuItem>
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
 		<Storyboard x:Key="sb_show_logs">
