@@ -245,7 +245,7 @@
 						<RowDefinition Height="6" />
 					</Grid.RowDefinitions>
 
-					<ProgressBar x:Name="pbar_downloading" Margin="5,0" Background="#FFDBEAF3" IsIndeterminate="True" Grid.Row="2" >
+					<ProgressBar x:Name="pbar_downloading" Margin="5,0" Background="#FFDBEAF3" IsIndeterminate="True" Grid.Row="2" Visibility="Hidden" >
 						<ProgressBar.Foreground>
 							<SolidColorBrush Color="#FF69D3FF"/>
 						</ProgressBar.Foreground>
