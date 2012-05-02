@@ -2,7 +2,8 @@
 # License
 
 [Comic Spider](https://github.com/ysmood/ComicSpider) - a tool for downloading and viewing online images.
-The purposes of this software is sharing and learning which means it is for previewing purposes only.
+
+The purpose of this software is sharing and learning. It is for previewing only.
 If you like the mangas/illustrations please support the author by purchasing them.
 
 This program is free software: you can redistribute it and/or modify 
@@ -33,13 +34,15 @@ April 2012 y.s.
 # Features
 
 * Open source, no ads and free forever. 
-* Simple drag and drop is all it needs to download. 
-* Online auto login service. 
-* A better way to browse manga via auto created view pages. 
-* Multithread and fast. 
-* Has an easy to use Lua programmable interface. 
-* Not only comic images, it can be easily modified into a complex downloader. 
-* Support remote script controller which means you can always get the latest parser without updating the program.
+* All you need are only dragging and dropping.
+* Auto-login service.
+* A better way to view manga via auto-created display pages.
+* Multithreaded and parsing fast.
+* An easy to use Lua programmable interface.
+* Not only downloading comic images.
+* It can be easily modified to a complex downloader.
+* Support remote script controller.
+* Always get the latest parser without updates.
 
 # FAQ
 
@@ -54,7 +57,7 @@ April 2012 y.s.
 
 # For developers
 
-Maybe use mono will make the project more open, but now windows only.
+Maybe using Mono will make the project more open, but now for Windows only.
 I provide a programmable interface to control the search behavior of producer: [Lua Interface](http://luaforge.net/projects/luainterface/).
 VC++ runtime is required for Lua, I put it in the ComicSpider/Asset/vcredist_x86.exe
 
@@ -82,8 +85,8 @@ File downloader threads will simply download files via the information queues.
 The spider will act like a normal browser and handle all the Cookies,
 Referer and other basic header information automatically.
 
-Most unpredictable part is the producer part. Every site has is way handle information presentation.
-But most sites has a same routine, they has a classic tree with depth 3 and with unknown leaves.
+Most unpredictable part is the producer part. Every site has its way to handle information presentation.
+But most sites has a same routine, they all have a classic tree with depth 3 and with unknown leaves.
 
 1. Volume list
 2. Page list
@@ -93,8 +96,10 @@ By default it won't parse the html tree for it may take up a lot of resources to
 Regular expression is a more efficient way to ignore all these exceptions.
 For example if you want select the javascript fragment in the html, it could be embarrassed to use a xml parser.
 And it's really simple to test regular expression in tools like [an online tester](http://myregextester.com/), Sublime Text or Expresso.
+
 But still you can use XPath to get information, I implemented a lua api for [HtmlAgilityPack](http://htmlagilitypack.codeplex.com/).
-Since login is required to download in some sites, so I implemented a login web service for some famous sites.
+
+Since login is required to download in some sites, I implemented a login web service for some famous sites.
 
 ### Detail work flow of producer
 
