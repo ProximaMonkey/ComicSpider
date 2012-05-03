@@ -139,9 +139,9 @@
 					</LinearGradientBrush>
 				</Button.Background>
 			</Button>
-			<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Click="btn_logs_Click" />
 			<Button Content="Fix display pages" ToolTip="auto create html pages to display images" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Click="btn_fix_display_pages_Click" />
 			<Button Content="Del display pages" ToolTip="delete all the auto create a html pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Click="btn_del_display_pages_Click" />
+			<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Click="btn_logs_Click" />
 			<Button Content="Controller" ToolTip="edit lua controller script" x:Name="btn_controller" Margin="5" Padding="5,0" Click="btn_controller_Click" Background="#FFEBFFEE" />
 			<Button Content="Help" x:Name="btn_help" Margin="5" Padding="5,0" Click="btn_help_Click" />
 			<CheckBox Content="Auto shutdown" ToolTip="auto shutdown computer when all downloaded" x:Name="cb_auto_shutdown" Margin="10,0" VerticalAlignment="Center" />

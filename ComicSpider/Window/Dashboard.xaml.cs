@@ -197,6 +197,20 @@ namespace ComicSpider
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
+		public delegate void Log_delegate(string info);
+		public void Log(string info)
+		{
+			if (txt_console.LineCount >= Main_settings.Instance.Max_console_line)
+			{
+				txt_console.Text = txt_console.Text.Substring(
+											txt_console.GetCharacterIndexFromLineIndex(
+												Main_settings.Instance.Max_console_line / 2
+											)
+										);
+			}
+			txt_console.AppendText(">> " + info + '\n');
+		}
+
 		public delegate void Report_progress_delegate(string info);
 		public void Report_progress(string info)
 		{

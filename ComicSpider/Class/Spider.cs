@@ -314,23 +314,17 @@ namespace ys
 			{
 				try
 				{
-					try
-					{
-						lua_script = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Lua_script;
-						// Chech if has been modified.
-						if (!string.IsNullOrEmpty(lua_script.E_tag))
-							wc.Headers["If-None-Match"] = lua_script.E_tag;
-						if (!string.IsNullOrEmpty(lua_script.Last_modified))
-							wc.Last_modified = lua_script.Last_modified;
-					}
-					catch
-					{
-					}
+					lua_script = ys.Common.ByteArrayToObject(data_reader["Value"] as byte[]) as Lua_script;
+					// Chech if has been modified.
+					if (!string.IsNullOrEmpty(lua_script.E_tag))
+						wc.Headers["If-None-Match"] = lua_script.E_tag;
+					if (lua_script.Last_modified != DateTime.MinValue)
+						wc.Last_modified = lua_script.Last_modified;
 
 					string loaded_script = wc.DownloadString(url);
 
 					lua_script.E_tag = wc.ResponseHeaders["ETag"];
-					lua_script.Last_modified = wc.ResponseHeaders["Last-Modified"];
+					lua_script.Last_modified = wc.Response.LastModified;
 					lua_script.Script = loaded_script;
 
 					kv_adpter.Update(
@@ -339,14 +333,14 @@ namespace ys
 						data_reader["Value"] as byte[]
 					);
 
-					Report("Loaded: " + url);
+					Log("Loaded: " + url);
 				}
 				catch(Exception ex)
 				{
 					var response = ((System.Net.HttpWebResponse)((((System.Net.WebException)(ex)).Response)));
 					if (response == null ||
 						response.StatusCode == HttpStatusCode.NotModified)
-						Report("Not Modified, load cache: " + url);
+						Log("Not Modified, load cache: " + url);
 				}
 			}
 			else
@@ -358,14 +352,14 @@ namespace ys
 					lua_script = new Lua_script(
 						loaded_script,
 						wc.ResponseHeaders["ETag"],
-						wc.ResponseHeaders["Last-Modified"]
+						wc.Response.LastModified
 					);
 
 					kv_adpter.Insert(
 						url,
 						ys.Common.ObjectToByteArray(lua_script)
 					);
-					Report("Loaded: " + url);
+					Log("Loaded: " + url);
 				}
 				catch (Exception ex)
 				{
@@ -439,6 +433,21 @@ namespace ys
 				{
 					Report(err.Message);
 				}
+			}
+		}
+		private void Log(string format, params object[] arg)
+		{
+			try
+			{
+				string info = string.Format(format, arg);
+				Console.WriteLine(info);
+				Dashboard.Instance.Dispatcher.Invoke(
+					new Dashboard.Log_delegate(Dashboard.Instance.Log),
+					info
+				);
+			}
+			catch
+			{
 			}
 		}
 		private void Report(string format, params object[] arg)

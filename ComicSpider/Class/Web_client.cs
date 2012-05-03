@@ -41,21 +41,34 @@ namespace ComicSpider
 
 		public int Timeout = 15 * 1000;
 		public bool AllowAutoRedirect = true;
-		public string Last_modified = null;
+		public DateTime Last_modified = DateTime.MinValue;
 
 		protected override WebRequest GetWebRequest(Uri address)
 		{
 			HttpWebRequest request = (HttpWebRequest)base.GetWebRequest(address);
 
-			if (!string.IsNullOrEmpty(Last_modified))
-				request.IfModifiedSince = DateTime.Parse(Last_modified);
-			
+			if (Last_modified != DateTime.MinValue)
+				request.IfModifiedSince = Last_modified;
+
 			// GZip
 			request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 
 			request.Timeout = Timeout;
 			request.AllowAutoRedirect = AllowAutoRedirect;
 			return request;
+		}
+		[System.Diagnostics.DebuggerStepThrough]
+		protected override WebResponse GetWebResponse(WebRequest request)
+		{
+			try
+			{
+				Response = base.GetWebResponse(request) as HttpWebResponse;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			return Response;
 		}
 	}
 }

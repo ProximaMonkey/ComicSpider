@@ -36,7 +36,7 @@ namespace ComicSpider
 			{
 				Console.WriteLine(info);
 				Dashboard.Instance.Dispatcher.Invoke(
-					new Dashboard.Report_progress_delegate(Dashboard.Instance.Report_progress),
+					new Dashboard.Log_delegate(Dashboard.Instance.Log),
 					info
 				);
 			}
@@ -176,13 +176,6 @@ namespace ComicSpider
 
 			List<Web_resource_info> list = this["info_list"] as List<Web_resource_info>;
 
-			if ((this["is_auto_format_name"] as bool?) == true &&
-				!string.IsNullOrEmpty(name) &&
-				!string.IsNullOrEmpty(parent.Name))
-			{
-				name = name.Replace(parent.Name, "").Trim();
-			}
-
 			list.Add(new Web_resource_info(
 				url,
 				index,
@@ -225,7 +218,7 @@ namespace ComicSpider
 	[Serializable]
 	public class Lua_script
 	{
-		public Lua_script(string script, string hash, string last_modified)
+		public Lua_script(string script, string hash, DateTime last_modified)
 		{
 			Script = script;
 			E_tag = hash;
@@ -234,6 +227,6 @@ namespace ComicSpider
 
 		public string Script { get; set; }
 		public string E_tag { get; set; }
-		public string Last_modified { get; set; }
+		public DateTime Last_modified { get; set; }
 	}
 }
