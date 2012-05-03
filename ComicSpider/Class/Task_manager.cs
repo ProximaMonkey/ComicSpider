@@ -16,7 +16,7 @@ namespace ComicSpider
 			Volumes = new ObservableCollection<Web_resource_info>();
 
 			monitor = new System.Timers.Timer();
-			monitor.Interval = 3 * 60 * 1000;
+			monitor.Interval = 1 * 60 * 1000;
 			monitor.Elapsed += new System.Timers.ElapsedEventHandler(monitor_Elapsed);
 		}
 
