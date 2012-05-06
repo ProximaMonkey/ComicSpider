@@ -6,7 +6,7 @@ namespace ComicSpider
 	{
 		public static bool Show(string msg, bool show_cancel_button = false, string title = "Comic Spider")
 		{
-			Message_box msg_box = new Message_box(msg, title);
+			Message_box msg_box = new Message_box(msg, show_cancel_button, title);
 			
 			msg_box.ShowDialog();
 
@@ -15,12 +15,15 @@ namespace ComicSpider
 
 		private static bool ok = false;
 
-		private Message_box(string msg, string title = "")
+		private Message_box(string msg, bool show_cancel_button = false, string title = "")
 		{
 			InitializeComponent();
 
 			this.Title = title;
 			txtMain.Text = msg;
+
+			if (!show_cancel_button)
+				btn_cancel.Visibility = System.Windows.Visibility.Collapsed;
 
 			string sound_path = @"Asset\メッセージ(alert).wav";
 			if (System.IO.File.Exists(sound_path))

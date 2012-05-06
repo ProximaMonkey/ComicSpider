@@ -28,8 +28,8 @@ External functions:
 	Web_client lc:web_post(string url, LuaTable dict):
 		Send data to server via POST method.
 
-	void lc:login(string host):
-		Comic Spider login service.
+	void lc:login(string host, LuaTable dict = null):
+		Comic Spider login service. Second param is the GET selector data.
 
 	string lc:find(string regex_pattern):
 		CSharp Regex.fill_list method. Param pattern will be automatically convert to string.

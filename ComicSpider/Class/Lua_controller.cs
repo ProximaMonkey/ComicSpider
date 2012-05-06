@@ -205,11 +205,23 @@ namespace ComicSpider
 			return Web_client.Post(url, info);
 		}
 
-		public void login(string host)
+		public void login(string host, LuaTable dict = null)
 		{
+			string data = string.Empty;
+			if (dict != null)
+			{
+				foreach (var key in dict.Keys)
+				{
+					data += "&" + System.Web.HttpUtility.UrlEncode(key as string) + "="
+						+ System.Web.HttpUtility.UrlEncode(dict[key] as string);
+				}
+			}
+
 			Web_client wc = new Web_client();
 			string cookie = wc.DownloadString(
-				"http://comicspider.sinaapp.com/service/?login=" + Uri.EscapeUriString(host)
+				"http://comicspider.sinaapp.com/service/?login=" +
+				Uri.EscapeUriString(host) +
+				data
 			);
 			Cookie_pool.Instance.Update(host, cookie);
 		}
