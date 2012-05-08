@@ -17,7 +17,7 @@ namespace ComicSpider
 
 			monitor = new System.Timers.Timer();
 			monitor.Interval = 1 * 60 * 1000;
-			monitor.Elapsed += new System.Timers.ElapsedEventHandler(monitor_Elapsed);
+			monitor.Elapsed += new System.Timers.ElapsedEventHandler(Monitor_Elapsed);
 		}
 
 		public void Start_monitor()
@@ -145,7 +145,7 @@ namespace ComicSpider
 
 		private System.Timers.Timer monitor;
 
-		private void monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void Monitor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (Dashboard.Instance.Is_all_left_failed)
 			{

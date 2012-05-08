@@ -923,6 +923,11 @@ delete from [Cookie] where 1;";
 
 						item.Parent.State = Web_resource_state.Wait;
 					}
+
+					if (item.Count > 0)
+					{
+						item.Children[0].State = Web_resource_state.Wait;
+					}
 				}
 			}
 
