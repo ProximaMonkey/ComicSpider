@@ -175,15 +175,8 @@ namespace ComicSpider
 		public delegate void Show_supported_sites_delegate(List<Website_info> list);
 		public void Show_supported_sites(List<Website_info> list)
 		{
-			var label = cb_supported_websites.Items[0];
 			cb_supported_websites.Items.Clear();
-			cb_supported_websites.Items.Add(label);
-			cb_supported_websites.SelectedIndex = 0;
-			foreach (var item in list)
-			{
-				cb_supported_websites.Items.Add(
-					new ComboBoxItem() { Content = item.Name, Tag = item.Home });
-			}
+			cb_supported_websites.ItemsSource = list;
 		}
 
 		public delegate void Show_update_info_delegate(string info, string downlaod_page);
@@ -278,14 +271,14 @@ namespace ComicSpider
 
 		private void cb_websites_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ComboBoxItem item = cb_supported_websites.SelectedValue as ComboBoxItem;
+			Website_info item = cb_supported_websites.SelectedValue as Website_info;
 
 			if (item == null ||
-				string.IsNullOrEmpty(item.Tag as string))
+				string.IsNullOrEmpty(item.Home))
 				return;
 			try
 			{
-				System.Diagnostics.Process.Start(item.Tag as string);
+				System.Diagnostics.Process.Start(item.Home);
 			}
 			catch (Exception ex)
 			{
@@ -297,7 +290,7 @@ namespace ComicSpider
 			if (!Dashboard.Is_initialized)
 			{
 				var d = Dashboard.Instance;
-				cb_supported_websites.Items.Add("Loading parser...");
+				cb_supported_websites.Items.Add(new Website_info("Loading parser...", null, null));
 			}
 		}
 

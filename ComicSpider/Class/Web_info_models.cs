@@ -283,5 +283,28 @@ namespace ys
 		public string Name { get; set; }
 		public string Home { get; set; }
 		public List<string> Hosts { get; set; }
+		public string Icon_path
+		{
+			get
+			{
+				string path = "ys.ico";
+
+				foreach (var p in favicon_paths)
+				{
+					if (string.IsNullOrEmpty(Home))
+						break;
+
+					if (Home.Contains(System.IO.Path.GetFileNameWithoutExtension(p)))
+					{
+						path = System.IO.Path.GetFileName(p);
+						break;
+					}
+				}
+
+				return "pack://siteoforigin:,,,/Favicon/" + path;
+			}
+		}
+
+		private static string[] favicon_paths = System.IO.Directory.GetFiles("Favicon");
 	}
 }
