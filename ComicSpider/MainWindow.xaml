@@ -246,7 +246,7 @@
 					</Grid.RowDefinitions>
 
 					<Button x:Name="btn_dashboard" ToolTip="hotkey : D" Content="Detail" Click="btn_dashboard_Click" Margin="5" IsDefault="True" Padding="1,1,5,1" />
-					<ComboBox x:Name="cb_supported_websites" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_websites_SelectionChanged" DropDownOpened="cb_websites_DropDownOpened" MaxDropDownHeight="600">
+					<ComboBox x:Name="cb_supported_websites" ToolTip="click item to open supported website" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_websites_SelectionChanged" DropDownOpened="cb_websites_DropDownOpened" MaxDropDownHeight="600">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
@@ -258,7 +258,7 @@
 					</ComboBox>
 
 					<Button x:Name="btn_view" Content="View" Grid.Row="1" Margin="5" ToolTip="view the latest downloaded view page" Click="View_volume" Padding="1,1,5,1"/>
-					<ComboBox x:Name="cb_view_pages" Grid.Row="1" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_view_pages_SelectionChanged" DropDownOpened="cb_view_pages_DropDownOpened" MaxDropDownHeight="600">
+					<ComboBox x:Name="cb_view_pages" ToolTip="click item to open view page" Grid.Row="1" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_view_pages_SelectionChanged" DropDownOpened="cb_view_pages_DropDownOpened" MaxDropDownHeight="600">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
