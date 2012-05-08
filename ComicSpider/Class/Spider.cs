@@ -484,6 +484,7 @@ namespace ys
 			{
 				root.Name = Raw_file_folder;
 				root.Children = new List<Web_resource_info>();
+
 				root.Children.Add(new Web_resource_info(url, 0, "", "", root));
 			}
 			else
@@ -498,6 +499,18 @@ namespace ys
 					root.Name = root.Name.Replace(c, ' ');
 				}
 				root.Path = Path.Combine(Main_settings.Instance.Root_dir, root.Name);
+
+				foreach (var vol in root.Children)
+				{
+					if (!string.IsNullOrEmpty(vol.Path))
+						continue;
+
+					foreach (var c in Path.GetInvalidFileNameChars())
+					{
+						vol.Name = vol.Name.Replace(c, ' ');
+					}
+					vol.Path = Path.Combine(root.Path, vol.Name);
+				}
 
 				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
 				Dashboard.Instance.Dispatcher.Invoke(
@@ -555,14 +568,6 @@ namespace ys
 						);
 
 						#region Create folder
-
-						foreach (var c in Path.GetInvalidFileNameChars())
-						{
-							vol_info.Name = vol_info.Name.Replace(c, ' ');
-						}
-
-						if (string.IsNullOrEmpty(vol_info.Path))
-							vol_info.Path = Path.Combine(vol_info.Parent.Path, vol_info.Name);
 
 						if (!Directory.Exists(vol_info.Path))
 						{
