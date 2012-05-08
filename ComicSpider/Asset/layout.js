@@ -349,12 +349,12 @@ function page_control(page)
 			{
 				// Q previous volume
 				case 81:
-					$('.btn.previous').click();
+					location.href = $('.btn.previous').attr('href');
 					break;
 
 				// W next volume
 				case 87:
-					$('.btn.next').click();
+					location.href = $('.btn.next').attr('href');
 					break;
 
 				// A auto split switch
@@ -376,7 +376,7 @@ function page_control(page)
 					{
 						$this = $(frames[i]);
 						var d = Math.abs($this.offset().top - doc.scrollTop());
-						if(d < distance && i < frames.length - 1)
+						if(d < distance)
 						{
 							distance = d;
 							img_frame = $this;
@@ -407,7 +407,7 @@ function page_control(page)
 					{
 						$this = $(frames[i]);
 						var d = Math.abs($this.offset().top - doc.scrollTop());
-						if(d < distance && i < frames.length - 1)
+						if(d < distance)
 						{
 							distance = d;
 							img_frame = $this;
