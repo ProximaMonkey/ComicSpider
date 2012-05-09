@@ -238,7 +238,14 @@ namespace ys
 						if (!string.IsNullOrEmpty(loaded_script))
 						{
 							Lua_script += '\n' + loaded_script;
-							lua.DoString(loaded_script);
+							try
+							{
+								lua.DoString(loaded_script);
+							}
+							catch (LuaException ex)
+							{
+								System.Windows.MessageBox.Show(url + "\r\n" + ex.Message + "\r\n" + ex.StackTrace);
+							}
 						}
 
 						// Check version
@@ -259,6 +266,7 @@ namespace ys
 					foreach (string site_name in (lua.GetTable("comic_spider") as LuaTable).Keys)
 					{
 						string home = lua.DoString(string.Format("return comic_spider['{0}'].home", site_name))[0] as string;
+						string description = lua.DoString(string.Format("return comic_spider['{0}'].description", site_name))[0] as string;
 						List<string> hosts = new List<string>();
 						var host = lua.DoString(string.Format("return comic_spider['{0}'].hosts", site_name))[0];
 						if ((host as LuaTable) != null)
@@ -268,7 +276,7 @@ namespace ys
 								hosts.Add(item);
 							}
 						}
-						supported_websites.Add(new Website_info(site_name, home, hosts));
+						supported_websites.Add(new Website_info(site_name, home, hosts, description));
 					}
 
 					supported_websites.Sort((x, y) => { return x.Name.CompareTo(y.Name); });

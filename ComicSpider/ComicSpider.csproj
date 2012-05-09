@@ -230,9 +230,6 @@
     <Resource Include="Images\ys_16.png" />
     <Resource Include="Images\minimize.png" />
     <SplashScreen Include="Images\splash_screen.png" />
-    <None Include="Favicon\ys.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Favicon\manhua.178.com.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -267,6 +264,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Favicon\yande.re.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Favicon\default.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Favicon\github.com.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Lib\HtmlAgilityPack.dll">

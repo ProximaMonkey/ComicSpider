@@ -249,7 +249,7 @@
 					<ComboBox x:Name="cb_supported_websites" ToolTip="click item to open supported website" Margin="6" Width="18" Background="{x:Null}" BorderBrush="{x:Null}" HorizontalAlignment="Right" Style="{DynamicResource ComboBoxStyle_side}" SelectionChanged="cb_websites_SelectionChanged" DropDownOpened="cb_websites_DropDownOpened" MaxDropDownHeight="600">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
+								<StackPanel Orientation="Horizontal" ToolTip="{Binding Description}">
 									<Image Width="16" Height="16" Source="{Binding Icon_path}"></Image>
 									<TextBlock Margin="5,0,0,0" Text="{Binding Name}"></TextBlock>
 								</StackPanel>

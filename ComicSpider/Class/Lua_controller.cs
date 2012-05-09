@@ -23,7 +23,14 @@ namespace ComicSpider
 			if (Dashboard.Is_initialized) dashboard = Dashboard.Instance;
 			settings = Main_settings.Instance;
 
-			this.DoString(Comic_spider.Lua_script);
+			try
+			{
+				this.DoString(Comic_spider.Lua_script);
+			}
+			catch (LuaException ex)
+			{
+				System.Windows.MessageBox.Show("comic_spider.lua : " + ex.Message + "\r\n" + ex.StackTrace);
+			}
 		}
 
 		public MainWindow main;

@@ -290,7 +290,7 @@ namespace ComicSpider
 			if (!Dashboard.Is_initialized)
 			{
 				var d = Dashboard.Instance;
-				cb_supported_websites.Items.Add(new Website_info("Loading parser...", "ComicSpider", null));
+				cb_supported_websites.Items.Add(new Website_info("Loading parser...", "default"));
 			}
 		}
 

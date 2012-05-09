@@ -272,11 +272,12 @@ namespace ComicSpider
 
 	public class Website_info : System.ComponentModel.INotifyPropertyChanged
 	{
-		public Website_info(string name, string home, List<string> hosts)
+		public Website_info(string name, string home, List<string> hosts = null, string description = "")
 		{
 			Name = name;
 			Home = home;
 			Hosts = hosts;
+			Description = description;
 		}
 
 		public object Is_inited_lock = new object();
@@ -285,6 +286,7 @@ namespace ComicSpider
 		public string Name { get; set; }
 		public string Home { get; set; }
 		public List<string> Hosts { get; set; }
+		public string Description { get; set; }
 		public string Icon_path
 		{
 			get
@@ -313,9 +315,11 @@ namespace ComicSpider
 						try
 						{
 							Web_client wc = new Web_client();
-							Regex reg = new Regex(@"[^/]/[^/].*");
+							string url = Regex.Replace(Home, @"[^/](?<r>/[^/].*)", m => {
+								return m.Groups[0].Value.Replace(m.Groups["r"].Value, "");
+							});
 							wc.DownloadFile(
-								reg.Replace(Home, "").TrimEnd('/') + "/favicon.ico",
+								url + "/favicon.ico",
 								Path.Combine(favicon_dir, (new Uri(Home)).Host + ".ico")
 							);
 							favicon_paths = System.IO.Directory.GetFiles(favicon_dir);
@@ -347,6 +351,6 @@ namespace ComicSpider
 
 		private static string[] favicon_paths = System.IO.Directory.GetFiles(favicon_dir);
 		private const string favicon_dir = "Favicon";
-		private const string default_icon = "ys.ico";
+		private const string default_icon = "default.ico";
 	}
 }

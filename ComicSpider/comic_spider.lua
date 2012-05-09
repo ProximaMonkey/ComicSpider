@@ -112,6 +112,8 @@ comic_spider = {
 
 		hosts = { '' },
 
+		description = '',
+
 		charset = 'utf-8',
 
 		is_create_view_page = true,
@@ -139,6 +141,7 @@ comic_spider = {
 	-- Project home
 	['-- Comic Spider Project --'] = {
 		home = 'http://github.com/ysmood/ComicSpider',
+		description = 'An open source project.'
 	},
 
 	-- A sample english manga site. You can follow code below to parse another site.
@@ -146,6 +149,9 @@ comic_spider = {
 		home = 'http://mangafox.me/directory/',
 
 		hosts = { 'mangafox.me', 'mfcdn.net' },
+
+		description = 'Read your favorite mangas online!\r\n' ..
+			'Hundreds of high-quality free manga for you, with a list being updated daily.',
 
 		get_volumes = function()
 			src_info.Name = lc:find([[<title>(?<find>.+) Manga - .+?</title>]])
@@ -178,6 +184,10 @@ comic_spider = {
 		home = 'http://manhua.178.com/',
 
 		hosts = { '178.com' },
+
+		description = '178在线漫画提供海量漫画,更新最快在线漫画欣赏\r\n' ..
+			'详尽的动漫资料库、动画资讯、用户评论社区于一体,它与在线动画站、动漫之家论坛三站合一\r\n' ..
+			'将成为国内更新最快,动漫视听享受最全,资料库最详尽的社区型动漫爱好者的交流互动平台',
 
 		get_volumes = function()
 			-- 首先获取漫画名
@@ -219,6 +229,10 @@ comic_spider = {
 
 		hosts = { 'pixiv.net' },
 
+		description = 'pixiv is an online artist community\r\n' ..
+			'where anyone can browse or submit their own anime and manga illustrations,\r\n' ..
+			'collaborate with others, and even join official contests.!',
+
 		is_create_view_page = false,
 		is_auto_format_name = false,
 
@@ -257,6 +271,9 @@ comic_spider = {
 
 		hosts = { 'yande.re', 'konachan.com', 'donmai.us', 'behoimi.org', 'nekobooru.net', 'sankakucomplex.com', 'sankakustatic.com' },
 
+		description = 'A Danbooru focusing on High Resolution Anime Scans,\r\n' ..
+			'Ecchi Scans, Hentai Scans, Moe Scans, and Bishoujo Scans; unlimited downloads.',
+
 		is_create_view_page  = false,
 		is_auto_format_name = false,
 
@@ -293,13 +310,16 @@ comic_spider = {
 }
 
 -- Example: clone Danbooru websites.
-for n, h in pairs {
-	['Konachan']               = 'http://konachan.com'           ,
-	['Donmai']                 = 'http://donmai.us'              ,
-	['Behoimi']                = 'http://behoimi.org'            ,
-	['Nekobooru']              = 'http://nekobooru.net'          ,
-	['Sankakucomplex Channel'] = 'http://chan.sankakucomplex.com',
-	['Sankakucomplex Idol']    = 'http://idol.sankakucomplex.com',
+for k, v in pairs {
+	['Konachan']               = {'http://konachan.com'            , 'Anime Wallpapers' },
+	['Donmai']                 = {'http://donmai.us'               , 'A Danbooru site' },
+	['Behoimi']                = {'http://behoimi.org'             , 'All about cosplay photos' },
+	['Nekobooru']              = {'http://nekobooru.net'           , 'A Danbooru site' },
+	['Sankakucomplex Channel'] = {'http://chan.sankakucomplex.com' , 'Anime, Manga and Games, observed from Japan.' },
+	['Sankakucomplex Idol']    = {'http://idol.sankakucomplex.com' , 'All about cosplay photos' },
 } do
-	comic_spider[n] = { home = h .. '/post?tags=rating%3Asafe' }
+	comic_spider[k] = {
+		home = v[1] .. '/post?tags=rating%3Asafe',
+		description = v[2],
+	}
 end
