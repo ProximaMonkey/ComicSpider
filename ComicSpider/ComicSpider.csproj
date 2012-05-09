@@ -233,7 +233,7 @@
     <None Include="Favicon\ys.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Favicon\178.com.ico">
+    <None Include="Favicon\manhua.178.com.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Favicon\animephile.com.png">

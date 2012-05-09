@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Linq;
+using System.IO;
+using System.Text.RegularExpressions;
 
-namespace ys
+namespace ComicSpider
 {
 	public enum Web_resource_state : int
 	{
@@ -268,7 +270,7 @@ namespace ys
 		private List<Web_resource_info> children;
 	}
 
-	public class Website_info
+	public class Website_info : System.ComponentModel.INotifyPropertyChanged
 	{
 		public Website_info(string name, string home, List<string> hosts)
 		{
@@ -287,7 +289,10 @@ namespace ys
 		{
 			get
 			{
-				string path = "ys.ico";
+				if (!Directory.Exists(favicon_dir))
+					Directory.CreateDirectory(favicon_dir);
+
+				string path = default_icon;
 
 				foreach (var p in favicon_paths)
 				{
@@ -301,10 +306,47 @@ namespace ys
 					}
 				}
 
-				return "pack://siteoforigin:,,,/Favicon/" + path;
+				// Download the favicon if necessary.
+				if (path == default_icon)
+				{
+					Thread get_favicon = new Thread(new ThreadStart(() => {
+						try
+						{
+							Web_client wc = new Web_client();
+							Regex reg = new Regex(@"[^/]/[^/].*");
+							wc.DownloadFile(
+								reg.Replace(Home, "").TrimEnd('/') + "/favicon.ico",
+								Path.Combine(favicon_dir, (new Uri(Home)).Host + ".ico")
+							);
+							favicon_paths = System.IO.Directory.GetFiles(favicon_dir);
+							NotifyPropertyChanged("Icon_path");
+						}
+						catch (Exception ex)
+						{
+							Dashboard.Instance.Dispatcher.Invoke(
+								new Dashboard.Log_delegate(Dashboard.Instance.Log),
+								ex.Message
+							);
+						}
+					}));
+					get_favicon.Start();
+				}
+
+				return "pack://siteoforigin:,,,/" + Path.Combine(favicon_dir, path);
 			}
 		}
 
-		private static string[] favicon_paths = System.IO.Directory.GetFiles("Favicon");
+		public void NotifyPropertyChanged(String prop_name)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(prop_name));
+			}
+		}
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		private static string[] favicon_paths = System.IO.Directory.GetFiles(favicon_dir);
+		private const string favicon_dir = "Favicon";
+		private const string default_icon = "ys.ico";
 	}
 }

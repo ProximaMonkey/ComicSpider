@@ -41,7 +41,7 @@
 				<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1" KeySpline="0.14,0.56,0.66,0.92"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
-		<ContextMenu x:Key="main_menu">
+		<ContextMenu x:Key="main_menu" Closed="ContextMenu_Closed">
 			<MenuItem Header="_View volume" Click="View_volume" InputGestureText="V"></MenuItem>
 			<MenuItem Header="_Open folder" Click="Open_folder" InputGestureText="O"></MenuItem>
 			<MenuItem Header="_Dashboard" Click="btn_dashboard_Click" InputGestureText="D"></MenuItem>

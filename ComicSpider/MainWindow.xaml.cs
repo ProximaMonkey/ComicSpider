@@ -290,7 +290,7 @@ namespace ComicSpider
 			if (!Dashboard.Is_initialized)
 			{
 				var d = Dashboard.Instance;
-				cb_supported_websites.Items.Add(new Website_info("Loading parser...", null, null));
+				cb_supported_websites.Items.Add(new Website_info("Loading parser...", "ComicSpider", null));
 			}
 		}
 
@@ -507,5 +507,16 @@ namespace ComicSpider
 		{
 			this.Close();
 		}
+
+		#region Fix the TaskbarNotification position bug.
+
+		private void ContextMenu_Closed(object sender, RoutedEventArgs e)
+		{
+			ContextMenu cm = sender as ContextMenu;
+			cm.VerticalOffset = 0;
+			cm.HorizontalOffset = 0;
+		} 
+
+		#endregion
 	}
 }
