@@ -141,7 +141,7 @@ comic_spider = {
 	-- Project home
 	['-- Comic Spider Project --'] = {
 		home = 'http://github.com/ysmood/ComicSpider',
-		description = 'An open source project.'
+		description = 'Project home page.'
 	},
 
 	-- A sample english manga site. You can follow code below to parse another site.
@@ -229,7 +229,7 @@ comic_spider = {
 
 		hosts = { 'pixiv.net' },
 
-		description = 'pixiv is an online artist community\r\n' ..
+		description = 'Pixiv is an online artist community\r\n' ..
 			'where anyone can browse or submit their own anime and manga illustrations,\r\n' ..
 			'collaborate with others, and even join official contests.!',
 
