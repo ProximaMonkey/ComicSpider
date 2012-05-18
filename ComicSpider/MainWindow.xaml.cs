@@ -175,7 +175,9 @@ namespace ComicSpider
 		public delegate void Show_supported_sites_delegate(List<Website_info> list);
 		public void Show_supported_sites(List<Website_info> list)
 		{
-			cb_supported_websites.Items.Clear();
+			if (cb_supported_websites.ItemsSource == null)
+				cb_supported_websites.Items.Clear();
+
 			cb_supported_websites.ItemsSource = list;
 		}
 
