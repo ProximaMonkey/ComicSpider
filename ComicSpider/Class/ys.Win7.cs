@@ -19,6 +19,14 @@ namespace ys.Win7
 			if (isWin7) TaskbarList = (ITaskbarList)new TaskbarList();
 		}
 
+		public bool IsNormalState
+		{
+			get
+			{
+				return isNormalState;
+			}
+		}
+
 		/// <summary>
 		/// TaskBar的状态设置
 		/// </summary>
@@ -61,7 +69,7 @@ namespace ys.Win7
 
 		private bool isWin7;
 		private static ITaskbarList TaskbarList;
-		public bool isNormalState = true;
+		private bool isNormalState = true;
 	}
 
 	#region Interface

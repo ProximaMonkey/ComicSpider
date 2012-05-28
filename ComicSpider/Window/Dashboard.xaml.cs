@@ -235,8 +235,6 @@ namespace ComicSpider
 			{
 				Is_all_downloaded = true;
 
-				MainWindow.Main.Taskbar.FlashTaskBar(ys.Win7.FlashOption.FLASHW_ALL);
-
 				comic_spider.Stop(true);
 				btn_start_state = Start_button_state.Start;
 				working_icon.Hide_working();
