@@ -1,4 +1,4 @@
---[[
+﻿--[[
 Comic Spider controller
 April 2012 y.s.
 
@@ -284,7 +284,7 @@ comic_spider = {
 				[[("rating":"(?<r>.)".*?"file_url":"(?<u>.+?)")|("file_url":"(?<u>.+?)".*?"rating":"(?<r>.)")]],
 				function(i, gs)
 					if one_page and info_list.Count > 0 then return end
-					url = gs['u'].Value
+					url = gs['u'].Value:gsub('\\/', '/')
 					r = gs['r'].Value
 					if r == 's' then
 						name = 'Safe'
@@ -323,3 +323,30 @@ for k, v in pairs {
 		description = v[2],
 	}
 end
+
+comic_spider['Fakku'] = {
+	home = 'http://www.fakku.net',
+
+	hosts = { 'fakku.net' },
+
+	description = 'FAKKU is the best hentai site on the internet.\r\nThousands of free hentai manga, doujin, games, videos, and images.',
+
+	get_volumes = function()
+		src_info.Name = 'Fakku'
+		vol_name = lc:find([[<title>(?<find>.+?) \| .+?</title>]])
+		if not src_info.Url:match('/read') then
+			src_info.Url = src_info.Url:gsub('/$', '') .. '/read'
+		end
+		lc:add(src_info.Url, 0, vol_name, src_info)
+	end,
+
+	get_pages = function()
+		data, count = lc:find([[var data = \{(?<find>.+?)\}]]):gsub('","', '","')
+		count = tonumber(count) + 1
+		for i = 1, count do
+			url = lc:find([[(?<find>'http://cdn.fakku.net/.+?' \+ x \+ .+?);]])
+			url = url:gsub("'", ''):gsub(' %+ x %+ ', string.format('%03d', i))
+			lc:add(url, i, nil, src_info)
+		end
+	end,
+}
