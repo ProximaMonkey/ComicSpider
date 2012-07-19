@@ -44,6 +44,11 @@ create table if not exists [Page_list] (
 	[Parent_url] nvarchar(300),
 	[Path] nvarchar(300)
 );
+create table if not exists [Favorites] (
+	[Url] nvarchar(300) PRIMARY KEY NOT NULL,
+	[Name] nvarchar(300),
+	[Path] nvarchar(300)
+);
 create table if not exists [File_list] (
 	[Url] nvarchar(300) PRIMARY KEY NOT NULL,
 	[Name] nvarchar(300),

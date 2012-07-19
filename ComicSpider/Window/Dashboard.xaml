@@ -93,7 +93,7 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Resources>
-	<TabControl>
+	<TabControl x:Name="tc_main">
 		<TabItem Header="Download">
 			<Grid>
 				<Grid.ColumnDefinitions>
@@ -212,7 +212,21 @@
 		</TabItem>
 		<TabItem Header="Favorites">
 			<Grid>
-				<ListView x:Name="favorites_list">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="35" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<StackPanel Orientation="Horizontal">
+					<Button Click="Fav_check_all_Clicked" Content="Check All" Margin="5" Padding="5,0"></Button>
+				</StackPanel>
+				<ListView x:Name="favorites_list" Grid.Row="1" Margin="5" KeyUp="Fav_delete_KeyUp" ItemContainerStyle="{DynamicResource list_item_container_style}">
+					<ListView.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Open folder" Click="Fav_open_folder_Clicked"></MenuItem>
+							<MenuItem Header="Check updates" Click="Fav_check_updates_Clicked"></MenuItem>
+							<MenuItem Header="Delete" Click="Fav_delete_Clicked"></MenuItem>
+						</ContextMenu>
+					</ListView.ContextMenu>
 					<ListView.View>
 						<GridView>
 							<GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Name}"/>

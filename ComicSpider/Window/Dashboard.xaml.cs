@@ -104,7 +104,7 @@ namespace ComicSpider
 			this.Activate();
 		}
 
-		public void Get_volume_list(string url)
+		public void Get_volume_list(string url, bool check_update = false)
 		{
 			Update_settings();
 
@@ -115,12 +115,12 @@ namespace ComicSpider
 				if (!string.IsNullOrEmpty(path))
 				{
 					txt_dir.Text = path;
-					btn_get_list_Click(null, null);
+					btn_get_list_Click(check_update, null);
 				}
 			}
 			else
 			{
-				btn_get_list_Click(null, null);
+				btn_get_list_Click(check_update, null);
 			}
 		}
 
@@ -154,6 +154,7 @@ namespace ComicSpider
 			{
 				Save_vol_info_list();
 				Save_page_info_list();
+				Save_favorites();
 				//Save_file_info_list();
 				Cookie_pool.Instance.Save();
 			}
@@ -175,7 +176,14 @@ namespace ComicSpider
 		{
 			foreach (var item in list)
 			{
-				comic_spider.Manager.Volumes.Add(item);
+				bool exists = false;
+				foreach (var vol in comic_spider.Manager.Volumes)
+				{
+					if (vol.Url == item.Url)
+						exists = true;
+				}
+				if(!exists)
+					comic_spider.Manager.Volumes.Add(item);
 			}
 
 			if (comic_spider.Stopped)
@@ -306,6 +314,7 @@ namespace ComicSpider
 			try
 			{
 				Init_info_list();
+				Init_favorites_list();
 			}
 			catch (Exception ex)
 			{
@@ -321,6 +330,9 @@ namespace ComicSpider
 
 			volume_list.ItemsSource = comic_spider.Manager.Volumes;
 			volume_drag_drop_manager = new WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info>(volume_list);
+
+			favorites_list.ItemsSource = fav_comics;
+			favorites_drag_drop_manager = new WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info>(favorites_list);
 
 			Is_all_downloaded = true;
 			MainWindow.Main.Main_progress = this.Main_progress;
@@ -356,6 +368,8 @@ namespace ComicSpider
 			}
 		}
 
+		private System.Collections.ObjectModel.ObservableCollection<Web_resource_info> fav_comics;
+
 		private Start_button_state btn_start_state
 		{
 			get
@@ -385,6 +399,7 @@ namespace ComicSpider
 		}
 
 		WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info> volume_drag_drop_manager;
+		WPF.JoshSmith.ServiceProviders.UI.ListViewDragDropManager<Web_resource_info> favorites_drag_drop_manager;
 
 		private string Get_direcotry(string info, string init_path = null)
 		{
@@ -519,6 +534,18 @@ namespace ComicSpider
 				}
 			}
 		}
+		private void Init_favorites_list()
+		{
+			FavoritesTableAdapter fav_adpter = new FavoritesTableAdapter();
+			User.FavoritesDataTable fav_table = fav_adpter.GetData();
+
+			fav_comics = new System.Collections.ObjectModel.ObservableCollection<Web_resource_info>();
+			foreach (User.FavoritesRow item in fav_table.Rows)
+			{
+				Web_resource_info comic = new Web_resource_info(item.Url, 0, item.Name, item.Path, null);
+				fav_comics.Add(comic);
+			}
+		}
 
 		private void Save_vol_info_list()
 		{
@@ -617,6 +644,31 @@ namespace ComicSpider
 
 			transaction.Commit();
 			file_adapter.Connection.Close();
+		}
+		private void Save_favorites()
+		{
+			FavoritesTableAdapter fav_adapter = new FavoritesTableAdapter();
+			fav_adapter.Adapter.DeleteCommand = fav_adapter.Connection.CreateCommand();
+			fav_adapter.Adapter.DeleteCommand.CommandText = "delete from [Favorites] where 1";
+
+			fav_adapter.Connection.Open();
+
+			SQLiteTransaction transaction = fav_adapter.Connection.BeginTransaction();
+
+			fav_adapter.Adapter.DeleteCommand.ExecuteNonQuery();
+
+			foreach (Web_resource_info item in fav_comics)
+			{
+				fav_adapter.Insert(
+					item.Url,
+					item.Name,
+					item.Path
+				);
+			}
+
+			transaction.Commit();
+
+			fav_adapter.Connection.Close();
 		}
 
 		private void Clear_cache()
@@ -776,7 +828,7 @@ delete from [Cookie] where 1;";
 			MainWindow.Main.working_icon.Show_working();
 			working_icon.Show_working();
 			Update_settings();
-			comic_spider.Async_get_volume_list();
+			comic_spider.Async_get_volume_list(sender is bool ? (bool)sender : false);
 		}
 
 		private void btn_controller_Click(object sender, RoutedEventArgs e)
@@ -848,10 +900,6 @@ delete from [Cookie] where 1;";
 				else
 					Message_box.Show("No target file found.");
 			}
-		}
-		private void Add_to_favorites_Click(object sender, RoutedEventArgs e)
-		{
-
 		}
 		private void Open_folder_Click(object sender, RoutedEventArgs e)
 		{
@@ -1127,6 +1175,92 @@ delete from [Cookie] where 1;";
 			catch
 			{
 				e.Handled = true;
+			}
+		}
+
+		private void Add_to_favorites_Click(object sender, RoutedEventArgs e)
+		{
+			foreach (Web_resource_info vol in volume_list.SelectedItems)
+			{
+				if (vol.Parent.Parent == null &&
+					vol.Parent != null)
+				{
+					bool exists = false;
+					foreach (var item in fav_comics)
+					{
+						if (item.Url == vol.Parent.Url)
+							exists = true;
+					}
+
+					if (!exists)
+						fav_comics.Add(vol.Parent);
+				}
+			}
+		}
+		private void Fav_open_folder_Clicked(object sender, RoutedEventArgs e)
+		{
+			foreach (Web_resource_info item in favorites_list.SelectedItems)
+			{
+				if (Directory.Exists(item.Path))
+				{
+					System.Diagnostics.Process.Start(item.Path);
+					break;
+				}
+				else if (File.Exists(item.Path))
+				{
+					System.Diagnostics.Process.Start("explorer.exe", "/select," + item.Path);
+					break;
+				}
+				else
+				{
+					Message_box.Show("Item doesn't exist.");
+					break;
+				}
+			}
+		}
+		private void Fav_check_all_Clicked(object sender, RoutedEventArgs e)
+		{
+			// Jump to Download tab.
+			tc_main.SelectedIndex = 0;
+
+			foreach (Web_resource_info item in favorites_list.Items)
+			{
+				Get_volume_list(item.Url, true);
+			}
+		}
+		private void Fav_delete_Clicked(object sender, RoutedEventArgs e)
+		{
+			if (favorites_list.SelectedItems.Count == 0)
+				return;
+
+			if (!Message_box.Show("Are you sure to delete?", true))
+				return;
+
+			List<Web_resource_info> selected_list = new List<Web_resource_info>();
+			foreach (Web_resource_info item in favorites_list.SelectedItems)
+			{
+				selected_list.Add(item);
+			}
+			foreach (var item in selected_list)
+			{
+				fav_comics.Remove(item);
+			}
+		}
+		private void Fav_delete_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (e.Key == System.Windows.Input.Key.Delete)
+			{
+				Fav_delete_Clicked(null, null);
+			}
+		}
+		private void Fav_check_updates_Clicked(object sender, RoutedEventArgs e)
+		{
+			// Jump to Download tab.
+			tc_main.SelectedIndex = 0;
+
+			foreach (Web_resource_info item in favorites_list.SelectedItems)
+			{
+				Get_volume_list(item.Url, true);
 			}
 		}
 

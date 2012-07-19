@@ -51,11 +51,14 @@ namespace ys
 		public string Default_script_editor = "notepad.exe";
 		public string Raw_file_folder = "Raw file";
 
-		public void Async_get_volume_list()
+		public void Async_get_volume_list(bool check_update = false)
 		{
 			Thread thread = new Thread(new ParameterizedThreadStart(Get_volume_list));
 			thread.Name = "Show_volume_list";
-			thread.Start(Main_settings.Instance.Main_url);
+			thread.Start(new object[] {
+				Main_settings.Instance.Main_url,
+				check_update
+			});
 			
 			Report("Downloading volume list...");
 		}
@@ -484,7 +487,9 @@ namespace ys
 
 		private void Get_volume_list(object arg)
 		{
-			string url = arg as string;
+			string url = (arg as object[])[0] as string;
+			bool check_update = (bool)(arg as object[])[1];
+
 			Lua_controller lua_c = new Lua_controller();
 			Web_resource_info root = new Web_resource_info(url, 0, "", "", null);
 
@@ -500,14 +505,16 @@ namespace ys
 				root.Children = Get_info_list_from_html(lua_c, root, "get_volumes");
 			}
 
+			// Create comic local path
+			foreach (var c in Path.GetInvalidFileNameChars())
+			{
+				root.Name = root.Name.Replace(c, ' ');
+			}
+			root.Path = Path.Combine(Main_settings.Instance.Root_dir, root.Name);
+
 			if (root.Count > 0)
 			{
-				foreach (var c in Path.GetInvalidFileNameChars())
-				{
-					root.Name = root.Name.Replace(c, ' ');
-				}
-				root.Path = Path.Combine(Main_settings.Instance.Root_dir, root.Name);
-
+				// Create volue local path.
 				foreach (var vol in root.Children)
 				{
 					if (!string.IsNullOrEmpty(vol.Path))
@@ -520,6 +527,17 @@ namespace ys
 					vol.Path = Path.Combine(root.Path, vol.Name);
 				}
 
+				if (check_update)
+				{
+					List<Web_resource_info> new_list = new List<Web_resource_info>();
+					foreach (var vol in root.Children)
+					{
+						if (!Directory.Exists(vol.Path))
+							new_list.Add(vol);
+					}
+					root.Children = new_list;
+				}
+
 				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
 				Dashboard.Instance.Dispatcher.Invoke(
 					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
@@ -530,7 +548,7 @@ namespace ys
 			{
 				Dashboard.Instance.Dispatcher.Invoke(
 					new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
-					"No volume found in " + url
+					"No newer volume found in " + url
 				);
 			}
 			Dashboard.Instance.Dispatcher.Invoke(

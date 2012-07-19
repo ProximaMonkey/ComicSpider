@@ -160,6 +160,7 @@ comic_spider = {
 				src_info.Name = lc:find([[<a.+?id="back">(?<find>.+?) Manga</a>]])
 				vol_name = lc:find([[<title>.+? - Read (?<find>.+?) Online - .+?</title>]])
 				lc:add(src_info.Url, 0, vol_name, src_info)
+				null, null, src_info.Url = src_info.Url:find('(.-//.-/.-/.-/)')
 			end
 			info_list:Reverse()
 		end,
@@ -203,6 +204,7 @@ comic_spider = {
 			if info_list.Count == 0 then
 				vol_name = lc:find([[var g_chapter_name = "(?<find>.+?)"]])
 				lc:add(src_info.Url, 0, vol_name, src_info)
+				src_info.Url = lc:find([[hotrmtexth1.+?href="(?<find>.+?)"]])
 			end
 		end,
 

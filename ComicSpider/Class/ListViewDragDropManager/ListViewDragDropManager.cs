@@ -180,10 +180,10 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			#region ProcessDrop [event]
 
 		/// <summary>
-		/// Raised when a drop occurs.  By default the dropped item will be moved
-		/// to the target index.  Handle this event if relocating the dropped item
+		/// Raised when a drop occurs.  By default the dropped vol will be moved
+		/// to the target index.  Handle this event if relocating the dropped vol
 		/// requires custom behavior.  Note, if this event is handled the default
-		/// item dropping logic will not occur.
+		/// vol dropping logic will not occur.
 		/// </summary>
 		public event EventHandler<ProcessDropEventArgs<ItemType>> ProcessDrop;
 
@@ -249,11 +249,11 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			if( !this.CanStartDragOperation )
 				return;
 
-			// Select the item the user clicked on.
+			// Select the vol the user clicked on.
 			if( this.listView.SelectedIndex != this.indexToSelect )
 				this.listView.SelectedIndex = this.indexToSelect;
 
-			// If the item at the selected index is null, there's nothing
+			// If the vol at the selected index is null, there's nothing
 			// we can do, so just return;
 			if( this.listView.SelectedItem == null )
 				return;
@@ -280,7 +280,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			if( this.ShowDragAdornerResolved )
 				this.UpdateDragAdornerLocation();
 
-			// Update the item which is known to be currently under the drag cursor.
+			// Update the vol which is known to be currently under the drag cursor.
 			int index = this.IndexUnderDragCursor;
 			this.ItemUnderDragCursor = index < 0 ? null : this.ListView.Items[index] as ItemType;
 		}
@@ -346,23 +346,23 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			if( newIndex < 0 )
 			{
 				// The drag started somewhere else, and our ListView is empty
-				// so make the new item the first in the list.
+				// so make the new vol the first in the list.
 				if( itemsSource.Count == 0 )
 					newIndex = 0;
 
 				// The drag started somewhere else, but our ListView has items
-				// so make the new item the last in the list.
+				// so make the new vol the last in the list.
 				else if( oldIndex < 0 )
 					newIndex = itemsSource.Count;
 
-				// The user is trying to drop an item from our ListView into
-				// our ListView, but the mouse is not over an item, so don't
+				// The user is trying to drop an vol from our ListView into
+				// our ListView, but the mouse is not over an vol, so don't
 				// let them drop it.
 				else
 					return;
 			}
 
-			// Dropping an item back onto itself is not considered an actual 'drop'.
+			// Dropping an vol back onto itself is not considered an actual 'drop'.
 			if( oldIndex == newIndex )
 				return;
 
@@ -377,7 +377,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			{
 				// Move the dragged data object from it's original index to the
 				// new index (according to where the mouse cursor is).  If it was
-				// not previously in the ListBox, then insert the item.
+				// not previously in the ListBox, then insert the vol.
 				if( oldIndex > -1 )
 					itemsSource.Move( oldIndex, newIndex );
 				else
@@ -478,7 +478,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 
 				// In case the cursor is at the very top or bottom of the ListViewItem
 				// we want to make the vertical threshold very small so that dragging
-				// over an adjacent item does not select it.
+				// over an adjacent vol does not select it.
 				double topOffset = Math.Abs( ptInItem.Y );
 				double btmOffset = Math.Abs( bounds.Height - ptInItem.Y );
 				double vertOffset = Math.Min( topOffset, btmOffset );
@@ -500,7 +500,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 
 		/// <summary>
 		/// Returns the index of the ListViewItem underneath the
-		/// drag cursor, or -1 if the cursor is not over an item.
+		/// drag cursor, or -1 if the cursor is not over an vol.
 		/// </summary>
 		int IndexUnderDragCursor
 		{
@@ -530,7 +530,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			// a visual in the adorner layer.
 			VisualBrush brush = new VisualBrush( itemToDrag );
 
-			// Create an element which displays the source item while it is dragged.
+			// Create an element which displays the source vol while it is dragged.
 			this.dragAdorner = new DragAdorner( this.listView, itemToDrag.RenderSize, brush );
 			
 			// Set the drag adorner's opacity.		
@@ -623,7 +623,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 				if( this.itemUnderDragCursor == value )
 					return;
 
-				// The first pass handles the previous item under the cursor.
+				// The first pass handles the previous vol under the cursor.
 				// The second pass handles the new one.
 				for( int i = 0; i < 2; ++i )
 				{
@@ -650,8 +650,8 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 			DragDropEffects allowedEffects = DragDropEffects.Move | DragDropEffects.Move | DragDropEffects.Link;
 			if( DragDrop.DoDragDrop( this.listView, selectedItem, allowedEffects ) != DragDropEffects.None )
 			{
-				// The item was dropped into a new location,
-				// so make it the new selected item.
+				// The vol was dropped into a new location,
+				// so make it the new selected vol.
 				this.listView.SelectedItem = selectedItem;
 			}
 		}
@@ -677,7 +677,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 
 				double left = ptCursor.X - this.ptMouseDown.X;
 
-				// 4/13/2007 - Made the top offset relative to the item being dragged.
+				// 4/13/2007 - Made the top offset relative to the vol being dragged.
 				ListViewItem itemBeingDragged = this.GetListViewItem( this.indexToSelect );
 				Point itemLoc = itemBeingDragged.TranslatePoint( new Point( 0, 0 ), this.ListView );
 				double top = itemLoc.Y + ptCursor.Y - this.ptMouseDown.Y;
@@ -718,7 +718,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		/// <summary>
 		/// Returns true if the specified ListViewItem is being dragged, else false.
 		/// </summary>
-		/// <param name="item">The ListViewItem to check.</param>
+		/// <param name="vol">The ListViewItem to check.</param>
 		public static bool GetIsBeingDragged( ListViewItem item )
 		{
 			return (bool)item.GetValue( IsBeingDraggedProperty );
@@ -727,7 +727,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		/// <summary>
 		/// Sets the IsBeingDragged attached property for the specified ListViewItem.
 		/// </summary>
-		/// <param name="item">The ListViewItem to set the property on.</param>
+		/// <param name="vol">The ListViewItem to set the property on.</param>
 		/// <param name="value">Pass true if the element is being dragged, else false.</param>
 		internal static void SetIsBeingDragged( ListViewItem item, bool value )
 		{
@@ -753,7 +753,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		/// Returns true if the specified ListViewItem is currently underneath the cursor 
 		/// during a drag-drop operation, else false.
 		/// </summary>
-		/// <param name="item">The ListViewItem to check.</param>
+		/// <param name="vol">The ListViewItem to check.</param>
 		public static bool GetIsUnderDragCursor( ListViewItem item )
 		{
 			return (bool)item.GetValue( IsUnderDragCursorProperty );
@@ -762,7 +762,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		/// <summary>
 		/// Sets the IsUnderDragCursor attached property for the specified ListViewItem.
 		/// </summary>
-		/// <param name="item">The ListViewItem to set the property on.</param>
+		/// <param name="vol">The ListViewItem to set the property on.</param>
 		/// <param name="value">Pass true if the element is underneath the drag cursor, else false.</param>
 		internal static void SetIsUnderDragCursor( ListViewItem item, bool value )
 		{
@@ -830,7 +830,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		}
 
 		/// <summary>
-		/// The current index of the data item being dropped, in the ItemsSource collection.
+		/// The current index of the data vol being dropped, in the ItemsSource collection.
 		/// </summary>
 		public int OldIndex
 		{
@@ -838,7 +838,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		}
 
 		/// <summary>
-		/// The target index of the data item being dropped, in the ItemsSource collection.
+		/// The target index of the data vol being dropped, in the ItemsSource collection.
 		/// </summary>
 		public int NewIndex
 		{
@@ -854,7 +854,7 @@ namespace WPF.JoshSmith.ServiceProviders.UI
 		}
 
 		/// <summary>
-		/// The drag drop effect(s) performed on the dropped item.
+		/// The drag drop effect(s) performed on the dropped vol.
 		/// </summary>
 		public DragDropEffects Effects
 		{
