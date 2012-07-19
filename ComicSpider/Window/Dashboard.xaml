@@ -26,6 +26,7 @@
 		</DataTemplate>
 		<ContextMenu x:Key="view_list_menu" Opened="ContextMenu_Opened">
 			<MenuItem Header="View" Click="View_Click" />
+			<MenuItem Header="Add to favorites" Click="Add_to_favorites_Click" />
 			<MenuItem Header="Open folder" Click="Open_folder_Click" />
 			<MenuItem Header="Open Url" Click="Open_url_Click" />
 			<MenuItem Header="Copy Url" Click="Copy_url_Click" />
@@ -92,121 +93,134 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Resources>
-	<Window.Background>
-		<ImageBrush ImageSource="pack://siteoforigin:,,,/Asset/main_bg.png" Stretch="UniformToFill" TileMode="None" />
-	</Window.Background>
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="67" />
-			<RowDefinition Height="35" />
-			<RowDefinition Height="363*" />
-		</Grid.RowDefinitions>
-		<Grid Grid.ColumnSpan="3">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="80" />
-				<ColumnDefinition />
-				<ColumnDefinition Width="70" />
-				<ColumnDefinition Width="55" />
-				<ColumnDefinition Width="40" />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="36" />
-				<RowDefinition Height="36" />
-			</Grid.RowDefinitions>
-			<Button Content="Get list" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
-			<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
-			<Button Margin="5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
-			<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
-
-			<TextBlock Grid.Column="2" Margin="3,3,6,3" VerticalAlignment="Center" Text="Max speed" Foreground="#FF26335F" HorizontalAlignment="Right"/>
-			<TextBox x:Name="txt_max_speed" Grid.Column="3" ToolTip="zero means no limit" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="0" Background="#BFFFFFFF" VerticalAlignment="Center"/>
-			<TextBlock Margin="3" Grid.Column="4" VerticalAlignment="Center" Text="KB/s" Foreground="#FF26335F"/>
-
-			<TextBlock Grid.Column="2" Grid.Row="1" Margin="3,3,6,3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F" HorizontalAlignment="Right"/>
-			<TextBox x:Name="txt_thread" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="3" Background="#BFFFFFFF"/>
-		</Grid>
-		<StackPanel Orientation="Horizontal" Grid.Row="1">
-			<Button Content="Start" x:Name="btn_start" IsEnabled="False" Click="btn_start_Click" Margin="5" Padding="5,0" Width="60" >
-				<Button.Background>
-					<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-						<GradientStop Color="#BFFFFCD4" Offset="0"/>
-						<GradientStop Color="#BFFFF9BA" Offset="0.5"/>
-						<GradientStop Color="#BFF7EE8F" Offset="0.5"/>
-						<GradientStop Color="#BFF5F2CE" Offset="1"/>
-					</LinearGradientBrush>
-				</Button.Background>
-			</Button>
-			<Button Content="Fix display pages" ToolTip="auto create html pages to display images" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Click="btn_fix_display_pages_Click" />
-			<Button Content="Del display pages" ToolTip="delete all the auto create a html pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Click="btn_del_display_pages_Click" />
-			<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Click="btn_logs_Click" />
-			<Button Content="Controller" ToolTip="edit lua controller script" x:Name="btn_controller" Margin="5" Padding="5,0" Click="btn_controller_Click" Background="#FFEBFFEE" />
-			<Button Content="Help" x:Name="btn_help" Margin="5" Padding="5,0" Click="btn_help_Click" />
-			<CheckBox Content="Auto shutdown" ToolTip="auto shutdown computer when all downloaded" x:Name="cb_auto_shutdown" Margin="10,0" VerticalAlignment="Center" />
-		</StackPanel>
-		<Grid Grid.Row="2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="1*" />
-				<ColumnDefinition Width="1*" />
-			</Grid.ColumnDefinitions>
-			<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick" ItemContainerStyle="{DynamicResource list_item_container_style}">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
-						<GridViewColumn Header="PI" Width="70" DisplayMemberBinding="{Binding Progress_int_text}"></GridViewColumn>
-						<GridViewColumn Header="Main" Width="140" DisplayMemberBinding="{Binding Parent.Name}"/>
-						<GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding Name}"/>
-					</GridView>
-				</ListView.View>
-			</ListView>
-			<ComicSpider:WorkingIcon x:Name="working_icon" Margin="0,0,25,25" Height="100" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
-			<GridSplitter HorizontalAlignment="Left" x:Name="gridSplitter1" Width="5" Grid.Column="1" Margin="0,5" Background="White" />
-			<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}" />
-						<GridViewColumn Header="P" Width="50" DisplayMemberBinding="{Binding Progress_double_text}" />
-						<GridViewColumn Header="Speed" Width="60" DisplayMemberBinding="{Binding Speed_text}" />
-						<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size_text}" />
-						<GridViewColumn Header="Url" Width="170">
-							<GridViewColumn.CellTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"/>
-								</DataTemplate>
-							</GridViewColumn.CellTemplate>
-						</GridViewColumn>
-					</GridView>
-				</ListView.View>
-			</ListView>
-		</Grid>
-		<Border x:Name="bd_logs" Grid.Row="2" Margin="20,40,20,20" Padding="5" Background="#E6FFFFFF" CornerRadius="5" BorderBrush="#FFB0B9C1" BorderThickness="1,1,2,2" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
-			<Border.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform/>
-					<SkewTransform/>
-					<RotateTransform/>
-					<TranslateTransform/>
-				</TransformGroup>
-			</Border.RenderTransform>
+	<TabControl>
+		<TabItem Header="Download">
 			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="28" />
-					<RowDefinition Height="257*" />
+					<RowDefinition Height="67" />
+					<RowDefinition Height="35" />
+					<RowDefinition Height="363*" />
 				</Grid.RowDefinitions>
-				<Grid Margin="3">
+				<Grid Grid.ColumnSpan="3">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="50" />
-						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="50" />
+						<ColumnDefinition Width="80" />
+						<ColumnDefinition />
+						<ColumnDefinition Width="70" />
+						<ColumnDefinition Width="55" />
+						<ColumnDefinition Width="40" />
 					</Grid.ColumnDefinitions>
-					<TextBlock FontSize="16" Text="Logs" VerticalAlignment="Center"/>
-					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite admin tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
-					<Button Content="Close" Grid.Column="2" Click="btn_logs_Click" />
+					<Grid.RowDefinitions>
+						<RowDefinition Height="36" />
+						<RowDefinition Height="36" />
+					</Grid.RowDefinitions>
+					<Button Content="Get list" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
+					<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
+					<Button Margin="5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
+					<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
+
+					<TextBlock Grid.Column="2" Margin="3,3,6,3" VerticalAlignment="Center" Text="Max speed" Foreground="#FF26335F" HorizontalAlignment="Right"/>
+					<TextBox x:Name="txt_max_speed" Grid.Column="3" ToolTip="zero means no limit" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="0" Background="#BFFFFFFF" VerticalAlignment="Center"/>
+					<TextBlock Margin="3" Grid.Column="4" VerticalAlignment="Center" Text="KB/s" Foreground="#FF26335F"/>
+
+					<TextBlock Grid.Column="2" Grid.Row="1" Margin="3,3,6,3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F" HorizontalAlignment="Right"/>
+					<TextBox x:Name="txt_thread" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="3" Background="#BFFFFFFF"/>
 				</Grid>
-				<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" Grid.Row="1" TextWrapping="Wrap" />
+				<StackPanel Orientation="Horizontal" Grid.Row="1">
+					<Button Content="Start" x:Name="btn_start" IsEnabled="False" Click="btn_start_Click" Margin="5" Padding="5,0" Width="60" >
+						<Button.Background>
+							<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+								<GradientStop Color="#BFFFFCD4" Offset="0"/>
+								<GradientStop Color="#BFFFF9BA" Offset="0.5"/>
+								<GradientStop Color="#BFF7EE8F" Offset="0.5"/>
+								<GradientStop Color="#BFF5F2CE" Offset="1"/>
+							</LinearGradientBrush>
+						</Button.Background>
+					</Button>
+					<Button Content="Fix display pages" ToolTip="auto create html pages to display images" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Click="btn_fix_display_pages_Click" />
+					<Button Content="Del display pages" ToolTip="delete all the auto create a html pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Click="btn_del_display_pages_Click" />
+					<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Click="btn_logs_Click" />
+					<Button Content="Controller" ToolTip="edit lua controller script" x:Name="btn_controller" Margin="5" Padding="5,0" Click="btn_controller_Click" Background="#FFEBFFEE" />
+					<Button Content="Help" x:Name="btn_help" Margin="5" Padding="5,0" Click="btn_help_Click" />
+					<CheckBox Content="Auto shutdown" ToolTip="auto shutdown computer when all downloaded" x:Name="cb_auto_shutdown" Margin="10,0" VerticalAlignment="Center" />
+				</StackPanel>
+				<Grid Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="1*" />
+					</Grid.ColumnDefinitions>
+					<ListView x:Name="volume_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Margin="5,5,0,5" SelectionChanged="volume_list_SelectionChanged" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick" ItemContainerStyle="{DynamicResource list_item_container_style}">
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}"></GridViewColumn>
+								<GridViewColumn Header="PI" Width="70" DisplayMemberBinding="{Binding Progress_int_text}"></GridViewColumn>
+								<GridViewColumn Header="Main" Width="140" DisplayMemberBinding="{Binding Parent.Name}"/>
+								<GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding Name}"/>
+							</GridView>
+						</ListView.View>
+					</ListView>
+					<ComicSpider:WorkingIcon x:Name="working_icon" Margin="0,0,25,25" Height="100" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+					<GridSplitter HorizontalAlignment="Left" x:Name="gridSplitter1" Width="5" Grid.Column="1" Margin="0,5" Background="White" />
+					<ListView x:Name="page_list" ContextMenu="{StaticResource ResourceKey=view_list_menu}" Grid.Column="1" Margin="5" ButtonBase.Click="GridView_column_header_Clicked" KeyUp="Delelte_list_item_KeyUp" MouseDoubleClick="volume_list_MouseDoubleClick">
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="S" Width="30" DisplayMemberBinding="{Binding State_text}" />
+								<GridViewColumn Header="P" Width="50" DisplayMemberBinding="{Binding Progress_double_text}" />
+								<GridViewColumn Header="Speed" Width="60" DisplayMemberBinding="{Binding Speed_text}" />
+								<GridViewColumn Header="Size" Width="60" DisplayMemberBinding="{Binding Size_text}" />
+								<GridViewColumn Header="Url" Width="170">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Url}" HorizontalAlignment="Right"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</Grid>
+				<Border x:Name="bd_logs" Grid.Row="2" Margin="20,40,20,20" Padding="5" Background="#E6FFFFFF" CornerRadius="5" BorderBrush="#FFB0B9C1" BorderThickness="1,1,2,2" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+					<Border.RenderTransform>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</Border.RenderTransform>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="28" />
+							<RowDefinition Height="257*" />
+						</Grid.RowDefinitions>
+						<Grid Margin="3">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="50" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="50" />
+							</Grid.ColumnDefinitions>
+							<TextBlock FontSize="16" Text="Logs" VerticalAlignment="Center"/>
+							<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite admin tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
+							<Button Content="Close" Grid.Column="2" Click="btn_logs_Click" />
+						</Grid>
+						<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" Grid.Row="1" TextWrapping="Wrap" />
+					</Grid>
+				</Border>
 			</Grid>
-		</Border>
-	</Grid>
+		</TabItem>
+		<TabItem Header="Favorites">
+			<Grid>
+				<ListView x:Name="favorites_list">
+					<ListView.View>
+						<GridView>
+							<GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Name}"/>
+							<GridViewColumn Header="Url" Width="400" DisplayMemberBinding="{Binding Url}"/>
+						</GridView>
+					</ListView.View>
+				</ListView>
+			</Grid>
+		</TabItem>
+	</TabControl>
 </Window>

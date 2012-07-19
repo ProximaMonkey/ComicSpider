@@ -105,6 +105,7 @@
     </ApplicationDefinition>
     <Compile Include="Class\AlphanumComparator.cs" />
     <Compile Include="Class\Cookie_pool.cs" />
+    <Compile Include="Class\Favorites_model.cs" />
     <Compile Include="Class\ListViewDragDropManager\DragAdorner.cs" />
     <Compile Include="Class\FolderBrowserDialogEx.cs">
       <SubType>Component</SubType>
@@ -181,7 +182,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class\Web_info_models.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -221,12 +221,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Asset\メッセージ%28alert%29.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Asset\メッセージ%28message%29.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Images\ys_16.png" />
     <Resource Include="Images\minimize.png" />
     <SplashScreen Include="Images\splash_screen.png" />
@@ -272,6 +266,12 @@
     <None Include="Favicon\github.com.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Asset\alert.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Asset\message.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Lib\HtmlAgilityPack.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

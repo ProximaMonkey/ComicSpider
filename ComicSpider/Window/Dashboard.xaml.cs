@@ -812,8 +812,11 @@ delete from [Cookie] where 1;";
 			string path = Get_direcotry("Please select a root folder");
 			if (!string.IsNullOrEmpty(path))
 				txt_dir.Text = path;
-		}	
+		}
 
+		private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+		{
+		}
 		private void View_Click(object sender, RoutedEventArgs e)
 		{
 			ListView list_view;
@@ -846,8 +849,9 @@ delete from [Cookie] where 1;";
 					Message_box.Show("No target file found.");
 			}
 		}
-		private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+		private void Add_to_favorites_Click(object sender, RoutedEventArgs e)
 		{
+
 		}
 		private void Open_folder_Click(object sender, RoutedEventArgs e)
 		{

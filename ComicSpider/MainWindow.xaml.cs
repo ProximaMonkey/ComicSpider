@@ -157,7 +157,7 @@ namespace ComicSpider
 			tray.ShowCustomBalloon(tray_balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 5000);
 			tray_balloon.Text = info;
 
-			string sound_path = @"Asset\メッセージ(message).wav";
+			string sound_path = @"Asset\message.wav";
 			if (play_sound)
 			{
 				if (System.IO.File.Exists(sound_path))

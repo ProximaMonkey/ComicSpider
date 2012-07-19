@@ -25,7 +25,7 @@ namespace ComicSpider
 			if (!show_cancel_button)
 				btn_cancel.Visibility = System.Windows.Visibility.Collapsed;
 
-			string sound_path = @"Asset\メッセージ(alert).wav";
+			string sound_path = @"Asset\alert.wav";
 			if (System.IO.File.Exists(sound_path))
 			{
 				System.Media.SoundPlayer sp = new System.Media.SoundPlayer(sound_path);
