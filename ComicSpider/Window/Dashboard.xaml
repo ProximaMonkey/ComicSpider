@@ -219,7 +219,7 @@
 				<StackPanel Orientation="Horizontal">
 					<Button Click="Fav_check_all_Clicked" Content="Check All" Margin="5" Padding="5,0"></Button>
 				</StackPanel>
-				<ListView x:Name="favorites_list" Grid.Row="1" Margin="5" KeyUp="Fav_delete_KeyUp" ItemContainerStyle="{DynamicResource list_item_container_style}">
+				<ListView x:Name="favorites_list" Grid.Row="1" Margin="5" MouseDoubleClick="fav_MouseDoubleClick" KeyUp="Fav_delete_KeyUp" ItemContainerStyle="{DynamicResource list_item_container_style}">
 					<ListView.ContextMenu>
 						<ContextMenu>
 							<MenuItem Header="Open folder" Click="Fav_open_folder_Clicked"></MenuItem>

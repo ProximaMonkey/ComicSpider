@@ -804,7 +804,8 @@ delete from [Cookie] where 1;";
 
 		private void btn_start_Click(object sender, RoutedEventArgs e)
 		{
-			if (volume_list.Items.Count == 0)
+			if (all_files_count == 0 ||
+				all_files_count == downloaded_files_count)
 				return;
 
 			Update_settings();
@@ -1177,6 +1178,24 @@ delete from [Cookie] where 1;";
 				e.Handled = true;
 			}
 		}
+		private void volume_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			page_list.Items.Clear();
+			foreach (Web_resource_info vol in volume_list.SelectedItems)
+			{
+				if (vol.Count == 0) continue;
+				foreach (var page in vol.Children)
+				{
+					page_list.Items.Add(page);
+				}
+			}
+		}
+		private void volume_list_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Web_resource_info item = (sender as ListView).SelectedItem as Web_resource_info;
+
+			View_Click(sender, null);
+		}
 
 		private void Add_to_favorites_Click(object sender, RoutedEventArgs e)
 		{
@@ -1196,6 +1215,10 @@ delete from [Cookie] where 1;";
 						fav_comics.Add(vol.Parent);
 				}
 			}
+		}
+		private void fav_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Fav_open_folder_Clicked(null, null);
 		}
 		private void Fav_open_folder_Clicked(object sender, RoutedEventArgs e)
 		{
@@ -1264,24 +1287,6 @@ delete from [Cookie] where 1;";
 			}
 		}
 
-		private void volume_list_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			page_list.Items.Clear();
-			foreach (Web_resource_info vol in volume_list.SelectedItems)
-			{
-				if (vol.Count == 0) continue;
-				foreach (var page in vol.Children)
-				{
-					page_list.Items.Add(page);
-				}
-			}
-		}
-		private void volume_list_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			Web_resource_info item = (sender as ListView).SelectedItem as Web_resource_info;
-
-			View_Click(sender, null);
-		}
 
 		private void GridView_column_header_Clicked(object sender, RoutedEventArgs e)
 		{
