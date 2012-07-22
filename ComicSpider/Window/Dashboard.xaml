@@ -222,8 +222,10 @@
 				<ListView x:Name="favorites_list" Grid.Row="1" Margin="5" MouseDoubleClick="fav_MouseDoubleClick" KeyUp="Fav_delete_KeyUp" ItemContainerStyle="{DynamicResource list_item_container_style}">
 					<ListView.ContextMenu>
 						<ContextMenu>
-							<MenuItem Header="Open folder" Click="Fav_open_folder_Clicked"></MenuItem>
 							<MenuItem Header="Check updates" Click="Fav_check_updates_Clicked"></MenuItem>
+							<MenuItem Header="Open folder" Click="Fav_open_folder_Clicked"></MenuItem>
+							<MenuItem Header="Open url" Click="Open_url_Click"></MenuItem>
+							<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 							<MenuItem Header="Delete" Click="Fav_delete_Clicked"></MenuItem>
 						</ContextMenu>
 					</ListView.ContextMenu>
