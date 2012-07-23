@@ -536,19 +536,29 @@ namespace ys
 							new_list.Add(vol);
 					}
 					root.Children = new_list;
-				}
 
-				Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
-				Dashboard.Instance.Dispatcher.Invoke(
-					new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
-					root.Children
-				);
+					if (root.Count == 0)
+					{
+						Dashboard.Instance.Dispatcher.Invoke(
+							new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
+							"No newer volume found in " + root.Name
+						);
+					}
+				}
+				else if (root.Count > 0)
+				{
+					Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
+					Dashboard.Instance.Dispatcher.Invoke(
+						new Dashboard.Show_volume_list_delegate(Dashboard.Instance.Show_volume_list),
+						root.Children
+					);
+				}
 			}
 			else
 			{
 				Dashboard.Instance.Dispatcher.Invoke(
 					new Dashboard.Alert_delegate(Dashboard.Instance.Alert),
-					"No newer volume found in " + url
+					"No volume found in " + url
 				);
 			}
 			Dashboard.Instance.Dispatcher.Invoke(

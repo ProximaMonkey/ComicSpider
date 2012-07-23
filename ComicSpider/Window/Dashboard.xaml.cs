@@ -132,6 +132,10 @@ namespace ComicSpider
 		{
 			btn_start_Click(null, null);
 		}
+		public void Update_favorites()
+		{
+			Fav_check_all_Clicked(null, null);
+		}
 		public void Update_settings()
 		{
 			Main_settings.Instance.Main_url = txt_main_url.Text;

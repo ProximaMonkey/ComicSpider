@@ -362,6 +362,10 @@ namespace ComicSpider
 			if (btn_start.IsEnabled)
 				Dashboard.Instance.Start();
 		}
+		private void Update_favorites(object sender, RoutedEventArgs e)
+		{
+			Dashboard.Instance.Update_favorites();
+		}
 		private void cb_is_slient_Click(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = sender as MenuItem;
