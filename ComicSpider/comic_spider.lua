@@ -261,7 +261,7 @@ comic_spider = {
 					img_node = node.FirstChild
 					url = img_node.Attributes['src'].Value:gsub('_m%.', '%.')
 					-- Author name and illust name
-					name = url:match('http://img.-/img/(.-)/.+') .. ' ' .. img_node:GetAttributeValue("alt", "")
+					name = url:match('http://.-/img/(.-)/.+') .. ' ' .. img_node:GetAttributeValue('alt', '')
 				end
 			)
 		end,
