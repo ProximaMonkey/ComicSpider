@@ -4,7 +4,7 @@
 		xmlns:ComicSpider="clr-namespace:ComicSpider"
 		xmlns:jas="clr-namespace:WPF.JoshSmith.ServiceProviders.UI"
 		x:Class="ComicSpider.Dashboard"
-		Title="Comic Spider Dashboard" MinHeight="600" MinWidth="850" Height="600" Width="850" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/y.s.ico" Closing="Window_Closing">
+		Title="Comic Spider Dashboard" MinHeight="600" MinWidth="850" Height="600" Width="850" Closed="Window_Closed" Icon="/Comic%20Spider;component/Images/logo.ico" Closing="Window_Closing">
 	<Window.Resources>
 		<DataTemplate x:Key="HeaderTemplateArrowUp">
 			<DockPanel>
@@ -39,42 +39,6 @@
 			</MenuItem>
 			<MenuItem Header="Delete" Click="Delelte_list_item_Click" />
 		</ContextMenu>
-		<Storyboard x:Key="sb_show_logs">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="-120"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="0,0,0,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="0"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1" KeySpline="0,0,0,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="0.9"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1" KeySpline="0.12,0.52,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="0.9"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1" KeySpline="0.12,0.52,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-		<Storyboard x:Key="sb_hide_logs" Completed="sb_hide_logs_Completed">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="0" KeySpline="0,0,0,1"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="-30" KeySpline="0,0.72,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="1" KeySpline="0,0,0,1"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0" KeySpline="0,0.72,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="1"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0.9" KeySpline="0,0.72,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="bd_logs">
-				<SplineDoubleKeyFrame KeyTime="0" Value="1"/>
-				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0.9" KeySpline="0,0.72,1,1"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
 		<Style x:Key="list_item_container_style" TargetType="ListViewItem">
 			<Style.Resources>
 				<SolidColorBrush x:Key="list_item_mouse_over_brush" Color="#33478FB4"/>
@@ -100,35 +64,28 @@
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="67" />
+					<RowDefinition Height="35" />
+					<RowDefinition Height="35"/>
 					<RowDefinition Height="35" />
 					<RowDefinition Height="363*" />
 				</Grid.RowDefinitions>
-				<Grid Grid.ColumnSpan="3">
+				<Grid>
+					<TextBlock FontSize="18" VerticalAlignment="Center" Margin="4,0,-4,0">Download</TextBlock>
+				</Grid>
+				<Grid Grid.RowSpan="2" Grid.Row="1">
 					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.088*" />
+						<ColumnDefinition Width="0.912*"/>
 						<ColumnDefinition Width="80" />
-						<ColumnDefinition />
-						<ColumnDefinition Width="70" />
-						<ColumnDefinition Width="55" />
-						<ColumnDefinition Width="40" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="36" />
-						<RowDefinition Height="36" />
 					</Grid.RowDefinitions>
-					<Button Content="Get list" x:Name="btn_get_list" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
-					<TextBox x:Name="txt_main_url"  Margin="5" Grid.Column="1" Background="#BFFFFFFF" />
-					<Button Margin="5" Grid.Row="1" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" />
-					<TextBox x:Name="txt_dir" Margin="5" Grid.Row="1" Grid.Column="1" Background="#BFFFFFFF" />
-
-					<TextBlock Grid.Column="2" Margin="3,3,6,3" VerticalAlignment="Center" Text="Max speed" Foreground="#FF26335F" HorizontalAlignment="Right"/>
-					<TextBox x:Name="txt_max_speed" Grid.Column="3" ToolTip="zero means no limit" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="0" Background="#BFFFFFFF" VerticalAlignment="Center"/>
-					<TextBlock Margin="3" Grid.Column="4" VerticalAlignment="Center" Text="KB/s" Foreground="#FF26335F"/>
-
-					<TextBlock Grid.Column="2" Grid.Row="1" Margin="3,3,6,3" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F" HorizontalAlignment="Right"/>
-					<TextBox x:Name="txt_thread" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="3" Background="#BFFFFFFF"/>
+					<TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5.5,0,0,0" >Current url </TextBlock>
+					<TextBox x:Name="txt_main_url"  Margin="5" Background="#BFFFFFFF" Grid.Column="1" />
+					<Button Content="Get list" x:Name="btn_get_list" Grid.Column="2" Click="btn_get_list_Click" Margin="5" Padding="5,0" />
 				</Grid>
-				<StackPanel Orientation="Horizontal" Grid.Row="1">
+				<StackPanel Orientation="Horizontal" Grid.Row="2">
 					<Button Content="Start" x:Name="btn_start" IsEnabled="False" Click="btn_start_Click" Margin="5" Padding="5,0" Width="60" >
 						<Button.Background>
 							<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
@@ -141,12 +98,10 @@
 					</Button>
 					<Button Content="Fix display pages" ToolTip="auto create html pages to display images" x:Name="btn_fix_display_pages" Margin="5" Padding="5,0" Click="btn_fix_display_pages_Click" />
 					<Button Content="Del display pages" ToolTip="delete all the auto create a html pages" x:Name="btn_del_display_pages" Margin="5" Padding="5,0" Click="btn_del_display_pages_Click" />
-					<Button Content="Logs" x:Name="btn_logs" Margin="5" Padding="5,0" Click="btn_logs_Click" />
-					<Button Content="Controller" ToolTip="edit lua controller script" x:Name="btn_controller" Margin="5" Padding="5,0" Click="btn_controller_Click" Background="#FFEBFFEE" />
 					<Button Content="Help" x:Name="btn_help" Margin="5" Padding="5,0" Click="btn_help_Click" />
 					<CheckBox Content="Auto shutdown" ToolTip="auto shutdown computer when all downloaded" x:Name="cb_auto_shutdown" Margin="10,0" VerticalAlignment="Center" />
 				</StackPanel>
-				<Grid Grid.Row="2">
+				<Grid Grid.Row="3">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="1*" />
 						<ColumnDefinition Width="1*" />
@@ -181,33 +136,6 @@
 						</ListView.View>
 					</ListView>
 				</Grid>
-				<Border x:Name="bd_logs" Grid.Row="2" Margin="20,40,20,20" Padding="5" Background="#E6FFFFFF" CornerRadius="5" BorderBrush="#FFB0B9C1" BorderThickness="1,1,2,2" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
-					<Border.RenderTransform>
-						<TransformGroup>
-							<ScaleTransform/>
-							<SkewTransform/>
-							<RotateTransform/>
-							<TranslateTransform/>
-						</TransformGroup>
-					</Border.RenderTransform>
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="28" />
-							<RowDefinition Height="257*" />
-						</Grid.RowDefinitions>
-						<Grid Margin="3">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="50" />
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="50" />
-							</Grid.ColumnDefinitions>
-							<TextBlock FontSize="16" Text="Logs" VerticalAlignment="Center"/>
-							<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite admin tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" />
-							<Button Content="Close" Grid.Column="2" Click="btn_logs_Click" />
-						</Grid>
-						<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" Grid.Row="1" TextWrapping="Wrap" />
-					</Grid>
-				</Border>
 			</Grid>
 		</TabItem>
 		<TabItem Header="Favorites">
@@ -216,9 +144,14 @@
 					<RowDefinition Height="35" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-				<StackPanel Orientation="Horizontal">
-					<Button Click="Fav_check_all_Clicked" Content="Check All" Margin="5" Padding="5,0"></Button>
-				</StackPanel>
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="80" />
+					</Grid.ColumnDefinitions>
+					<TextBlock VerticalAlignment="Center" FontSize="18" Grid.ColumnSpan="2" Margin="6,6,74,6">Favorites</TextBlock>
+					<Button Click="Fav_check_all_Clicked" Content="Check All" Margin="5" Padding="5,0" Grid.Column="1"></Button>
+				</Grid>
 				<ListView x:Name="favorites_list" Grid.Row="1" Margin="5" MouseDoubleClick="fav_MouseDoubleClick" KeyUp="Fav_delete_KeyUp" ItemContainerStyle="{DynamicResource list_item_container_style}">
 					<ListView.ContextMenu>
 						<ContextMenu>
@@ -236,6 +169,52 @@
 						</GridView>
 					</ListView.View>
 				</ListView>
+			</Grid>
+		</TabItem>
+		<TabItem Header="Logs">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="40" />
+					<RowDefinition Height="257*" />
+				</Grid.RowDefinitions>
+				<Grid Margin="3">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="50" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<TextBlock FontSize="18" Text="Logs" VerticalAlignment="Center" />
+					<TextBlock FontSize="12" Foreground="Gray" Text="For more detail log information, use a SQLite admin tool to browse the 'user.db' file." VerticalAlignment="Bottom" Grid.Column="1" HorizontalAlignment="Right" />
+				</Grid>
+				<TextBox x:Name="txt_console" Foreground="#FF405493" IsReadOnly="True" FontFamily="Courier New" Background="{x:Null}" VerticalScrollBarVisibility="Visible" Grid.Row="1" TextWrapping="Wrap" />
+			</Grid>
+		</TabItem>
+		<TabItem Header="Settings">
+			<Grid Grid.ColumnSpan="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="80" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="36" />
+					<RowDefinition Height="36"/>
+					<RowDefinition Height="36" />
+					<RowDefinition Height="36" />
+					<RowDefinition Height="36" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				
+				<TextBlock FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="6,0,0,0">Settings</TextBlock>
+				
+				<Button Margin="5" Foreground="#FF26335F" Content="Save to" Padding="5,3" Click="btn_save_to_Click" Grid.Row="1" />
+				<TextBox x:Name="txt_dir" Margin="5" Grid.Column="1" Background="#BFFFFFFF" Grid.Row="1" />
+
+				<TextBlock VerticalAlignment="Center" Text="Max speed" Foreground="#FF26335F" HorizontalAlignment="Right" Grid.Row="3" Margin="0,10,7,10" />
+				<TextBox x:Name="txt_max_speed" Grid.Column="1" ToolTip="zero means no limit" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="0" Background="#BFFFFFFF" VerticalAlignment="Center" Margin="5,5,0,5" Grid.Row="3" Width="60" HorizontalAlignment="Left" />
+				<TextBlock Margin="75,5,609,5" Grid.Column="1" VerticalAlignment="Center" Text="KB/s" Foreground="#FF26335F" Grid.Row="3" Width="60" />
+
+				<TextBlock Grid.Row="2" VerticalAlignment="Center" Text="Threads" Foreground="#FF26335F" HorizontalAlignment="Right" Margin="0,10,7,10" />
+				<TextBox x:Name="txt_thread" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" HorizontalContentAlignment="Center" PreviewTextInput="Number_PreviewTextInput" Text="3" Background="#BFFFFFFF" Margin="5,5,0,5" Width="60" HorizontalAlignment="Left" />
+				<Button Content="Controller" Margin="5" Name="btn_controller" Padding="5,0" ToolTip="edit lua controller script" Grid.Row="4" Click="btn_controller_Click" />
 			</Grid>
 		</TabItem>
 	</TabControl>

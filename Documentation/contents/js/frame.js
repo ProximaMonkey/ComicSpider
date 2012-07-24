@@ -3,7 +3,7 @@
 function frame()
 {
 	$('#header').prepend(
-		'<img style="float: left; margin: 4px 4px;" src="img/ys_16.png"/>' +
+		'<img style="float: left; margin: 4px 4px;" src="img/logo-16.png"/>' +
 		'<a href="0-comic-spider.html">Comic Spider Documentation</a> &gt;&gt; '
 	);
 	$('#footer').append(

@@ -19,11 +19,14 @@ namespace ComicSpider
 			sb_working.Pause();
 
 			is_working = false;
+			working_counter = 0;
 		}
 
 		public bool Is_working { get { return is_working; } }
 		public void Show_working()
 		{
+			working_counter++;
+
 			if (is_working)
 				return;
 
@@ -33,10 +36,13 @@ namespace ComicSpider
 		}
 		public void Hide_working()
 		{
-			sb_hide_working.Begin();
-			sb_working.Pause();
+			if (--working_counter == 0)
+			{
+				sb_hide_working.Begin();
+				sb_working.Pause();
 
-			is_working = false;
+				is_working = false;
+			}
 		}
 
 		/***************************** Private ********************************/
@@ -45,5 +51,6 @@ namespace ComicSpider
 		private Storyboard sb_working;
 		private Storyboard sb_hide_working;
 		private bool is_working;
+		private int working_counter;
 	}
 }

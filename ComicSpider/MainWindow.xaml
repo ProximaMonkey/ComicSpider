@@ -11,7 +11,7 @@
 		Closed="Window_Closed"
 		Topmost="True"
 		FontSize="12"
-		KeyUp="Window_KeyUp" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/y.s.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True"
+		KeyUp="Window_KeyUp" Drop="Window_Drop" AllowDrop="True" WindowStartupLocation="CenterScreen" WindowStyle="None" Background="{x:Null}" AllowsTransparency="True" Icon="Images/logo.ico" MouseLeftButtonDown="window_MouseLeftButtonDown" ResizeMode="NoResize" SnapsToDevicePixels="True"
 		 ContextMenu="{DynamicResource ResourceKey=main_menu}">
 	<Window.Resources>
 		<Storyboard x:Key="sb_hide_window">
@@ -184,7 +184,7 @@
 					<ColumnDefinition Width="26"/>
 					<ColumnDefinition Width="5"/>
 				</Grid.ColumnDefinitions>
-				<Image x:Name="img_logo" Source="Images/ys_16.ico" Width="16" Height="16" />
+				<Image x:Name="img_logo" Source="Images/logo_16.ico" Width="16" Height="16" />
 				<TextBlock x:Name="txt_title" Text="Comic Spider" ToolTip="{Binding Path=Text, ElementName=txt_title}" Foreground="#FF33629A" VerticalAlignment="Center" Grid.Column="1" FontSize="10" d:LayoutOverrides="GridBox" FontFamily="Segoe UI" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" />
 				<Button x:Name="btn_minimize" IsCancel="True" ToolTip="Minimize, hotkey : Win + C or Esc" Grid.Column="2" Click="btn_hide_Click" Template="{DynamicResource Button_minizie_template}" Margin="0,3">
 					<i:Interaction.Triggers>
@@ -287,7 +287,7 @@
 
 			<ComicSpider:WorkingIcon Grid.RowSpan="2" x:Name="working_icon" Margin="63.666,4.5,144.333,23.5" d:LayoutOverrides="HorizontalMargin" />
 
-			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/ys_16.ico" ContextMenu="{StaticResource ResourceKey=main_menu}" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
+			<tb:TaskbarIcon x:Name="tray" IconSource="/Comic%20Spider;component/Images/logo_16.ico" ContextMenu="{StaticResource ResourceKey=main_menu}" TrayLeftMouseDown="tray_TrayLeftMouseDown" Visibility="Collapsed">
 				<tb:TaskbarIcon.TrayToolTip>
 					<Border Padding="10,5" CornerRadius="3" Panel.ZIndex="100" Opacity="0.9">
 						<Border.Background>

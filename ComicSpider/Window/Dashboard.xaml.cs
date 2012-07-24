@@ -191,11 +191,6 @@ namespace ComicSpider
 			}
 
 			if (comic_spider.Stopped)
-				working_icon.Hide_working();
-
-			MainWindow.Main.Task_done();
-
-			if (comic_spider.Stopped)
 			{
 				if (Main_settings.Instance.Is_auto_begin)
 					btn_start_Click(null, null);
@@ -847,23 +842,6 @@ delete from [Cookie] where 1;";
 				Message_box.Show(ex.Message);
 			}
 		}
-		private void btn_logs_Click(object sender, RoutedEventArgs e)
-		{
-			if (bd_logs.Visibility == Visibility.Collapsed)
-			{
-				bd_logs.Visibility = Visibility.Visible;
-				(Resources["sb_show_logs"] as Storyboard).Begin();
-			}
-			else
-			{
-				(Resources["sb_hide_logs"] as Storyboard).Begin();
-			}
-		}
-		private void sb_hide_logs_Completed(object sender, EventArgs e)
-		{
-			bd_logs.Visibility = Visibility.Collapsed;
-		}
-
 		private void btn_save_to_Click(object sender, RoutedEventArgs e)
 		{
 			string path = Get_direcotry("Please select a root folder");
@@ -1201,6 +1179,7 @@ delete from [Cookie] where 1;";
 			View_Click(sender, null);
 		}
 
+		// Favorites events
 		private void Add_to_favorites_Click(object sender, RoutedEventArgs e)
 		{
 			foreach (Web_resource_info vol in volume_list.SelectedItems)

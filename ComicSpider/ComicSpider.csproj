@@ -56,7 +56,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\y.s.ico</ApplicationIcon>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
@@ -222,6 +222,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="logo.ico" />
     <Resource Include="Images\ys_16.png" />
     <Resource Include="Images\minimize.png" />
     <SplashScreen Include="Images\splash_screen.png" />
@@ -273,6 +274,8 @@
     <Content Include="Asset\message.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\logo.ico" />
+    <Resource Include="Images\logo_16.ico" />
     <Content Include="Lib\HtmlAgilityPack.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -313,7 +316,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Images\close.png" />
-    <Resource Include="Images\ys_16.ico" />
     <None Include="Lib\Hardcodet.Wpf.TaskbarNotification.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
