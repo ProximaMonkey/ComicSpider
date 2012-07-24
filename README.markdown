@@ -1,3 +1,4 @@
+[![Comic Spider](https://raw.github.com/ysmood/ComicSpider/master/Documentation/contents/img/splash_screen.png)](https://github.com/downloads/ysmood/ComicSpider/Comic_Spider.zip)
 
 # License
 
