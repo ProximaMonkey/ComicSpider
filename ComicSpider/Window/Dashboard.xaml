@@ -157,7 +157,7 @@
 						<ContextMenu>
 							<MenuItem Header="Check updates" Click="Fav_check_updates_Clicked"></MenuItem>
 							<MenuItem Header="Open folder" Click="Fav_open_folder_Clicked"></MenuItem>
-							<MenuItem Header="Open url" Click="Open_url_Click"></MenuItem>
+							<MenuItem Header="Open Url" Click="Open_url_Click"></MenuItem>
 							<MenuItem Header="Copy Url" Click="Copy_url_Click" />
 							<MenuItem Header="Delete" Click="Fav_delete_Clicked"></MenuItem>
 						</ContextMenu>
