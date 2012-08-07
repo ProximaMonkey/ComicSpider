@@ -201,6 +201,8 @@ namespace ComicSpider
 				this.Show();
 			});
 
+			working_icon.Hide_working();
+
 			MainWindow.Main.Main_progress = this.Main_progress;
 		}
 
