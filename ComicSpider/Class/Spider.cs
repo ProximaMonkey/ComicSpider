@@ -545,7 +545,8 @@ namespace ys
 						);
 					}
 				}
-				else if (root.Count > 0)
+
+				if (root.Count > 0)
 				{
 					Report("Get volume list: {0}, Count: {1}", root.Name, root.Children.Count);
 					Dashboard.Instance.Dispatcher.Invoke(
