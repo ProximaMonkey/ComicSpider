@@ -90,6 +90,8 @@ function init_navigator()
 	});
 
 	var path = decodeURIComponent(location);
+	path = '..' + path.match(/\/[^\/]+?\/index.html/)[0];
+	
 	volume_list.alphanumSort(false);
 	var i  = 0;
 	for (; i < volume_list.length; i++)

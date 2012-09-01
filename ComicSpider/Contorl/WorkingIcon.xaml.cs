@@ -36,12 +36,13 @@ namespace ComicSpider
 		}
 		public void Hide_working()
 		{
-			if (--working_counter == 0)
+			if (--working_counter <= 0)
 			{
 				sb_hide_working.Begin();
 				sb_working.Pause();
 
 				is_working = false;
+				working_counter = 0;
 			}
 		}
 

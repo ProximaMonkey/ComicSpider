@@ -109,7 +109,7 @@ namespace ys
 						sw = new StreamWriter(ys.Common.Combine_path(root_dir, "index.js"), true, Encoding.UTF8);
 						foreach (var vol_dir in comic_dirs)
 						{
-							sw.WriteLine("volume_list.push('" + vol_dir.Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
+							sw.WriteLine("volume_list.push('.." + vol_dir.Replace(root_dir, "").Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
 							Create_display_page(vol_dir);
 						}
 						sw.Close();
@@ -126,7 +126,7 @@ namespace ys
 
 							foreach (var vol_dir in volume_dirs)
 							{
-								sw.WriteLine("volume_list.push('" + vol_dir.Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
+								sw.WriteLine("volume_list.push('.." + vol_dir.Replace(root_dir, "").Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
 								Create_display_page(vol_dir);
 							}
 							sw.Close();

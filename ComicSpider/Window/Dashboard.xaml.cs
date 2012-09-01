@@ -1228,11 +1228,22 @@ delete from [Cookie] where 1;";
 		}
 		private void Fav_check_all_Clicked(object sender, RoutedEventArgs e)
 		{
+			Update_settings();
+
 			// Jump to Download tab.
 			tc_main.SelectedIndex = 0;
 
 			foreach (Web_resource_info item in favorites_list.Items)
 			{
+				// If the settings file move to another computer. Repair the favorites' path.
+				if (!Directory.Exists(item.Path))
+				{
+					string fixed_path = Path.Combine(Main_settings.Instance.Root_dir, item.Name);
+
+					if (!Directory.Exists(fixed_path))
+						Directory.CreateDirectory(fixed_path);
+				}
+
 				Get_volume_list(item.Url, true);
 			}
 		}
@@ -1263,11 +1274,22 @@ delete from [Cookie] where 1;";
 		}
 		private void Fav_check_updates_Clicked(object sender, RoutedEventArgs e)
 		{
+			Update_settings();
+
 			// Jump to Download tab.
 			tc_main.SelectedIndex = 0;
 
 			foreach (Web_resource_info item in favorites_list.SelectedItems)
 			{
+				// If the settings file move to another computer. Repair the favorites' path.
+				if (!Directory.Exists(item.Path))
+				{
+					string fixed_path = Path.Combine(Main_settings.Instance.Root_dir, item.Name);
+
+					if (!Directory.Exists(fixed_path))
+						Directory.CreateDirectory(fixed_path);
+				}
+
 				Get_volume_list(item.Url, true);
 			}
 		}
