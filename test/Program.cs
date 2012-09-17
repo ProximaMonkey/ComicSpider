@@ -12,20 +12,8 @@ namespace test
 	{
 		static void Main(string[] args)
 		{
-			//HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			//doc.Load("test.html");
-			//foreach (var item in doc.DocumentNode.SelectNodes("//a[@id='highres']"))
-			//{
-			//    Console.WriteLine(item.Attributes["href"].Value);
-			//}
-			
-			Lua lua = new Lua();
-			Regex reg = new Regex(@".+");
-			lua["s"] =  "";
-			lua.DoString(@"
-c = luanet.load_assembly('System.Console')
-c:WriteLine('test')
-");
+			//File.Copy(@"Asset\layout.js", Path.Combine(parent_dir, "layout.js"), true);
+			File.Copy(@"C:\Cradle\CSharp\ComicSpider\ComicSpider\Asset\layout.js", @"Z:\CAPSULE\ACG\Comic\里香\layout.js", true);
 
 			Console.WriteLine();
 			Console.ReadLine();

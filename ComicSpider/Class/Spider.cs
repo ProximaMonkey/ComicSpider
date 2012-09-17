@@ -167,7 +167,7 @@ namespace ys
 
 			layout_html = layout_html.Replace("<?= img_list ?>", img_list.TrimEnd(','));
 
-			StreamWriter sw = new StreamWriter(Path.Combine(voluem_dir, "index.html"));
+			StreamWriter sw = new StreamWriter(Path.Combine(voluem_dir, "index.html"), false);
 			sw.Write(layout_html);
 			sw.Close();
 		}
@@ -616,7 +616,7 @@ namespace ys
 								lock (index_file_lock)
 								{
 									StreamWriter sw = new StreamWriter(Path.Combine(vol_info.Parent.Path, "index.js"), true, Encoding.UTF8);
-									sw.WriteLine("volume_list.push('" + vol_info.Path.Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
+									sw.WriteLine("volume_list.push('.." + vol_info.Path.Replace(vol_info.Parent.Path, "").Replace('\\', '/').Replace("'", "\\'") + "/index.html');");
 									sw.Close();
 								}
 							}
