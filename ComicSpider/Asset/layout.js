@@ -49,17 +49,17 @@ function init_css()
 	$('#navibar').hover(
 		function ()
 		{
-			$(this).stop().animate({ right: 5 }, 'fast');
+			$(this).stop().animate({ opacity: 1 }, 'fast');
 		},
 		function ()
 		{
-			$(this).stop().animate({ right: -430 });
+			$(this).stop().animate({ opacity: 0.5 });
 		}
 	);
 	
 	win.one('scroll', function()
 	{
-		$('#navibar').animate({ right: -430 });
+		$('#navibar').animate({ opacity: 0.5 });
 	});
 }
 
@@ -90,6 +90,7 @@ function init_navigator()
 	});
 
 	var path = decodeURIComponent(location);
+	document.title = path.match(/(([^\/]+?\/[^\/]+?)\/[^\/]+?)$/)[2];
 	volume_list.alphanumSort(false);
 	var i  = 0;
 	for (; i < volume_list.length; i++)

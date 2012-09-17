@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../layout.css" type="text/css"/>
 <title>Comic Display - April 2012 y.s.</title>
 <script type="text/javascript">
-	var img_list = [<?= img_list ?>];
+	var img_list = [<?= img_list ?>].sort();
 </script>
 </head>
 <body>
@@ -19,7 +19,6 @@
 		Use mouse click, mouse drag, press key Z and X to navigate.
 	</div>
 	<div id="navibar">
-		<div class="navibar-indicator">&lt;&lt;</div>
 		Volume : <a class="btn previous" href="#!" title="previous volume">previous(Q)</a> /
 		<a class="btn next" href="#!" title="next volume">next(W)</a> ,
 		Auto split(A) : <a class="btn auto-split" href="#!" title="whether to split page when it's too wide">off</a> ,
