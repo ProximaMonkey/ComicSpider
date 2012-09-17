@@ -53,13 +53,13 @@ function init_css()
 		},
 		function ()
 		{
-			$(this).stop().animate({ right: -410 });
+			$(this).stop().animate({ right: -430 });
 		}
 	);
 	
 	win.one('scroll', function()
 	{
-		$('#navibar').animate({ right: -410 });
+		$('#navibar').animate({ right: -430 });
 	});
 }
 
@@ -90,13 +90,11 @@ function init_navigator()
 	});
 
 	var path = decodeURIComponent(location);
-	path = '..' + path.match(/\/[^\/]+?\/index.html/)[0];
-	
 	volume_list.alphanumSort(false);
 	var i  = 0;
 	for (; i < volume_list.length; i++)
 	{
-		if(path.indexOf(volume_list[i]) >= 0)
+		if(path.indexOf(volume_list[i].substring(2)) >= 0)
 			break;
 	}
 
