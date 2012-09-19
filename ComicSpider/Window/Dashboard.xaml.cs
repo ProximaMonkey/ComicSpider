@@ -1241,7 +1241,17 @@ delete from [Cookie] where 1;";
 					string fixed_path = Path.Combine(Main_settings.Instance.Root_dir, item.Name);
 
 					if (!Directory.Exists(fixed_path))
-						Directory.CreateDirectory(fixed_path);
+					{
+						try
+						{
+							Directory.CreateDirectory(fixed_path);
+						}
+						catch (Exception ex)
+						{
+							Message_box.Show(ex.Message);
+							break;
+						}
+					}
 				}
 
 				Get_volume_list(item.Url, true);
