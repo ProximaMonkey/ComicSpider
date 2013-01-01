@@ -197,6 +197,14 @@ namespace ComicSpider
 			return ys.Common.LevenshteinDistance(s, t);
 		}
 
+		public object eval_js(string s)
+		{
+			using (Noesis.Javascript.JavascriptContext context = new Noesis.Javascript.JavascriptContext())
+			{
+				return context.Run(s);
+			}
+		}
+
 		public object json_decode(string input)
 		{
 			return Newtonsoft.Json.JsonConvert.DeserializeObject(input);

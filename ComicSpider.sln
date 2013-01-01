@@ -2,10 +2,17 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5B383280-FCC8-42EC-9FC0-E382393B25A8}"
+	ProjectSection(SolutionItems) = preProject
+		ComicSpider.vsmdi = ComicSpider.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComicSpider", "ComicSpider\ComicSpider.csproj", "{6558692D-5BEE-494E-AD45-A2036EB80000}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{7EF8046C-11E6-4DD1-92A6-9F0C031871C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{C3815198-88F0-4D74-BA68-532689A4178F}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -40,6 +47,16 @@ Global
 		{7EF8046C-11E6-4DD1-92A6-9F0C031871C3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{7EF8046C-11E6-4DD1-92A6-9F0C031871C3}.Release|x86.ActiveCfg = Release|x86
 		{7EF8046C-11E6-4DD1-92A6-9F0C031871C3}.Release|x86.Build.0 = Release|x86
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C3815198-88F0-4D74-BA68-532689A4178F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

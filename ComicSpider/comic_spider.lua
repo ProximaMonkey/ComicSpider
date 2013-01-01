@@ -19,6 +19,9 @@ External functions:
 	string lc:format_for_number_sort(string str, int length = 3):
 		As its name.
 
+	object lc:eval_js(string code):
+		Run javascript code via V8 engine.
+
 	int lc:levenshtein_distance(string s, string t):
 		Get the levenshtein distance between two strings.
 
@@ -212,7 +215,9 @@ comic_spider = {
 			-- 站点显式使用了负载均衡，利用这点。
 			img_hosts = { 'imgd', 'img', 'imgfast' }
 			-- 此站点使用了ajax，利用这点可以直接在第一页获取所有文件地址。
-			list = lc:find([[var pages = pages = '(?<find>.+?)']])
+			-- 这里先用V8 engine运行了js代码后获取json。
+			code = lc:find([[eval\(function.+\n;]])
+			list = lc:eval_js(code .. 'pages;')
 			lc:fill_list(
 				lc:json_decode(list),
 				-- 这里演示了step的应用，类似jQuery中animate的step函数。注意变量url和name是引用。

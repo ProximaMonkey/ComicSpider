@@ -12,11 +12,14 @@ namespace test
 	{
 		static void Main(string[] args)
 		{
-			//File.Copy(@"Asset\layout.js", Path.Combine(parent_dir, "layout.js"), true);
-			File.Copy(@"C:\Cradle\CSharp\ComicSpider\ComicSpider\Asset\layout.js", @"Z:\CAPSULE\ACG\Comic\里香\layout.js", true);
+			run_js("[1,'2',3]");
+		}
 
-			Console.WriteLine();
-			Console.ReadLine();
+		public static string run_js(string s)
+		{
+			Noesis.Javascript.JavascriptContext context = new Noesis.Javascript.JavascriptContext();
+			var ret = context.Run(s);
+			return ret.ToString();
 		}
 	}
 }
