@@ -30,7 +30,7 @@ April 2012 y.s.
 
 ### [Video Demo](http://www.tudou.com/v/Cm3deG4DLak/&rpid=2572312&resourceId=2572312_04_05_99/v.swf)
 
-### [Download latest Comic Spider bin](https://github.com/downloads/ysmood/ComicSpider/Comic_Spider.zip)
+### [Download the latest Comic Spider](http://sdrv.ms/VhcHT4)
 
 # Features
 
