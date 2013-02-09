@@ -1071,9 +1071,6 @@ delete from [Cookie] where 1;";
 			if (list_view.SelectedItems.Count == 0)
 				return;
 
-			if (!Message_box.Show("Are you sure to delete?", true))
-				return;
-
 			if (list_view == volume_list)
 			{
 				List<Web_resource_info> selected_list = new List<Web_resource_info>();

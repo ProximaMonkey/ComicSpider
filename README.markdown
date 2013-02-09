@@ -51,6 +51,9 @@ April 2012 y.s.
 
    Please watch the [Video Demo](http://www.tudou.com/v/Cm3deG4DLak/&rpid=2572312&resourceId=2572312_04_05_99/v.swf)
 
+* ### Could not load file or assembly?
+   Please install the "vcredist_x86.exe" in the "Asset" folder, then try again.
+
 * ### 中文界面？
 
    軟體的主要使用無需刻意理解界面中的文字。將想要的資源拖拽到面板中即為全部所需操作。
