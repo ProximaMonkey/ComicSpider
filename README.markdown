@@ -53,6 +53,7 @@ April 2012 y.s.
 
 * ### Could not load file or assembly?
    Please install the "vcredist_x86.exe" in the "Asset" folder, then try again.
+   Or install this pack [vcredist_x86.exe](http://www.microsoft.com/en-us/download/details.aspx?id=26368).
 
 * ### 中文界面？
 
