@@ -90,7 +90,7 @@ function init_navigator()
 	});
 
 	var path = decodeURIComponent(location);
-	document.title = path.match(/(([^\/]+?\/[^\/]+?)\/[^\/]+?)$/)[2];
+	document.title = path.replace('index.html', '').match(/[^\/]+\/[^\/]+\/$/);
 	volume_list.alphanumSort(false);
 	var i  = 0;
 	for (; i < volume_list.length; i++)
