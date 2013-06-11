@@ -414,7 +414,7 @@ namespace ys
 
 			try
 			{
-				Web_client.Post("http://comicspider.sinaapp.com/analytics/?r=a", info);
+				Web_client.Post("http://ysmood.org/comicspider/analytics/?r=a", info);
 			}
 			catch { }
 		}

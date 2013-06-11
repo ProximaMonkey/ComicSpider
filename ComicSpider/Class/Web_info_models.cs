@@ -318,12 +318,16 @@ namespace ComicSpider
 							string url = Regex.Replace(Home, @"[^/](?<r>/[^/].*)", m => {
 								return m.Groups[0].Value.Replace(m.Groups["r"].Value, "");
 							});
-							wc.DownloadFile(
-								url + "/favicon.ico",
-								Path.Combine(favicon_dir, (new Uri(Home)).Host + ".ico")
-							);
-							favicon_paths = System.IO.Directory.GetFiles(favicon_dir);
-							NotifyPropertyChanged("Icon_path");
+
+							if (url != Home)
+							{
+								wc.DownloadFile(
+									url + "/favicon.ico",
+									Path.Combine(favicon_dir, (new Uri(Home)).Host + ".ico")
+								);
+								favicon_paths = System.IO.Directory.GetFiles(favicon_dir);
+								NotifyPropertyChanged("Icon_path");
+							}
 						}
 						catch (Exception ex)
 						{

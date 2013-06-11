@@ -95,7 +95,7 @@ External objects:
 
 settings = {
 	-- Url list for including remote lua scripts. Be careful, it may be dangerous to use remote script.
-	requires = { 'http://comicspider.sinaapp.com/parser.lua' },
+	requires = { 'http://ysmood.org/upload/comicspider/parser.lua' },
 
 	-- File type to be downloaded.
 	file_types = { '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.zip' },
@@ -184,12 +184,12 @@ comic_spider = {
 	},
 
 	-- 这是个具有代表意义的中文漫画站点。以下为示例(事件驱动)：
-	['* 178漫画频道'] = {
-		home = 'http://manhua.178.com/',
+	['* 动漫之家'] = {
+		home = 'http://www.dmzj.com',
 
-		hosts = { '178.com' },
+		hosts = { 'dmzj.com' },
 
-		description = '178在线漫画提供海量漫画,更新最快在线漫画欣赏\r\n' ..
+		description = '在线漫画提供海量漫画,更新最快在线漫画欣赏\r\n' ..
 			'详尽的动漫资料库、动画资讯、用户评论社区于一体,它与在线动画站、动漫之家论坛三站合一\r\n' ..
 			'将成为国内更新最快,动漫视听享受最全,资料库最详尽的社区型动漫爱好者的交流互动平台',
 
@@ -201,13 +201,16 @@ comic_spider = {
 				{
 					[[<div class="cartoon_online_border"[\s\S]+?<div]],
 					[[href="(?<url>.+?)".*?>(?<name>.+?)</a>]]
-				}
+				},
+				function(i, gs)
+					url = 'http://www.dmzj.com/' .. gs['url'].Value
+				end
 			)
 			-- 如果没有发现列表，则认为这个url指向的是卷地址，而不是主目录地址。
 			if info_list.Count == 0 then
 				vol_name = lc:find([[var g_chapter_name = "(?<find>.+?)"]])
 				lc:add(src_info.Url, 0, vol_name, src_info)
-				src_info.Url = lc:find([[hotrmtexth1.+?href="(?<find>.+?)"]])
+				src_info.Url = 'http://www.dmzj.com/' .. lc:find([[hotrmtexth1.+?href="(?<find>.+?)"]])
 			end
 		end,
 
@@ -223,7 +226,7 @@ comic_spider = {
 				-- 这里演示了step的应用，类似jQuery中animate的step函数。注意变量url和name是引用。
 				function(i, str)
 					n = math.random(#img_hosts)
-					url = 'http://' .. img_hosts[n] .. '.manhua.178.com/' .. str
+					url = 'http://' .. img_hosts[n] .. '.dmzj.com/' .. str
 				end
 			)
 		end,
@@ -316,6 +319,8 @@ comic_spider = {
 	},
 }
 
+--[==[
+
 -- Example: clone Danbooru websites.
 for k, v in pairs {
 	['Konachan']               = {'http://konachan.com'            , 'Anime Wallpapers' },
@@ -331,6 +336,62 @@ for k, v in pairs {
 	}
 end
 
+
+comic_spider['Animephile'] = {
+	home = 'http://www.animephile.com',
+
+	hosts = { 'animephile.com' },
+
+	description = 'Animephile is the premier Japanese hentai and yaoi website on the Internet',
+
+	get_volumes = function()
+		src_info.Name = lc:find([[<title>(?<find>.+?) Manga Online .+?</title>]])
+		lc:fill_list(
+			{
+				[[<select class="selectchapter"([\s\S]+?)</select>]],
+				[[option value="(?<url>.+?)".+?>(?<name>.+?)</option]]
+			},
+			function(i, gs)
+				url = src_info.Url:gsub('%?.*', '') .. '?ch=' .. url
+			end
+		)
+		if info_list.Count == 0 then
+			lc:add(src_info.Url, 0, src_info.Name, src_info)
+			src_info.Name = 'Animephile'
+		end
+	end,
+
+	get_pages = function()
+		lc:fill_list(
+			{
+				[[class="selectpage"[\s\S]+?</select]],
+				[[option value="(?<url>.+?)".+?</option]]
+			},
+			function(i, gs)
+				url = src_info.Url .. '&page=' .. url
+			end
+		)
+		if info_list.Count == 0 then
+			lc:fill_list(
+				{
+					[[class="thumbs"[\s\S].+?</div]],
+					[[a href="(?<url>.+?)"]]
+				},
+				function(i, gs)
+					url = src_info.Url .. url
+				end
+			)
+		end
+	end,
+
+	get_files = function()
+		lc:fill_list([[id="mainimage" src="(?<url>.+?)"]])
+		if info_list.Count == 0 then
+			lc:fill_list([[div class="slide"[\s\S]+?<img[\s\S]+?src="(?<url>.+?)".+?</div]])
+		end
+	end,
+}
+
 comic_spider['Fakku'] = {
 	home = 'http://www.fakku.net',
 
@@ -342,6 +403,7 @@ comic_spider['Fakku'] = {
 		src_info.Name = 'Fakku'
 		vol_name = lc:find([[<title>(?<find>.+?) \| .+?</title>]])
 		if not src_info.Url:match('/read') then
+			vol_name = lc:find([[<title>(?<find>.+?) - .*</title>]])
 			src_info.Url = src_info.Url:gsub('/$', '') .. '/read'
 		end
 		lc:add(src_info.Url, 0, vol_name, src_info)
@@ -357,3 +419,5 @@ comic_spider['Fakku'] = {
 		end
 	end,
 }
+
+]==]
