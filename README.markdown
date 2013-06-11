@@ -30,7 +30,7 @@ April 2012 y.s.
 
 ### [Video Demo](http://www.tudou.com/v/Cm3deG4DLak/&rpid=2572312&resourceId=2572312_04_05_99/v.swf)
 
-### [Download the latest Comic Spider](http://sdrv.ms/VhcHT4)
+### [Download the latest Comic Spider](http://ysmood.org/upload/comicspider/Comic_Spider.zip)
 
 # Features
 
@@ -53,6 +53,7 @@ April 2012 y.s.
 
 * ### Could not load file or assembly?
    Please install the "vcredist_x86.exe" in the "Asset" folder, then try again.
+   Or install this pack [vcredist_x86.exe](http://www.microsoft.com/en-us/download/details.aspx?id=26368).
 
 * ### 中文界面？
 
