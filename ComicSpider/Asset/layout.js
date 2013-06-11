@@ -90,12 +90,13 @@ function init_navigator()
 	});
 
 	var path = decodeURIComponent(location);
-	document.title = path.replace('index.html', '').match(/[^\/]+\/[^\/]+\/$/);
+	document.title = path.replace('index.html', '').match(/[^\/]+\/[^\/]+\/$/)[0];
+	var vol_name = document.title.match(/\/[^\/]+\/$/)[0];
 	volume_list.alphanumSort(false);
 	var i  = 0;
 	for (; i < volume_list.length; i++)
 	{
-		if(path.indexOf(volume_list[i].substring(2)) >= 0)
+		if(volume_list[i].indexOf(vol_name) >= 0)
 			break;
 	}
 
